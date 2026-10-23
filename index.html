@@ -1742,7 +1742,7 @@ function startLevel(n) {
     cds: {}, ultUsed: false,
     owlLv: u.owl, owlT: 1, owlAnim: 0, thorns: BAL.thornsDmg * u.thorns,
     timeStop: 0, blizzard: 0, blizDps: 0, blizTick: 0, starfall: null,
-    missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [], secretUsed: {},
+    missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [],
     castAnim: 0, shake: 0, castleFlash: 0, noMpT: 0, reflectT: 0,
     gold: 0, kills: 0, over: null, overT: 0, paused: false, hintT: 7, nextId: 1,
     introT: 2.4, goldBump: 0, mpFlash: 0, castColor: '#ffd84d', postStory: null,
@@ -2813,11 +2813,11 @@ function drawHUD() {
     rrect(160, 76, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, '#7ad7ff');
     txt(`魔力爆發 ${G.surge.toFixed(1)}`, 245, 93, 17, '#7ad7ff');
   }
-  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發，各自每關一次（畫面上不顯示）
+  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發，不限次數（畫面上不顯示）
   for (const [id, x, y, w, h] of [['quake', 80, 60, 40, 34], ['surge', 62, 282, 36, 52]]) {
     buttons.push({ x, y, w, h, fn: () => {
-      if (G.over || G.paused || G.secretUsed[id]) return;
-      if (useSpell(id, null, null, true, true)) { G.secretUsed[id] = true; burst(x + w / 2, y + h / 2, 10, ['#ffd84d', '#ffffff'], 140, 0, 5, 0.5); }
+      if (G.over || G.paused) return;
+      if (useSpell(id, null, null, true, true)) burst(x + w / 2, y + h / 2, 10, ['#ffd84d', '#ffffff'], 140, 0, 5, 0.5);
     } });
   }
   // 魔法列
