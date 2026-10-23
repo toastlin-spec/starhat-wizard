@@ -1742,7 +1742,7 @@ function startLevel(n) {
     cds: {}, ultUsed: false,
     owlLv: u.owl, owlT: 1, owlAnim: 0, thorns: BAL.thornsDmg * u.thorns,
     timeStop: 0, blizzard: 0, blizDps: 0, blizTick: 0, starfall: null,
-    missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [],
+    missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [], secretUsed: {},
     castAnim: 0, shake: 0, castleFlash: 0, noMpT: 0, reflectT: 0,
     gold: 0, kills: 0, over: null, overT: 0, paused: false, hintT: 7, nextId: 1,
     introT: 2.4, goldBump: 0, mpFlash: 0, castColor: '#ffd84d', postStory: null,
@@ -1880,13 +1880,17 @@ function hitCastle(dmg) {
 // ============================================================
 //  施法
 // ============================================================
-function useSpell(id, x, y, silent) {
+// free：隱藏按鈕用，不檢查是否學會、不耗魔力、不進冷卻
+function useSpell(id, x, y, silent, free) {
   const sp = SPELL[id];
-  if (!G || G.over || G.paused || !sp || !learned(id)) return false;
-  if (sp.type === 'ult') { if (G.ultUsed) { if (!silent) msg('每關只能用一次'); return false; } }
-  else if (!G.loadout.includes(id)) return false;
-  if (G.cds[id] > 0) return false;
-  const cost = spellCost(sp);
+  if (!G || G.over || G.paused || !sp) return false;
+  if (!free) {
+    if (!learned(id)) return false;
+    if (sp.type === 'ult') { if (G.ultUsed) { if (!silent) msg('每關只能用一次'); return false; } }
+    else if (!G.loadout.includes(id)) return false;
+    if (G.cds[id] > 0) return false;
+  }
+  const cost = free ? 0 : spellCost(sp);
   if (G.mp < cost) { if (!silent) { msg('魔力不足！'); G.mpFlash = 0.5; SFX.fizzle(); } return false; }
   if (y != null) y = Math.min(y, GROUND + 30);
   let target = null;
@@ -1899,7 +1903,7 @@ function useSpell(id, x, y, silent) {
     if (!target) { if (!silent) msg(nearestEnemy(x, y, 170) ? '對 BOSS 無效' : '沒有目標'); return false; }
   }
   const r = rankOf(id), mul = G.power * (1 + BAL.rankBonus * (r - 1)), dmg = sp.dmg * mul;
-  G.mp -= cost; G.cds[id] = sp.cd; G.castAnim = 0.28; G.castColor = sp.color;
+  G.mp -= cost; if (!free) G.cds[id] = sp.cd; G.castAnim = 0.28; G.castColor = sp.color;
   const tip = staffTip();
   burst(tip.x, tip.y, 8, [sp.color, '#ffffff'], 140, 0, 5, 0.35);
   const gx = Math.max(WALL_X + 70, x || 0);
@@ -2808,6 +2812,13 @@ function drawHUD() {
   if (G.surge > 0) {
     rrect(160, 76, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, '#7ad7ff');
     txt(`魔力爆發 ${G.surge.toFixed(1)}`, 245, 93, 17, '#7ad7ff');
+  }
+  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發，各自每關一次（畫面上不顯示）
+  for (const [id, x, y, w, h] of [['quake', 80, 60, 40, 34], ['surge', 62, 282, 36, 52]]) {
+    buttons.push({ x, y, w, h, fn: () => {
+      if (G.over || G.paused || G.secretUsed[id]) return;
+      if (useSpell(id, null, null, true, true)) { G.secretUsed[id] = true; burst(x + w / 2, y + h / 2, 10, ['#ffd84d', '#ffffff'], 140, 0, 5, 0.5); }
+    } });
   }
   // 魔法列
   const { slots, ult, right } = hudLayout();
