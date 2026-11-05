@@ -39,7 +39,7 @@ const WIZ = { x: 150, y: 392 };   // 法師站立點（腳底）
 const OWL = { x: 62, y: 390 };    // 貓頭鷹咕咕站立點
 const OUT = '#3a2a4a';            // Q版粗輪廓色
 const FONT = '"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",sans-serif';
-const MAX_STAGE = 50;
+const MAX_STAGE = 60;
 const MAX_RANK = 5;
 const COIN_POS = { x: 1092, y: 40 };
 const MAX_RES = 1.6;              // 畫布解析度上限（避免高解析螢幕 lag）
@@ -73,6 +73,8 @@ const SPELLS = [
     desc: '召喚一陣隕石砸向點擊處附近的地面。打不到空中。', up: '傷害 +12%，隕石 +1 顆' },
   { id: 'timestop',  name: '時間凍結', type: 'self',   cost: 70, cd: 30,   dmg: 0,   unlock: 19, color: '#d0a8ff',
     desc: '按下立即讓全場敵人和敵方飛行道具暫停 3 秒。', up: '暫停時間 +0.5 秒' },
+  { id: 'dragon',    name: '召喚飛龍', type: 'self',   cost: 70, cd: 30,   dmg: 55,  unlock: 21, color: '#a98bff',
+    desc: '被你救回的黑翼飛龍飛來助陣 10 秒，朝敵人連續噴出大火球，地面空中都燒得到，盾牌也擋不住。', up: '傷害 +12%，停留時間 +1 秒' },
   { id: 'blizzard',  name: '暴風雪',   type: 'self',   cost: 65, cd: 25,   dmg: 14,  unlock: 22, color: '#cfefff',
     desc: '按下立即颳起暴風雪，全場敵人緩速並持續凍傷 6 秒。', up: '每秒傷害 +12%' },
   { id: 'storm',     name: '雷暴雲',   type: 'target', cost: 50, cd: 16,   dmg: 45,  unlock: 25, color: '#b8b0ff',
@@ -82,14 +84,14 @@ const SPELLS = [
   // ---------- 第四、五章新魔法 ----------
   { id: 'missiles',  name: '星光飛彈', type: 'target', cost: 26, cd: 2.5,  dmg: 30,  unlock: 31, color: '#fff07a',
     desc: '發射會自動追蹤的星光飛彈，射向點擊處附近的敵人，地面空中都打得到。', up: '傷害 +12%，每 2 級多 1 發' },
-  { id: 'syrup',     name: '糖漿陷阱', type: 'target', cost: 30, cd: 9,    dmg: 12,  unlock: 33, color: '#ff9fd0',
-    desc: '在地上倒一灘黏黏的糖漿，踩到的敵人幾乎動不了，還會持續受傷。打不到空中。', up: '每秒傷害 +12%，持續更久' },
-  { id: 'sheep',     name: '變羊術',   type: 'target', cost: 35, cd: 10,   dmg: 0,   unlock: 35, color: '#f5efe0',
-    desc: '把一個敵人變成小綿羊：不能攻擊、走得很慢，而且更怕痛。對 BOSS 無效。', up: '變羊時間 +1 秒' },
+  { id: 'beam',      name: '彩虹光束', type: 'target', cost: 38, cd: 8,    dmg: 60,  unlock: 33, color: '#ff9fd0',
+    desc: '朝點擊的高度射出橫貫全場的彩虹光束，持續 1 秒，穿透整排敵人。點地面打地面，點天空打空中。', up: '傷害 +12%，光束更粗' },
+  { id: 'siphon',    name: '魔力虹吸', type: 'target', cost: 15, cd: 10,   dmg: 40,  unlock: 35, color: '#7ad7ff',
+    desc: '在點擊處引爆魔力漩渦，每打中一個敵人就吸回 5 點魔力。', up: '傷害 +12%，可吸回的魔力上限提高' },
   { id: 'tornado',   name: '龍捲風',   type: 'target', cost: 40, cd: 9,    dmg: 22,  unlock: 37, color: '#8fe8c8',
     desc: '捲起一道往遠方移動的龍捲風，把碰到的敵人吹回去並造成傷害。', up: '傷害 +12%，持續更久' },
-  { id: 'icewall',   name: '冰晶城牆', type: 'target', cost: 45, cd: 18,   dmg: 0,   unlock: 39, color: '#bfeaff',
-    desc: '在地上豎起一道冰晶城牆 12 秒，擋住地面的近戰敵人，讓它們先打牆。', up: '城牆耐久 +20%' },
+  { id: 'giant',     name: '薑餅巨人', type: 'target', cost: 50, cd: 18,   dmg: 35,  unlock: 39, color: '#d9a066',
+    desc: '召喚薑餅巨人站在地上 12 秒，擋住地面的近戰敵人，還會揮拳打前方的一群敵人。', up: '傷害 +12%，巨人耐久 +20%' },
   { id: 'holy',      name: '聖光之柱', type: 'target', cost: 50, cd: 10,   dmg: 90,  unlock: 41, color: '#fff3a8',
     desc: '從天降下一道聖光持續灼燒 2 秒，能打穿星石巨像的硬皮，還讓隱形敵人現形。', up: '每秒傷害 +12%' },
   { id: 'fairy',     name: '召喚精靈', type: 'self',   cost: 55, cd: 25,   dmg: 22,  unlock: 43, color: '#9ff0c8',
@@ -100,6 +102,17 @@ const SPELLS = [
     desc: '按下立即引發大地震，全場地面敵人受到傷害並暈眩，能打穿硬皮。打不到空中。', up: '傷害 +12%，暈眩更久' },
   { id: 'surge',     name: '魔力爆發', type: 'self',   cost: 40, cd: 40,   dmg: 0,   unlock: 49, color: '#7ad7ff',
     desc: '按下立即進入魔力爆發 8 秒：魔法消耗減半、冷卻快一倍、魔力回復加快。', up: '持續時間 +1 秒' },
+  // ---------- 第六章新魔法 ----------
+  { id: 'rewind',    name: '時光倒流', type: 'self',   cost: 70, cd: 40,   dmg: 0,   unlock: 51, color: '#ffd6a5',
+    desc: '按下立即倒轉時間：城堡找回最近 6 秒受的傷，敵人被拉回遠方（BOSS 除外），飛來的攻擊也全部消失。', up: '可找回的耐久上限提高' },
+  { id: 'comet',     name: '彗星衝擊', type: 'target', cost: 90, cd: 22,   dmg: 300, unlock: 53, color: '#8fd8ff',
+    desc: '1.2 秒後，巨大彗星砸向點擊處，大範圍重創地面和空中的敵人，還能打穿硬皮。', up: '傷害 +12%，範圍變大' },
+  { id: 'turret',    name: '星光砲台', type: 'target', cost: 55, cd: 15,   dmg: 38,  unlock: 55, color: '#ff8fc8',
+    desc: '在地上蓋一座棒棒糖砲台 15 秒，自動射擊附近的敵人，地面空中都打。最多同時 3 座。', up: '傷害 +12%，持續 +1 秒' },
+  { id: 'mark',      name: '弱點印記', type: 'target', cost: 30, cd: 12,   dmg: 0,   unlock: 57, color: '#ff6a6a',
+    desc: '在一群敵人身上打下印記 8 秒，受到的所有傷害增加 35%。對 BOSS 也有效，先印再放大招！', up: '增傷再 +5%' },
+  { id: 'phoenix',   name: '鳳凰衝擊', type: 'self',   cost: 80, cd: 35,   dmg: 150, unlock: 59, color: '#ffb03d',
+    desc: '按下立即召喚火鳳凰橫掃全場，燒傷所有地面和空中的敵人，並修復城堡 5% 耐久。', up: '傷害 +12%，修復量 +20%' },
 ];
 const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
 const TYPE_LABEL = { target: '指定目標：先選魔法再點敵人', self: '立即施放：按下按鈕就發動', ult: '終極魔法：每關限用一次' };
@@ -130,9 +143,14 @@ const ENEMY = {
   golem:    { name: '星石巨像',   hp: 900, speed: 18,  dmg: 50, atkCd: 2.5, gold: 30, r: 42, h: 128, reach: 48, heavy: true, armor: 0.5 },
   boss4:    { name: '空賊船長 鉤鉤', hp: 8000, speed: 60, dmg: 14, atkCd: 3.2, gold: 700, r: 80, h: 170, boss: 4, air: true },
   boss5:    { name: '虛空魔王 諾克斯', hp: 14000, speed: 50, dmg: 24, atkCd: 2.2, gold: 1000, r: 60, h: 200, boss: 5, air: true },
+  // ---------- 第六章 ----------
+  ghost:    { name: '糖晶幽靈', hp: 85,  speed: 75,  dmg: 12, atkCd: 1.1, gold: 8,  r: 22, h: 66,  air: true, fly: [360, 440], phasing: true },
+  knight:   { name: '水晶騎士', hp: 180, speed: 36,  dmg: 20, atkCd: 1.4, gold: 12, r: 28, h: 100, shield: true, charge: true },
+  witch:    { name: '吸魔女巫', hp: 80,  speed: 42,  dmg: 0,  atkCd: 3.2, gold: 11, r: 22, h: 92,  range: 560, shot: 'drain' },
+  boss6:    { name: '暗影波比', hp: 20000, speed: 50, dmg: 24, atkCd: 2, gold: 1300, r: 42, h: 200, boss: 6, air: true },
 };
 // 這些魔法能打穿星石巨像的硬皮
-const ARMOR_PIERCE = { bolt: 1, holy: 1, quake: 1, star: 1 };
+const ARMOR_PIERCE = { bolt: 1, holy: 1, quake: 1, star: 1, comet: 1 };
 
 // ============================================================
 //  城堡工坊（金幣升級）
@@ -218,7 +236,7 @@ const LEVELS = [
   { name: 'BOSS：黑翼飛龍', hint: '飛龍在高空噴火！只有能打到空中的魔法才傷得了牠', boss: true,
     groups: [[2, 'bandit', 10, 0.8], [6, 'boss2', 1, 0], [14, 'wolf', 6, 0.8], [24, 'shield', 4, 1.5], [34, 'shaman', 2, 3], [44, 'ram', 1, 0], [50, 'bandit', 12, 0.5]] },
   // ---------- 第三章：暗影火山 ----------
-  { name: '暗影刺客', hint: '隱形刺客在遠處幾乎打不痛，靠近時會現形衝刺！',
+  { name: '暗影刺客', hint: '新魔法「召喚飛龍」：黑翼飛龍成為夥伴了！隱形刺客靠近時才會現形',
     groups: [[2, 'bandit', 12, 0.7], [8, 'assassin', 2, 2], [14, 'shield', 5, 1.2], [20, 'assassin', 4, 1.5], [26, 'harpy', 6, 0.8],
              [32, 'shaman', 2, 2], [36, 'bandit', 18, 0.35], [44, 'assassin', 5, 0.8], [48, 'wolf', 8, 0.5], [52, 'ram', 1, 0]] },
   { name: '暴風雪', hint: '新魔法「暴風雪」：全場緩速加持續傷害',
@@ -254,13 +272,13 @@ const LEVELS = [
   { name: '空賊來襲', hint: '熱氣球空賊會從高空丟炸彈，用打得到空中的魔法擊落它！',
     groups: [[2, 'bandit', 12, 0.5], [8, 'balloon', 2, 3], [14, 'shield', 6, 1], [20, 'balloon', 3, 2], [26, 'harpy', 8, 0.6],
              [32, 'wolf', 10, 0.45], [38, 'balloon', 4, 1.5], [42, 'bandit', 16, 0.35], [48, 'shaman', 3, 1.5], [52, 'bat', 14, 0.25]] },
-  { name: '黏黏的糖漿', hint: '新魔法「糖漿陷阱」：踩到的敵人幾乎動不了',
+  { name: '彩虹光束', hint: '新魔法「彩虹光束」：穿透一整排敵人，點地面打地面、點天空打空中',
     groups: [[2, 'wolf', 12, 0.4], [8, 'balloon', 3, 2], [14, 'slime', 10, 0.6], [20, 'shield', 7, 0.8], [26, 'harpy', 8, 0.6],
              [32, 'ram', 2, 2.5], [36, 'assassin', 5, 0.8], [42, 'bandit', 18, 0.3], [48, 'balloon', 4, 1.2], [52, 'wolf', 10, 0.4]] },
   { name: '瞬移小惡魔', hint: '小惡魔會突然瞬移向前，別讓它們溜到城門下！',
     groups: [[2, 'imp', 4, 1.5], [8, 'bandit', 14, 0.45], [14, 'imp', 6, 1], [20, 'harpy', 8, 0.6], [26, 'shield', 7, 0.8],
              [32, 'imp', 8, 0.7], [38, 'balloon', 4, 1.5], [42, 'shaman', 3, 1.5], [46, 'imp', 8, 0.6], [52, 'bandit', 16, 0.3]] },
-  { name: '變成小綿羊', hint: '新魔法「變羊術」：把強敵變成小綿羊！對 BOSS 無效',
+  { name: '魔力虹吸', hint: '新魔法「魔力虹吸」：打中越多敵人，吸回越多魔力',
     groups: [[2, 'ram', 2, 2], [6, 'bandit', 14, 0.45], [12, 'imp', 6, 0.9], [18, 'shield', 8, 0.7], [24, 'balloon', 4, 1.5],
              [30, 'ram', 3, 2], [34, 'harpy', 10, 0.5], [40, 'slime', 10, 0.5], [46, 'wolf', 12, 0.35], [52, 'imp', 8, 0.5]] },
   { name: '雲海大軍', hint: '魔法欄位已經有 6 格，多帶幾種魔法搭配',
@@ -272,7 +290,7 @@ const LEVELS = [
   { name: '空賊艦隊', hint: '天上滿滿的熱氣球！星光飛彈和閃電鏈最有效',
     groups: [[2, 'balloon', 4, 1.5], [8, 'bandit', 18, 0.4], [14, 'harpy', 10, 0.5], [20, 'balloon', 5, 1.2], [26, 'imp', 10, 0.6],
              [32, 'shield', 8, 0.7], [36, 'shaman', 4, 1.2], [40, 'balloon', 6, 1], [46, 'wolf', 14, 0.3], [52, 'bat', 16, 0.25]] },
-  { name: '冰晶城牆', hint: '新魔法「冰晶城牆」：擋住地面敵人，讓它們先打牆',
+  { name: '薑餅巨人', hint: '新魔法「薑餅巨人」：擋住地面敵人，還會揮拳反擊',
     groups: [[2, 'ram', 3, 2], [6, 'wolf', 14, 0.35], [12, 'imp', 10, 0.6], [18, 'shield', 9, 0.6], [24, 'balloon', 5, 1.2],
              [30, 'slime', 12, 0.45], [36, 'ram', 3, 1.6], [40, 'assassin', 8, 0.5], [46, 'bandit', 20, 0.3], [52, 'harpy', 10, 0.45]] },
   { name: 'BOSS：空賊船長', hint: '空賊飛船會發射砲彈、空投小兵！只有打得到空中的魔法傷得到它', boss: true,
@@ -287,7 +305,7 @@ const LEVELS = [
   { name: '小精靈來幫忙', hint: '新魔法「召喚精靈」：小精靈會自動攻擊敵人',
     groups: [[2, 'wolf', 16, 0.35], [8, 'golem', 1, 0], [12, 'imp', 10, 0.6], [18, 'balloon', 6, 1], [24, 'shield', 9, 0.6],
              [30, 'assassin', 8, 0.5], [36, 'golem', 2, 3], [40, 'shaman', 4, 1.2], [44, 'bandit', 20, 0.3], [50, 'harpy', 12, 0.4]] },
-  { name: '虛空的低語', hint: '巨像和小惡魔一起來了，用糖漿陷阱拖住它們',
+  { name: '虛空的低語', hint: '巨像和小惡魔一起來了，用薑餅巨人擋住它們',
     groups: [[2, 'imp', 12, 0.5], [8, 'golem', 2, 3], [14, 'harpy', 12, 0.45], [20, 'ram', 3, 1.6], [26, 'balloon', 6, 1],
              [30, 'assassin', 8, 0.5], [36, 'slime', 14, 0.4], [42, 'shaman', 4, 1.2], [46, 'bandit', 22, 0.28], [52, 'golem', 2, 2]] },
   { name: '星之引力', hint: '新魔法「星之引力」：把敵人吸在一起，再用範圍魔法一網打盡',
@@ -307,10 +325,41 @@ const LEVELS = [
              [30, 'harpy', 14, 0.35], [36, 'assassin', 9, 0.45], [40, 'slime', 14, 0.35], [46, 'bandit', 25, 0.22], [50, 'golem', 4, 1.6], [52, 'shaman', 5, 1]] },
   { name: 'BOSS：虛空魔王', hint: '魔王會張開虛空護盾吸收傷害，先集中火力打破護盾！', boss: true,
     groups: [[2, 'imp', 10, 0.6], [6, 'boss5', 1, 0], [16, 'shield', 8, 0.8], [26, 'balloon', 4, 1.5], [36, 'golem', 2, 3], [46, 'assassin', 8, 0.6], [56, 'wolf', 12, 0.4]] },
+  // ---------- 第六章：糖晶聖殿 ----------
+  { name: '糖晶聖殿', hint: '新魔法「時光倒流」：城堡找回剛受的傷，敵人也被拉回遠方',
+    groups: [[2, 'ghost', 8, 0.7], [8, 'bandit', 22, 0.28], [14, 'knight', 4, 1.4], [20, 'imp', 12, 0.45], [26, 'balloon', 6, 1],
+             [32, 'ghost', 10, 0.5], [38, 'shield', 10, 0.55], [44, 'golem', 2, 3], [48, 'wolf', 16, 0.3], [52, 'harpy', 12, 0.4]] },
+  { name: '水晶騎士', hint: '水晶騎士血量剩一半時會衝鋒！它的盾擋得住火球，改用閃電',
+    groups: [[2, 'knight', 5, 1.2], [8, 'wolf', 16, 0.3], [14, 'imp', 12, 0.45], [20, 'knight', 6, 1], [26, 'balloon', 6, 1],
+             [32, 'assassin', 10, 0.45], [38, 'golem', 3, 2.2], [44, 'bandit', 26, 0.24], [50, 'harpy', 14, 0.38], [54, 'knight', 4, 1]] },
+  { name: '彗星衝擊', hint: '新魔法「彗星衝擊」：等 1.2 秒就有超大範圍的重擊。吸魔女巫要優先解決！',
+    groups: [[2, 'bandit', 26, 0.25], [8, 'witch', 3, 2], [14, 'golem', 3, 2.2], [20, 'ghost', 12, 0.45], [26, 'shield', 12, 0.5],
+             [32, 'witch', 4, 1.5], [36, 'imp', 14, 0.4], [42, 'balloon', 7, 0.9], [48, 'knight', 6, 0.9], [52, 'wolf', 18, 0.28]] },
+  { name: '吸魔女巫', hint: '女巫的紫光打到城牆會吸走魔力，別讓她們站著施法',
+    groups: [[2, 'witch', 5, 1.2], [8, 'imp', 14, 0.4], [14, 'knight', 6, 0.9], [20, 'ghost', 14, 0.4], [26, 'witch', 5, 1],
+             [30, 'golem', 3, 2], [36, 'bandit', 28, 0.22], [42, 'balloon', 8, 0.8], [48, 'shaman', 5, 1], [52, 'wolf', 18, 0.26]] },
+  { name: '星光砲台', hint: '新魔法「星光砲台」：蓋一座會自動射擊的棒棒糖砲台',
+    groups: [[2, 'wolf', 20, 0.26], [8, 'golem', 3, 2], [14, 'witch', 5, 1], [20, 'shield', 14, 0.45], [26, 'ghost', 14, 0.38],
+             [32, 'knight', 7, 0.8], [38, 'assassin', 12, 0.4], [44, 'balloon', 8, 0.8], [48, 'imp', 16, 0.35], [52, 'golem', 3, 1.8]] },
+  { name: '幽靈迴廊', hint: '糖晶幽靈變透明時打不到，等它現身再出手',
+    groups: [[2, 'ghost', 16, 0.35], [8, 'bandit', 28, 0.22], [14, 'golem', 4, 1.8], [20, 'witch', 6, 0.9], [26, 'harpy', 16, 0.35],
+             [32, 'knight', 8, 0.7], [38, 'balloon', 9, 0.7], [44, 'imp', 16, 0.35], [48, 'ghost', 14, 0.35], [52, 'wolf', 20, 0.24]] },
+  { name: '弱點印記', hint: '新魔法「弱點印記」：先打上印記再放大招，傷害更高！',
+    groups: [[2, 'ram', 4, 1.4], [8, 'knight', 8, 0.7], [14, 'ghost', 16, 0.35], [20, 'golem', 4, 1.6], [26, 'witch', 6, 0.8],
+             [32, 'shield', 14, 0.42], [38, 'imp', 18, 0.32], [44, 'balloon', 9, 0.7], [48, 'bandit', 30, 0.2], [52, 'golem', 4, 1.5]] },
+  { name: '裂晶風暴', hint: '聖殿快撐不住了，把最強的魔法都帶上',
+    groups: [[2, 'wolf', 22, 0.22], [8, 'witch', 6, 0.8], [14, 'golem', 5, 1.5], [20, 'ghost', 18, 0.32], [26, 'knight', 9, 0.65],
+             [32, 'balloon', 10, 0.65], [38, 'assassin', 14, 0.35], [44, 'imp', 18, 0.3], [48, 'ram', 4, 1.2], [52, 'harpy', 18, 0.3]] },
+  { name: '鳳凰衝擊', hint: '新魔法「鳳凰衝擊」：火鳳凰橫掃全場，還會修復城堡。最後決戰就快到了！',
+    groups: [[2, 'knight', 9, 0.6], [8, 'golem', 5, 1.4], [14, 'ghost', 18, 0.3], [20, 'witch', 7, 0.7], [26, 'bandit', 32, 0.18],
+             [32, 'balloon', 10, 0.6], [38, 'shield', 16, 0.38], [44, 'golem', 5, 1.3], [48, 'imp', 20, 0.28], [52, 'wolf', 22, 0.2]] },
+  { name: 'BOSS：暗影波比', hint: '暗影波比受傷後會封印你的魔法！多帶幾種魔法輪流用', boss: true,
+    groups: [[2, 'ghost', 10, 0.6], [6, 'boss6', 1, 0], [16, 'knight', 6, 0.8], [26, 'witch', 4, 1.5], [36, 'golem', 2, 3], [46, 'imp', 10, 0.6], [56, 'balloon', 5, 1]] },
 ];
 
-// 第四、五章各關的敵人血量加成（用整段戰役模擬調出來的數值）
-const LEVEL_HP = { 31: 1.2, 32: 1.4, 33: 1.15, 34: 1.35, 35: 1.4, 37: 1.35, 38: 1.25, 39: 1.35, 42: 0.95, 43: 1.1, 44: 1.2, 46: 1.2, 47: 1.05 };
+// 第四～六章各關的敵人血量加成（用整段戰役模擬調出來的數值）
+const LEVEL_HP = { 31: 1.2, 32: 1.4, 33: 1.15, 34: 1.35, 35: 1.4, 37: 1.35, 38: 1.25, 39: 1.35, 42: 0.95, 43: 1.1, 44: 1.2, 46: 1.2, 47: 1.05,
+  51: 1.15, 52: 1.15, 54: 1.2, 55: 0.9, 56: 0.8, 57: 0.9, 58: 0.9, 59: 0.85 };
 
 const CHAPTERS = [
   { name: '第一章', sub: '草原小鎮', color: '#a6e58a' },
@@ -318,6 +367,7 @@ const CHAPTERS = [
   { name: '第三章', sub: '暗影火山', color: '#d2a8ff' },
   { name: '第四章', sub: '天空浮島', color: '#ffd6a5' },
   { name: '第五章', sub: '星界裂縫', color: '#b8c0ff' },
+  { name: '第六章', sub: '糖晶聖殿', color: '#ffc2e8' },
 ];
 
 const LOSE_TIPS = [
@@ -369,10 +419,22 @@ const STORY = {
     ['owl', '牠被黑魔法控制了咕！只有打得到空中的魔法才傷得了牠！'],
     ['bobby', '火球、閃電、落雷……全部都用上吧！'],
   ] },
-  post20: { title: '墮落的法師', ch: 1, music: 'snow', lines: [
+  dragonOath: { title: '飛龍的誓約', ch: 1, music: 'snow', calm: true, lines: [
+    ['dragon', '吼喔～！'],
+    ['bobby', '咦？是黑翼飛龍！牠怎麼飛回來了？'],
+    ['owl', '牠要報答你打碎黑色印記的恩情咕！牠願意當你的召喚獸！'],
+    ['bobby', '太好了！以後就請你多多幫忙囉！'],
+    ['owl', '「召喚飛龍」已經放進出戰欄位了咕，戰鬥時按下就能叫牠來！'],
+  ] },
+  post20: { title: '飛龍的誓約', ch: 1, music: 'snow', calm: true, lines: [
     ['dragon', '吼……嗚嗚……'],
-    ['owl', '黑色印記碎掉了，飛龍恢復清醒飛走了咕。'],
-    ['bobby', '那個印記……我好像在師父的書上看過。'],
+    ['owl', '黑色印記碎掉了，飛龍恢復清醒了咕！'],
+    ['bobby', '牠沒有飛走……還低下頭來了？'],
+    ['owl', '牠在向你道謝咕！牠願意當你的召喚獸，一起守護糖霜城！'],
+    ['dragon', '吼喔～！'],
+    ['bobby', '太好了！以後就請你多多幫忙囉！'],
+    ['owl', '「召喚飛龍」已經放進出戰欄位了咕，戰鬥時按下就能叫牠來！'],
+    ['bobby', '不過那個印記……我好像在師父的書上看過。'],
     ['owl', '那是墮落大法師「莫恩」的印記咕……他以前也是守護糖霜城的法師。'],
     ['bobby', '什麼！？那他為什麼要攻擊這裡？'],
     ['owl', '傳說他想用星之糖晶的力量，讓自己變成最強的法師……'],
@@ -446,6 +508,29 @@ const STORY = {
     ['owl', '咕咕！今天的糖霜蛋糕要做兩倍大咕！'],
     ['bobby', '嘿嘿……謝謝大家。從今以後，我會一直守護這片星空！'],
   ] },
+  pre51: { title: '第六章　糖晶聖殿', ch: 5, music: 'crystal', calm: true, lines: [
+    ['owl', '波比！蛋糕才吃到一半，城堡地底就傳來好大的聲音咕！'],
+    ['moen', '是星之糖晶。它吸了太多虛空的力量，開始裂開了。'],
+    ['dragon', '吼喔喔！'],
+    ['bobby', '飛龍也感覺到了！聖殿裡有什麼東西跑出來了！'],
+    ['moen', '波比，學會這招「時光倒流」吧。接下來的敵人，會比虛空軍團更難纏。'],
+    ['bobby', '好！大家一起進聖殿，把糖晶修好！'],
+  ] },
+  pre60: { title: '最終決戰　暗影波比', ch: 5, music: 'boss', calm: true, lines: [
+    ['shadow', '……你來了，另一個我。'],
+    ['bobby', '那、那是我！？為什麼會有另一個我！'],
+    ['moen', '糖晶映照出了你心裡的影子，還把它變成了真的。'],
+    ['shadow', '你一直在害怕吧？怕自己不夠強，怕守不住大家。'],
+    ['bobby', '……我是會害怕。可是，我不是一個人在戰鬥！'],
+    ['owl', '小心咕！它受傷之後會封印你的魔法，多帶幾種魔法輪流用！'],
+  ] },
+  post60: { title: '終章　星帽的約定', ch: 5, music: 'title', calm: true, lines: [
+    ['shadow', '原來……害怕的時候，也可以往前走啊……'],
+    ['bobby', '嗯。我們本來就是同一個人，以後一起加油吧。'],
+    ['moen', '影子消失了，星之糖晶也恢復了光芒。裂痕全都不見了。'],
+    ['owl', '咕咕！糖霜城這次真的得救了！蛋糕要做三倍大咕！'],
+    ['bobby', '謝謝大家。不管敵人從哪裡來，我都會戴著這頂星帽，守護糖霜城！'],
+  ] },
 };
 
 // ============================================================
@@ -464,8 +549,10 @@ function applySave(s) {
   save = Object.assign(defSave(), s);
   save.upgrades = Object.assign(defSave().upgrades, s.upgrades || {});
   save.stars = Object.assign({}, s.stars); save.ranks = Object.assign({}, s.ranks); save.seen = Object.assign({}, s.seen);
-  const needFill = !Array.isArray(s.loadout);
-  save.loadout = needFill ? [] : [...s.loadout];
+  // 已刪除的魔法：投入的技能點自動退回，空出來的出戰欄位自動補上
+  for (const k of Object.keys(save.ranks)) if (!SPELL[k]) delete save.ranks[k];
+  const needFill = !Array.isArray(s.loadout) || s.loadout.some(id => !SPELL[id]);
+  save.loadout = Array.isArray(s.loadout) ? [...s.loadout] : [];
   normalizeLoadout(needFill);
   return true;
 }
@@ -529,6 +616,12 @@ function normalizeLoadout(fill) {
   if (!lo.length) lo = ['fire'];
   save.loadout = lo;
 }
+// 把召喚飛龍放進出戰欄：有空格就放，沒空格就換掉最後一格
+function equipDragon() {
+  const lo = save.loadout;
+  if (lo.includes('dragon')) return;
+  if (lo.length < slotsFor(heroLv())) lo.push('dragon'); else lo[lo.length - 1] = 'dragon';
+}
 
 // ============================================================
 //  音效（Web Audio 合成；共用一段雜訊，避免每次重建）
@@ -586,7 +679,6 @@ const SOUNDS = {
   buy:     [80,  () => { tone(784, 0.08, 'square', 0.05); tone(1175, 0.15, 'square', 0.05, 0, 0.08); }],
   missile: [80,  () => [1319, 1568, 1760].forEach((f, i) => tone(f, 0.12, 'triangle', 0.04, 1.2, i * 0.05))],
   poof:    [100, () => { noise(0.25, 0.1, 3000); tone(600, 0.2, 'sine', 0.06, 1.8); }],
-  baa:     [150, () => { tone(520, 0.35, 'sawtooth', 0.04, 0.9); tone(530, 0.35, 'square', 0.02, 0.9); }],
   wind:    [120, () => noise(0.9, 0.12, 900)],
   quake:   [200, () => { noise(1.0, 0.3, 300); tone(55, 0.9, 'sine', 0.2, 0.6); }],
   holy:    [120, () => [880, 1109, 1319].forEach((f, i) => tone(f, 0.6, 'sine', 0.05, 0, i * 0.04))],
@@ -636,6 +728,10 @@ const TRACKS = {
              chords: [[60, 63, 67], [56, 60, 63], [53, 56, 60], [55, 59, 62]], bass: [36, 32, 41, 43],
              mel: [72, 0, 75, 0, 79, 0, 77, 75, 75, 0, 72, 0, 68, 0, 0, 0, 68, 0, 72, 0, 77, 0, 75, 72, 71, 0, 74, 0, 79, 0, 0, 0],
              kick: [0, 4], snare: [6], hat: ALL8 },
+  crystal: { bpm: 104, lead: 'triangle', leadVol: 0.07, len: 1.8, padVol: 0.018, bassType: 'sine', bassVol: 0.08, bassPat: [0, 3, 4, 6],
+             chords: [[65, 69, 72], [62, 65, 69], [58, 62, 65], [60, 64, 67]], bass: [41, 38, 46, 48],
+             mel: [84, 81, 77, 81, 84, 0, 86, 84, 81, 77, 74, 77, 81, 0, 0, 0, 82, 77, 74, 77, 82, 0, 84, 82, 79, 76, 72, 76, 79, 0, 0, 0],
+             kick: [0, 4], hat: [2, 6] },
 };
 const Music = { cur: null, step: 0, next: 0, gain: null };
 function setMusic(name) {
@@ -689,7 +785,7 @@ setInterval(musicTick, 80);
 //  畫面縮放與快取
 // ============================================================
 let scale = 1, K = 1;
-const bgCaches = [null, null, null, null, null];
+const bgCaches = [null, null, null, null, null, null];
 let castleCache = null, vignette = null;
 const glowCache = {};
 function resize() {
@@ -853,21 +949,45 @@ function drawSpellIcon(id, x, y, s = 1) {
         drawStar(sx, sy, r, '#fff07a', OUT, 2);
       }
       break;
-    case 'syrup':
-      ell(0, 12, 20, 8); fillStroke('#ff9fd0', 3);
-      ctx.beginPath(); ctx.moveTo(0, -20); ctx.quadraticCurveTo(10, -6, 8, 2); ctx.arc(0, 2, 8, 0, Math.PI); ctx.quadraticCurveTo(-10, -6, 0, -20); ctx.closePath();
-      fillStroke('#ff7ab8', 3);
-      ell(-3, -2, 2.5, 4); ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fill();
+    case 'dragon':
+      ctx.beginPath(); ctx.moveTo(4, -2); ctx.quadraticCurveTo(14, -24, 24, -22); ctx.quadraticCurveTo(20, -8, 20, 2); ctx.closePath(); fillStroke('#7a5aa8', 2.5);
+      ell(-2, 8, 15, 10); fillStroke('#4a3a6a', 3);
+      ell(-13, -8, 11, 9); fillStroke('#4a3a6a', 3);
+      ctx.beginPath(); ctx.moveTo(-12, -16); ctx.lineTo(-8, -24); ctx.lineTo(-6, -14); ctx.closePath(); fillStroke('#f2e6c8', 2);
+      ctx.fillStyle = '#ffd84d'; circ(-16, -9, 2.8); ctx.fill();
       break;
-    case 'sheep': drawSheepShape(4, 16, 0.62); break;
+    case 'beam':
+      ['#ff6a6a', '#ffd84d', '#7be38a', '#62a8ff', '#c9a0ff'].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(-22, -14 + i * 6, 44, 6); });
+      ctx.lineWidth = 3; ctx.strokeStyle = OUT; ctx.strokeRect(-22, -14, 44, 30);
+      break;
+    case 'siphon':
+      circ(0, 0, 19); fillStroke('#d9f4ff', 3);
+      ctx.strokeStyle = '#3d9fd0'; ctx.lineWidth = 3; ctx.beginPath();
+      for (let k = 0; k < 30; k++) { const an = -k * 0.5, rr = 14 - k * 0.42; ctx.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); }
+      ctx.stroke();
+      break;
+    case 'giant': drawGingerbread(0, 20, 0.34, 0, 1); break;
+    case 'rewind':
+      circ(0, 0, 19); fillStroke('#fff1dc', 3);
+      ctx.strokeStyle = OUT; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -12); ctx.moveTo(0, 0); ctx.lineTo(-8, 4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-23, -14); ctx.lineTo(-14, -18); ctx.lineTo(-18, -8); ctx.closePath(); ctx.fillStyle = '#e8484f'; ctx.fill();
+      break;
+    case 'comet':
+      ctx.strokeStyle = '#8fd8ff'; ctx.lineWidth = 7;
+      ctx.beginPath(); ctx.moveTo(20, -20); ctx.lineTo(0, 0); ctx.stroke();
+      circ(-4, 5, 13); fillStroke('#d9f4ff', 3);
+      drawStar(-4, 5, 6, '#62a8ff', OUT, 0);
+      break;
+    case 'turret': drawTurret(0, 22, 0.62, 1); break;
+    case 'mark':
+      circ(0, 0, 18); fillStroke('#fff', 3);
+      circ(0, 0, 10); ctx.lineWidth = 4; ctx.strokeStyle = '#e8484f'; ctx.stroke();
+      circ(0, 0, 3.5); ctx.fillStyle = '#e8484f'; ctx.fill();
+      break;
+    case 'phoenix': drawPhoenix(5, 2, 0.24, 0); break;
     case 'tornado':
       for (let i = 0; i < 5; i++) { ell(i % 2 ? 2 : -2, -18 + i * 9, 18 - i * 3, 4); fillStroke('#8fe8c8', 2.5); }
-      break;
-    case 'icewall':
-      rrect(-18, -18, 36, 36, 4); fillStroke('#bfeaff', 3);
-      ctx.strokeStyle = '#3d9fd0'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(-18, -4); ctx.lineTo(18, -4); ctx.moveTo(-18, 8); ctx.lineTo(18, 8);
-      ctx.moveTo(-4, -18); ctx.lineTo(-4, -4); ctx.moveTo(6, -4); ctx.lineTo(6, 8); ctx.moveTo(-8, 8); ctx.lineTo(-8, 18); ctx.stroke();
       break;
     case 'holy':
       drawGlow(0, 0, 24, '#fff3a8', 0.9);
@@ -897,20 +1017,53 @@ function drawSpellIcon(id, x, y, s = 1) {
   }
   ctx.restore();
 }
-// 小綿羊（變羊術的圖示與被變身的敵人共用；原點在腳底，面向左）
-function drawSheepShape(x, y, s) {
+// 薑餅巨人（魔法圖示與戰場共用；原點在腳底，面向右）swing：揮拳動畫 0～1
+function drawGingerbread(x, y, s, swing, ratio) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  const B = '#c98a4a', icing = '#fff6e8';
+  ell(-22, -10, 20, 14); fillStroke(B, 4); ell(22, -10, 20, 14); fillStroke(B, 4);
+  ctx.save(); ctx.translate(-34, -74); ctx.rotate(0.5); ell(0, 20, 15, 28); fillStroke(B, 4); ctx.restore();
+  rrect(-38, -94, 76, 84, 28); fillStroke(B, 4);
+  ctx.save(); ctx.translate(30, -76); ctx.rotate(-0.5 - swing * 1.3); ell(0, 24, 16, 30); fillStroke(B, 4);
+  ctx.strokeStyle = icing; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-10, 32); ctx.lineTo(10, 32); ctx.stroke(); ctx.restore();
+  for (const [bx, by] of [[0, -74], [0, -52], [0, -30]]) { circ(bx, by, 6); fillStroke(['#ff8fc8', '#ffd84d', '#7be38a'][(-by / 22 | 0) % 3], 2.5); }
+  circ(0, -124, 36); fillStroke(B, 4);
+  ctx.fillStyle = OUT; circ(-2, -130, 5); ctx.fill(); circ(18, -130, 5); ctx.fill();
+  ctx.strokeStyle = icing; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.arc(8, -118, 13, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-28, -148); ctx.quadraticCurveTo(0, -158, 28, -148); ctx.stroke();
+  // 受傷時的裂痕
+  ctx.strokeStyle = '#6b4020'; ctx.lineWidth = 3;
+  if (ratio < 0.66) { ctx.beginPath(); ctx.moveTo(-24, -86); ctx.lineTo(-14, -66); ctx.lineTo(-24, -46); ctx.stroke(); }
+  if (ratio < 0.33) { ctx.beginPath(); ctx.moveTo(26, -142); ctx.lineTo(12, -122); ctx.lineTo(22, -102); ctx.stroke(); }
+  ctx.restore();
+}
+// 棒棒糖砲台（原點在底座）
+function drawTurret(x, y, s, ratio) {
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round';
-  ctx.fillStyle = OUT;
-  for (const lx of [-12, -4, 6, 14]) ctx.fillRect(lx - 2.5, -14, 5, 14);
-  const puffs = [[-14, -26, 11], [0, -32, 13], [14, -26, 11], [-6, -18, 10], [8, -18, 10]];
-  ctx.strokeStyle = OUT; ctx.lineWidth = 3;
-  for (const [px, py, r] of puffs) { circ(px, py, r); ctx.stroke(); }
-  ctx.fillStyle = '#ffffff';
-  for (const [px, py, r] of puffs) { circ(px, py, r - 1.5); ctx.fill(); }
-  ell(-24, -30, 9, 11); fillStroke('#3a3550', 3);
-  ell(-30, -38, 5, 3); fillStroke('#3a3550', 2);
-  ctx.fillStyle = '#fff'; circ(-26, -32, 2); ctx.fill();
-  ctx.fillStyle = '#ffb6c8'; ell(-26, -24, 3, 2); ctx.fill();
+  rrect(-5, -60, 10, 56, 4); fillStroke('#fff6e8', 3);
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(22, 0); ctx.lineTo(14, -18); ctx.lineTo(-14, -18); ctx.closePath(); fillStroke('#a98bff', 3.5);
+  circ(0, -74, 22); fillStroke('#ff8fc8', 3.5);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.5; ctx.beginPath();
+  for (let k = 0; k < 26; k++) { const an = k * 0.6 + T * 2, rr = k * 0.7; ctx.lineTo(Math.cos(an) * rr, -74 + Math.sin(an) * rr); }
+  ctx.stroke();
+  // 快消失時閃爍
+  if (ratio < 0.2) { drawGlow(0, -74, 34, '#ffffff', 0.5 + Math.sin(T * 16) * 0.3); }
+  ctx.restore();
+}
+// 火鳳凰（面向右）
+function drawPhoenix(x, y, s, t) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round';
+  const f = Math.sin(t * 14) * 18;
+  drawGlow(0, 0, 110, '#ff8a3d', 0.7);
+  ctx.beginPath(); ctx.moveTo(-20, 0); ctx.quadraticCurveTo(-90, -10, -130, -34); ctx.quadraticCurveTo(-100, 4, -128, 34); ctx.quadraticCurveTo(-70, 26, -20, 12); ctx.closePath(); fillStroke('#ffd84d', 4, '#e8582a');
+  ctx.beginPath(); ctx.moveTo(4, -6); ctx.quadraticCurveTo(-26, -60 - f, -70, -74 - f); ctx.quadraticCurveTo(-44, -30, -22, -2); ctx.closePath(); fillStroke('#ff8a3d', 4, '#c8401f');
+  ell(4, 4, 36, 20); fillStroke('#ff7a3d', 4, '#c8401f');
+  ctx.beginPath(); ctx.moveTo(10, 2); ctx.quadraticCurveTo(-16, 60 + f, -58, 70 + f); ctx.quadraticCurveTo(-34, 30, -16, 8); ctx.closePath(); fillStroke('#ffb03d', 4, '#c8401f');
+  circ(42, -12, 18); fillStroke('#ffb03d', 4, '#c8401f');
+  ctx.beginPath(); ctx.moveTo(56, -18); ctx.lineTo(80, -10); ctx.lineTo(56, -4); ctx.closePath(); fillStroke('#ffe36b', 3, '#c8401f');
+  ctx.fillStyle = OUT; circ(48, -16, 3.5); ctx.fill();
+  for (const [ax, ang] of [[30, -1.9], [40, -1.6], [50, -1.3]]) { ctx.beginPath(); ctx.moveTo(ax, -24); ctx.lineTo(ax + Math.cos(ang) * 24, -24 + Math.sin(ang) * 24); ctx.lineWidth = 4; ctx.strokeStyle = '#ffd84d'; ctx.stroke(); }
   ctx.restore();
 }
 function drawFairy(x, y, s, t) {
@@ -957,13 +1110,14 @@ function paintBg(g, ch) {
     { sky: ['#2d1b3d', '#8a3448'], mtn: '#4a2a48', cap: '#ff7a3d', hill1: '#3e2840', hill2: '#4f3048', grass: '#4a3440', path: '#7a5a52', edge: '#5e443e', low: '#3d2a36', stone: '#6a4a44' },
     { sky: ['#8fd0ff', '#ffefd9'], mtn: '#ffffff', cap: '#ffffff', hill1: '#ffffff', hill2: '#f3f7ff', grass: '#fdfdff', path: '#ffe6b0', edge: '#f0cf86', low: '#eef4ff', stone: '#f3d58a' },
     { sky: ['#0b0a24', '#3a1f5c'], mtn: '#1e1840', cap: '#7af0ff', hill1: '#241c48', hill2: '#2e2456', grass: '#2a2140', path: '#4a3d6b', edge: '#362c58', low: '#221a3a', stone: '#5a4d80' },
+    { sky: ['#5a2a7a', '#ffb8d8'], mtn: '#c58ad0', cap: '#ffffff', hill1: '#e8b0dc', hill2: '#d89ad0', grass: '#f6cfe6', path: '#fff0f6', edge: '#e8b8d4', low: '#e2a8d0', stone: '#d890c0' },
   ][ch];
   const sky = g.createLinearGradient(0, 0, 0, GROUND);
   sky.addColorStop(0, P.sky[0]); sky.addColorStop(1, P.sky[1]);
   g.fillStyle = sky; g.fillRect(0, 0, W, H);
   // 太陽／月亮
   const sun = g.createRadialGradient(1110, 110, 10, 1110, 110, 120);
-  const sc = ch === 2 ? '255,120,90' : ch === 4 ? '170,120,255' : '255,244,170';
+  const sc = ch === 2 ? '255,120,90' : ch === 4 ? '170,120,255' : ch === 5 ? '255,220,170' : '255,244,170';
   sun.addColorStop(0, `rgba(${sc},1)`); sun.addColorStop(0.35, `rgba(${sc},.7)`); sun.addColorStop(1, `rgba(${sc},0)`);
   g.fillStyle = sun; g.fillRect(980, 0, 260, 240);
   if (ch === 3) {
@@ -990,6 +1144,23 @@ function paintBg(g, ch) {
       g.fillStyle = '#3a2f6a'; g.beginPath(); g.moveTo(x - w, 560); g.lineTo(x, 560 - hgt); g.lineTo(x + w, 560); g.closePath(); g.fill();
       g.fillStyle = 'rgba(122,240,255,.5)'; g.beginPath(); g.moveTo(x, 560 - hgt); g.lineTo(x + w * 0.4, 560 - hgt * 0.4); g.lineTo(x, 560 - hgt * 0.3); g.closePath(); g.fill();
     }
+  } else if (ch === 5) {
+    // 糖晶尖塔與聖殿
+    for (const [x, hgt, w] of [[340, 190, 40], [470, 270, 54], [610, 150, 32], [1020, 170, 36], [1160, 280, 56], [1262, 180, 38]]) {
+      g.fillStyle = '#d68fd8'; g.beginPath(); g.moveTo(x - w, 560); g.lineTo(x, 560 - hgt); g.lineTo(x + w, 560); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,240,250,.65)'; g.beginPath(); g.moveTo(x, 560 - hgt); g.lineTo(x + w * 0.5, 560 - hgt * 0.4); g.lineTo(x, 560 - hgt * 0.25); g.closePath(); g.fill();
+    }
+    // 聖殿
+    g.fillStyle = '#fbe6f4'; g.fillRect(690, 400, 240, 170);
+    g.fillStyle = '#efc4e4'; g.fillRect(670, 556, 280, 16); g.fillRect(684, 386, 252, 16);
+    g.fillStyle = '#f4d3ea'; for (let i = 0; i < 5; i++) g.fillRect(704 + i * 46, 402, 20, 154);
+    g.fillStyle = '#c58ad0'; g.beginPath(); g.moveTo(674, 386); g.lineTo(810, 310); g.lineTo(946, 386); g.closePath(); g.fill();
+    // 頂端的星之糖晶
+    const glowC = g.createRadialGradient(810, 262, 4, 810, 262, 90);
+    glowC.addColorStop(0, 'rgba(255,255,255,.9)'); glowC.addColorStop(1, 'rgba(255,190,235,0)');
+    g.fillStyle = glowC; g.fillRect(720, 172, 180, 180);
+    g.fillStyle = '#ff9fd8'; g.beginPath(); g.moveTo(810, 222); g.lineTo(834, 262); g.lineTo(810, 312); g.lineTo(786, 262); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.moveTo(810, 222); g.lineTo(820, 262); g.lineTo(810, 300); g.closePath(); g.fill();
   } else {
   // 遠山
   const peaks = [[330, 360], [440, 450], [560, 330], [700, 470], [820, 380], [960, 480], [1080, 350], [1280, 470]];
@@ -1027,7 +1198,7 @@ function paintBg(g, ch) {
     } else if (ch === 3) {
       g.fillStyle = '#ffffff'; ell(x, y, 18, 9, g); g.fill(); ell(x + 10, y - 6, 12, 8, g); g.fill();
     } else {
-      g.fillStyle = '#7af0ff'; g.beginPath(); g.moveTo(x, y - 22); g.lineTo(x + 7, y + 6); g.lineTo(x - 7, y + 6); g.closePath(); g.fill();
+      g.fillStyle = ch === 5 ? '#ff9fd8' : '#7af0ff'; g.beginPath(); g.moveTo(x, y - 22); g.lineTo(x + 7, y + 6); g.lineTo(x - 7, y + 6); g.closePath(); g.fill();
     }
   });
   // 地面
@@ -1054,7 +1225,7 @@ function paintBg(g, ch) {
       if (i % 2 === 0) { g.fillStyle = ch === 1 ? '#dfe9f5' : '#ffffff'; ell(x, y, 16, 6, g); g.fill(); }
       if (ch === 3 && i % 5 === 0) { g.fillStyle = '#ffd84d'; circ(x + 12, y - 4, 3, g); g.fill(); }
     } else if (i % 4 === 0) {
-      g.fillStyle = ch === 2 ? '#2d1e2a' : '#3a2f6a'; ell(x, y, 10, 6, g); g.fill();
+      g.fillStyle = ch === 2 ? '#2d1e2a' : ch === 5 ? '#ffe0f2' : '#3a2f6a'; ell(x, y, 10, 6, g); g.fill();
     }
   }
 }
@@ -1065,7 +1236,7 @@ function drawBg(ch = 0) {
 const clouds = [{ x: 200, y: 90, s: 1.1, v: 8 }, { x: 620, y: 60, s: 0.8, v: 12 }, { x: 980, y: 150, s: 1.3, v: 6 }, { x: 1250, y: 80, s: 0.9, v: 10 }];
 function drawClouds(ch = 0) {
   if (ch === 4) return;
-  ctx.fillStyle = ch === 2 ? 'rgba(90,60,90,.75)' : 'rgba(255,255,255,.92)';
+  ctx.fillStyle = ch === 2 ? 'rgba(90,60,90,.75)' : ch === 5 ? 'rgba(255,225,245,.7)' : 'rgba(255,255,255,.92)';
   for (const c of clouds) {
     const x = ((c.x + T * c.v) % (W + 300)) - 150;
     ctx.save(); ctx.translate(x, c.y); ctx.scale(c.s, c.s);
@@ -1088,6 +1259,16 @@ function drawAmbient(ch) {
     for (let i = 0; i < 26; i++) {
       const a = 0.4 + 0.6 * Math.abs(Math.sin(T * (1 + i % 4) + i));
       ctx.globalAlpha = a; drawStar((i * 173) % W, (i * 97) % 540, 3 + i % 3, i % 3 ? '#ffffff' : '#7af0ff', OUT, 0);
+    }
+    ctx.globalAlpha = 1;
+  } else if (ch === 5) {
+    // 飄升的糖晶碎片
+    for (let i = 0; i < 26; i++) {
+      const y = H - ((i * 67 + T * 26 * (1 + i % 3)) % H), x = (i * 149 + Math.sin(T * 1.2 + i) * 16) % W;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(T + i); ctx.globalAlpha = 0.75;
+      ctx.fillStyle = i % 2 ? '#ffd0ec' : '#ffffff';
+      ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(4, 0); ctx.lineTo(0, 6); ctx.lineTo(-4, 0); ctx.closePath(); ctx.fill();
+      ctx.restore();
     }
     ctx.globalAlpha = 1;
   } else if (ch === 1) {
@@ -1181,30 +1362,32 @@ const STAFF_CAST = 0.95;
 function staffTip() {
   return { x: WIZ.x + 16 + Math.sin(STAFF_CAST) * 72, y: WIZ.y - 34 - Math.cos(STAFF_CAST) * 72 };
 }
-function drawWizard(x, y, s, t, cast, glowColor) {
+const WIZ_PAL = { boot: '#6b4a3a', robe: '#4f7cf0', trim: '#ffd84d', hair: '#8a5a3c', skin: '#ffe3c8', eye: OUT, blush: 'rgba(255,120,150,.55)', hat: '#7a4fe0', brim: '#6a3fd0', staff: '#fdf6ff', orb: '#ff8fc8' };
+const SHADOW_PAL = { boot: '#1a1228', robe: '#2b1f48', trim: '#8a5ae0', hair: '#14102a', skin: '#4a3a6a', eye: '#ff4a6a', blush: 'rgba(160,60,200,.5)', hat: '#1e1438', brim: '#14102a', staff: '#3a2a5a', orb: '#8a3cff' };
+function drawWizard(x, y, s, t, cast, glowColor, pal = WIZ_PAL) {
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
   const br = Math.sin(t * 3) * 1.5;
-  ell(-10, -3, 9, 5); fillStroke('#6b4a3a');
-  ell(10, -3, 9, 5); fillStroke('#6b4a3a');
+  ell(-10, -3, 9, 5); fillStroke(pal.boot);
+  ell(10, -3, 9, 5); fillStroke(pal.boot);
   ctx.beginPath(); ctx.moveTo(-25, -4);
   ctx.quadraticCurveTo(-22, -32, -13, -46 + br); ctx.lineTo(13, -46 + br);
   ctx.quadraticCurveTo(22, -32, 25, -4); ctx.quadraticCurveTo(0, 4, -25, -4); ctx.closePath();
-  fillStroke('#4f7cf0');
-  ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 3;
+  fillStroke(pal.robe);
+  ctx.strokeStyle = pal.trim; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(-22, -9); ctx.quadraticCurveTo(0, -2, 22, -9); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0, -44 + br); ctx.lineTo(0, -8); ctx.stroke();
-  drawStar(0, -30 + br * 0.5, 5.5, '#ffd84d', OUT, 2);
+  drawStar(0, -30 + br * 0.5, 5.5, pal.trim, OUT, 2);
   const hy = -76 + br;
-  ell(-24, hy + 6, 9, 13); fillStroke('#8a5a3c');
-  ell(24, hy + 6, 9, 13); fillStroke('#8a5a3c');
-  circ(0, hy, 30); fillStroke('#ffe3c8');
-  ctx.fillStyle = '#8a5a3c';
+  ell(-24, hy + 6, 9, 13); fillStroke(pal.hair);
+  ell(24, hy + 6, 9, 13); fillStroke(pal.hair);
+  circ(0, hy, 30); fillStroke(pal.skin);
+  ctx.fillStyle = pal.hair;
   ctx.beginPath(); ctx.moveTo(-28, hy - 8); ctx.quadraticCurveTo(-16, hy - 2, -8, hy - 14);
   ctx.quadraticCurveTo(0, hy - 4, 10, hy - 14); ctx.quadraticCurveTo(20, hy - 3, 28, hy - 8);
   ctx.lineTo(28, hy - 24); ctx.lineTo(-28, hy - 24); ctx.closePath(); ctx.fill();
   const blink = (t % 4) > 3.86;
-  ctx.fillStyle = OUT; ctx.strokeStyle = OUT;
+  ctx.fillStyle = pal.eye; ctx.strokeStyle = pal.eye;
   if (blink) {
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(-13, hy + 3); ctx.lineTo(-3, hy + 3); ctx.moveTo(7, hy + 3); ctx.lineTo(17, hy + 3); ctx.stroke();
@@ -1212,29 +1395,29 @@ function drawWizard(x, y, s, t, cast, glowColor) {
     ell(-8, hy + 2, 4.8, 6.8); ctx.fill(); ell(12, hy + 2, 4.8, 6.8); ctx.fill();
     ctx.fillStyle = '#fff'; circ(-6.5, hy - 1, 2); ctx.fill(); circ(13.5, hy - 1, 2); ctx.fill();
   }
-  ctx.fillStyle = 'rgba(255,120,150,.55)'; ell(-18, hy + 13, 6, 3.5); ctx.fill(); ell(22, hy + 13, 6, 3.5); ctx.fill();
+  ctx.fillStyle = pal.blush; ell(-18, hy + 13, 6, 3.5); ctx.fill(); ell(22, hy + 13, 6, 3.5); ctx.fill();
   ctx.beginPath(); ctx.arc(3, hy + 12, 5, 0.15 * Math.PI, 0.85 * Math.PI); ctx.lineWidth = 3; ctx.strokeStyle = OUT; ctx.stroke();
   const hb = hy - 20, sw = Math.sin(t * 2) * 3;
   ctx.beginPath(); ctx.moveTo(-26, hb); ctx.quadraticCurveTo(-12, hb - 50, 26 + sw, hb - 74);
   ctx.quadraticCurveTo(12, hb - 40, 26, hb); ctx.closePath();
-  fillStroke('#7a4fe0');
+  fillStroke(pal.hat);
   ctx.beginPath(); ctx.moveTo(-25, hb - 3); ctx.lineTo(25, hb - 3); ctx.lineTo(22, hb - 14); ctx.lineTo(-21, hb - 14); ctx.closePath();
-  fillStroke('#ffd84d', 3);
-  ell(0, hb, 42, 9); fillStroke('#6a3fd0');
+  fillStroke(pal.trim, 3);
+  ell(0, hb, 42, 9); fillStroke(pal.brim);
   drawStar(-1, hb - 30, 4, '#ffe98a', OUT, 0); drawStar(11, hb - 47, 3, '#ffe98a', OUT, 0);
   drawStar(26 + sw, hb - 74, 9, glowColor || '#ffd84d', OUT, 3);
   const a = cast > 0 ? STAFF_CAST : 0.25 + Math.sin(t * 2) * 0.04;
   ctx.save(); ctx.translate(16, -34 + br); ctx.rotate(a);
-  rrect(-3.5, -72, 7, 82, 3.5); fillStroke('#fdf6ff', 3);
-  ctx.strokeStyle = '#ff8fc8'; ctx.lineWidth = 3;
+  rrect(-3.5, -72, 7, 82, 3.5); fillStroke(pal.staff, 3);
+  ctx.strokeStyle = pal.orb; ctx.lineWidth = 3;
   for (let k = -64; k < 8; k += 14) { ctx.beginPath(); ctx.moveTo(-3, k + 6); ctx.lineTo(3, k); ctx.stroke(); }
   if (glowColor) drawGlow(0, -72, cast > 0 ? 42 : 28, glowColor, 0.6);
-  circ(0, -72, 13); fillStroke('#ff8fc8', 3);
+  circ(0, -72, 13); fillStroke(pal.orb, 3);
   ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath();
   for (let k = 0; k < 26; k++) { const an = k * 0.55, rr = k * 0.42; ctx.lineTo(Math.cos(an) * rr, -72 + Math.sin(an) * rr); }
   ctx.stroke();
   ctx.restore();
-  circ(16, -34 + br, 7); fillStroke('#ffe3c8', 3);
+  circ(16, -34 + br, 7); fillStroke(pal.skin, 3);
   ctx.restore();
 }
 function drawOwl(x, y, t, shoot, s = 1) {
@@ -1473,8 +1656,10 @@ function drawDragon(e) {
   ctx.beginPath(); ctx.moveTo(-40, -102); ctx.lineTo(-30, -126); ctx.lineTo(-26, -100); ctx.closePath(); fillStroke('#f2e6c8', 3);
   ctx.beginPath(); ctx.moveTo(-24, -98); ctx.lineTo(-8, -118); ctx.lineTo(-12, -94); ctx.closePath(); fillStroke('#f2e6c8', 3);
   circ(-50, -86, 8); fillStroke('#fff', 3);
-  ctx.fillStyle = '#e8484f'; circ(-53, -86, 4); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(-62, -96); ctx.lineTo(-40, -94); ctx.lineWidth = 4; ctx.strokeStyle = OUT; ctx.stroke();
+  ctx.fillStyle = e.calm ? '#c98a00' : '#e8484f'; circ(-53, -86, 4); ctx.fill();
+  // 救回後：眼神變溫和，脖子戴著金星；還被控制時是兇狠的眉毛
+  if (e.calm) drawStar(-22, -62, 10, '#ffd84d', OUT, 2.5);
+  else { ctx.beginPath(); ctx.moveTo(-62, -96); ctx.lineTo(-40, -94); ctx.lineWidth = 4; ctx.strokeStyle = OUT; ctx.stroke(); }
   ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-78, -62); ctx.lineTo(-74, -54); ctx.lineTo(-70, -62); ctx.moveTo(-66, -61); ctx.lineTo(-62, -53); ctx.lineTo(-58, -61); ctx.fill();
   if (e.swing > 0) drawGlow(-90, -66, 36, '#ff7a3d', e.swing / 0.4);
   ctx.beginPath(); ctx.moveTo(0, -70); ctx.quadraticCurveTo(-20, -160 + f * 30, 50, -170 + f * 34); ctx.quadraticCurveTo(40, -130, 60, -110); ctx.quadraticCurveTo(30, -110, 20, -70); ctx.closePath();
@@ -1638,11 +1823,62 @@ function drawNox(e) {
   ctx.restore();
 }
 
+// ---------- 第六章 ----------
+function drawGhost(e) {
+  const w = Math.sin(e.age * 5) * 3;
+  ctx.save(); ctx.globalAlpha = e.phased ? 0.28 : 0.92;
+  drawGlow(0, -34, 44, '#ffc2e8', 0.5);
+  ctx.beginPath(); ctx.moveTo(-22, -34); ctx.arc(0, -36, 22, Math.PI, 0);
+  ctx.lineTo(22, -8 + w); ctx.lineTo(13, -16 - w); ctx.lineTo(5, -4 + w); ctx.lineTo(-4, -16 - w); ctx.lineTo(-13, -4 + w); ctx.lineTo(-22, -14 - w); ctx.closePath();
+  fillStroke('#ffd9f0', 3.5, '#b05aa8');
+  ctx.fillStyle = OUT; ell(-11, -40, 3.5, 5); ctx.fill(); ell(2, -40, 3.5, 5); ctx.fill();
+  ctx.beginPath(); ctx.arc(-5, -28, 4, 0, Math.PI); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0, -66); ctx.lineTo(5, -56); ctx.lineTo(0, -50); ctx.lineTo(-5, -56); ctx.closePath(); fillStroke('#ff9fd8', 2, '#b05aa8');
+  ctx.restore();
+}
+function drawKnight(e) {
+  const sw = swingOf(e);
+  if (e.dash) drawGlow(0, -50, 62, '#ff6a8a', 0.55);
+  ctx.save(); ctx.translate(18, -48); ctx.rotate(-0.6 + sw * 1.3);
+  rrect(-3, -40, 6, 44, 2); fillStroke('#e8f6ff', 3); rrect(-9, 0, 18, 5, 2); fillStroke('#a98bff', 2.5);
+  ctx.restore();
+  rrect(-22, -62, 44, 50, 14); fillStroke('#bfe8ff', 4);
+  ctx.strokeStyle = '#6ab8e8'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(-12, -60); ctx.lineTo(0, -38); ctx.lineTo(12, -60); ctx.stroke();
+  circ(0, -78, 20); fillStroke('#d9f4ff', 4);
+  rrect(-18, -82, 26, 9, 4); ctx.fillStyle = OUT; ctx.fill();
+  ctx.fillStyle = e.dash ? '#ff4a6a' : '#7af0ff'; circ(-11, -78, 2.5); ctx.fill(); circ(0, -78, 2.5); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0, -112); ctx.lineTo(7, -96); ctx.lineTo(-7, -96); ctx.closePath(); fillStroke('#ff9fd8', 2.5);
+  // 水晶盾
+  ctx.beginPath(); ctx.moveTo(-30, -68); ctx.lineTo(-14, -56); ctx.lineTo(-14, -30); ctx.lineTo(-30, -14); ctx.lineTo(-44, -30); ctx.lineTo(-44, -56); ctx.closePath();
+  fillStroke('#9fdcff', 4);
+  ctx.beginPath(); ctx.moveTo(-30, -60); ctx.lineTo(-22, -42); ctx.lineTo(-30, -24); ctx.lineWidth = 2.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+}
+function drawWitch(e) {
+  const sw = swingOf(e);
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.quadraticCurveTo(-20, -40, -11, -56); ctx.lineTo(11, -56); ctx.quadraticCurveTo(20, -40, 22, 0); ctx.closePath();
+  fillStroke('#5a3a8a', 4);
+  head(0, -68, 16, '#e8d8f8');
+  ctx.fillStyle = OUT; circ(-7, -69, 2.5); ctx.fill(); circ(3, -69, 2.5); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-28, -80); ctx.lineTo(24, -80); ctx.lineTo(4, -118); ctx.lineTo(-14, -90); ctx.closePath(); fillStroke('#3a2460', 3.5);
+  ctx.save(); ctx.translate(-22, -46); ctx.rotate(-0.15 - sw * 0.6);
+  rrect(-2.5, -36, 5, 72, 2); fillStroke('#7a5030', 2.5);
+  drawGlow(0, -44, 26, '#7be38a', 0.8);
+  circ(0, -44, 9); fillStroke('#7be38a', 3);
+  ctx.restore();
+}
+function drawShadowBobby(e) {
+  drawGlow(0, -100, 150, '#7a3cff', 0.42 + Math.sin(e.age * 2) * 0.1);
+  ctx.save(); ctx.scale(-1.15, 1.15);
+  drawWizard(0, 0, 1, e.age, e.swing > 0 ? 1 : 0, '#b05aff', SHADOW_PAL);
+  ctx.restore();
+}
+
 const DRAWERS = { bandit: drawBandit, archer: drawArcher, shield: drawShieldman, bomber: drawBomber, wolf: drawWolf, bat: drawBat,
   shaman: drawShaman, ram: drawRam, slime: e => drawSlime(e), slimelet: e => drawSlime(e, 0.6), assassin: drawAssassin, harpy: drawHarpy,
-  balloon: drawBalloon, imp: drawImp, golem: drawGolem,
-  boss1: drawBoss1, boss2: drawDragon, boss3: drawDarkMage, boss4: drawAirship, boss5: drawNox };
-const HAS_FEET = { bandit: 1, archer: 1, shield: 1, bomber: 1, assassin: 1 };
+  balloon: drawBalloon, imp: drawImp, golem: drawGolem, ghost: drawGhost, knight: drawKnight, witch: drawWitch,
+  boss1: drawBoss1, boss2: drawDragon, boss3: drawDarkMage, boss4: drawAirship, boss5: drawNox, boss6: drawShadowBobby };
+const HAS_FEET = { bandit: 1, archer: 1, shield: 1, bomber: 1, assassin: 1, knight: 1 };
 
 function drawEnemy(e) {
   const d = ENEMY[e.type];
@@ -1656,12 +1892,12 @@ function drawEnemy(e) {
   if (e.stealth) ctx.globalAlpha = 0.22 + Math.sin(e.age * 6) * 0.08;
   if (e.flash > 0) ctx.scale(1.08, 0.94);
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  if (e.sheep > 0) drawSheepShape(0, 0, 1);
-  else {
-    if (HAS_FEET[e.type]) feet(moving ? Math.sin(e.walk * 0.12) : 0);
-    DRAWERS[e.type](e);
+  if (HAS_FEET[e.type]) feet(moving ? Math.sin(e.walk * 0.12) : 0);
+  DRAWERS[e.type](e);
+  if (e.mark > 0) {
+    ctx.lineWidth = 4; ctx.strokeStyle = '#ff4a5a';
+    circ(0, -d.h * 0.5, 15); ctx.stroke(); circ(0, -d.h * 0.5, 4); ctx.fillStyle = '#ff4a5a'; ctx.fill();
   }
-  if (e.syrup > 0 && !d.air) { ctx.globalAlpha = 0.6; ctx.fillStyle = '#ff9fd0'; ell(0, -2, d.r + 8, 7); ctx.fill(); ctx.globalAlpha = 1; }
   const oy = -d.h / 2, orx = e.type === 'ram' ? 70 : d.boss ? d.r * 1.6 : d.r + 6, ory = d.h / 2 + 4, ox = e.type === 'ram' ? -16 : 0;
   if (e.flash > 0) { ctx.globalAlpha = 0.45; ctx.fillStyle = '#fff'; ell(ox, oy, orx, ory); ctx.fill(); }
   if (e.frz > 0) { ctx.globalAlpha = 0.5; ctx.fillStyle = '#bff0ff'; ell(ox, oy, orx, ory); ctx.fill(); ctx.globalAlpha = 1; ctx.lineWidth = 3; ctx.strokeStyle = '#62cfff'; ctx.stroke(); }
@@ -1700,6 +1936,8 @@ function showToast(s) { toast = { s, t: 2 }; }
 function goState(s) { state = s; transT = 0.35; P.down = false; }
 
 function enterLevel(n) {
+  // 舊存檔已打過第 20 關：補播飛龍成為夥伴的劇情
+  if (save.cleared >= 20 && !save.seen.dragonOath) { equipDragon(); playStory('dragonOath', () => enterLevel(n)); return; }
   const id = 'pre' + n;
   if (STORY[id] && !save.seen[id]) playStory(id, () => startLevel(n));
   else startLevel(n);
@@ -1743,6 +1981,7 @@ function startLevel(n) {
     owlLv: u.owl, owlT: 1, owlAnim: 0, thorns: BAL.thornsDmg * u.thorns,
     timeStop: 0, blizzard: 0, blizDps: 0, blizTick: 0, starfall: null,
     missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [],
+    ally: null, comets: [], turrets: [], phoenix: null, hist: [], histT: 0,
     castAnim: 0, shake: 0, castleFlash: 0, noMpT: 0, reflectT: 0,
     gold: 0, kills: 0, over: null, overT: 0, paused: false, hintT: 7, nextId: 1,
     introT: 2.4, goldBump: 0, mpFlash: 0, castColor: '#ffd84d', postStory: null,
@@ -1757,7 +1996,7 @@ function spawn(type, fromQueue, x) {
   const d = ENEMY[type];
   const hp = Math.round(d.boss ? d.hp : d.hp * G.hpMul);
   let y;
-  if (d.boss === 2) y = 250; else if (d.boss === 3) y = 330; else if (d.boss === 4) y = 240; else if (d.boss === 5) y = 320;
+  if (d.boss === 2) y = 250; else if (d.boss === 3) y = 330; else if (d.boss === 4) y = 240; else if (d.boss === 5) y = 320; else if (d.boss === 6) y = 350;
   else if (d.air) y = d.fly[0] + Math.random() * (d.fly[1] - d.fly[0]);
   else y = GROUND - 8 + Math.random() * 28;
   const e = {
@@ -1766,7 +2005,8 @@ function spawn(type, fromQueue, x) {
     slow: 0, stun: 0, frz: 0, flash: 0, swing: 0, kb: 0, dead: false, stealth: !!d.stealth, dash: false,
     stopX: d.range ? WALL_X + d.range + (d.boss ? 0 : Math.random() * 140) : WALL_X + (d.reach || d.r) + Math.random() * 16,
     phase: 1, sumT: 9, mirT: 7, mirror: 0, pt: 0, patrol: false, blockT: 0,
-    sheep: 0, syrup: 0, blinkT: 1.5 + Math.random() * 1.5, vshield: 0, vsT: 8, tpT: 6,
+    blinkT: 1.5 + Math.random() * 1.5, vshield: 0, vsT: 8, tpT: 6, sealT: 5,
+    mark: 0, markAmp: 1, phased: false, phaseT: 2.5 + Math.random() * 1.5,
   };
   if (d.boss) { e.x = W + 120; G.boss = e; G.bossIntro = 2.5; G.shake = 12; SFX.roar(); }
   G.enemies.push(e);
@@ -1805,12 +2045,20 @@ function applyStun(e, t) {
 }
 
 const DMG_COLOR = { fire: '#ffb03d', ice: '#a8ecff', bolt: '#fff36b', meteor: '#ff9a3d', owl: '#f2dcc0', star: '#ffe46b', bomb: '#ff8a5a', thorns: '#c4cbe0',
-  missile: '#fff07a', tornado: '#8fe8c8', quake: '#e8b878', fairy: '#9ff0c8' };
+  missile: '#fff07a', tornado: '#8fe8c8', quake: '#e8b878', fairy: '#9ff0c8',
+  dragon: '#ff8a5a', siphon: '#7ad7ff', giant: '#d9a066', comet: '#8fd8ff', turret: '#ff8fc8', phoenix: '#ffb03d' };
 // 持續傷害：不跳數字、不擊退
-const DOT = { flame: 1, blizzard: 1, syrup: 1, gravity: 1, holy: 1 };
+const DOT = { flame: 1, blizzard: 1, gravity: 1, holy: 1, beam: 1 };
 function damage(e, amt, kind) {
   if (e.dead) return;
   const d = ENEMY[e.type];
+  // 幽靈變透明時打不到（星辰隕落、彗星例外）
+  if (e.phased && kind !== 'star' && kind !== 'comet') {
+    if (e.blockT <= 0 && !DOT[kind]) { e.blockT = 0.5; addText('穿過了！', e.x, e.y - d.h - 20, '#ffd9f0', 20); }
+    return;
+  }
+  // 飛龍是自己人：大法師張開反射結界時，牠的火球只會被擋下，不會反彈到城牆
+  if (d.boss === 3 && e.mirror > 0 && kind === 'dragon') return;
   if (d.boss === 3 && e.mirror > 0 && kind !== 'star') {
     if (G.reflectT <= 0) { G.reflectT = 0.25; addText('反射！', e.x, e.y - 170, '#e0d0ff', 26); hitCastle(4); }
     return;
@@ -1835,7 +2083,7 @@ function damage(e, amt, kind) {
   }
   if (e.stealth) amt *= 0.25;
   if (d.heavy && kind === 'flame') amt *= 2;
-  if (e.sheep > 0) amt *= 1.3;
+  if (e.mark > 0) amt *= e.markAmp;
   e.hp -= amt; e.flash = 0.1;
   if (!d.boss && !d.heavy && !DOT[kind]) e.kb = Math.min(12, e.kb + 5);
   if (!DOT[kind]) addText(Math.max(1, Math.round(amt)), e.x + (Math.random() - 0.5) * 20, e.y - d.h, DMG_COLOR[kind] || '#fff', d.boss ? 30 : 24);
@@ -1894,13 +2142,9 @@ function useSpell(id, x, y, silent, free) {
   if (G.mp < cost) { if (!silent) { msg('魔力不足！'); G.mpFlash = 0.5; SFX.fizzle(); } return false; }
   if (y != null) y = Math.min(y, GROUND + 30);
   let target = null;
-  if (id === 'bolt' || id === 'thunder') {
+  if (id === 'bolt' || id === 'thunder' || id === 'mark') {
     target = nearestEnemy(x, y, 170);
     if (!target) { if (!silent) msg('沒有目標'); return false; }
-  }
-  if (id === 'sheep') {
-    target = nearestEnemy(x, y, 170, e => !ENEMY[e.type].boss && e.sheep <= 0);
-    if (!target) { if (!silent) msg(nearestEnemy(x, y, 170) ? '對 BOSS 無效' : '沒有目標'); return false; }
   }
   const r = rankOf(id), mul = G.power * (1 + BAL.rankBonus * (r - 1)), dmg = sp.dmg * mul;
   G.mp -= cost; if (!free) G.cds[id] = sp.cd; G.castAnim = 0.28; G.castColor = sp.color;
@@ -1983,26 +2227,82 @@ function useSpell(id, x, y, silent, free) {
       }
       SFX.missile(); break;
     }
-    case 'syrup': {
-      const t = 6 + 0.5 * (r - 1);
-      G.zones.push({ kind: 'syrup', x: Math.min(gx, W - 90), t, max: t, dps: dmg, tick: 0 });
-      SFX.poof(); break;
+    case 'dragon': {
+      G.ally = { t: 10 + (r - 1), x: -140, y: 240, atk: 0.9, dmg, age: 0, swing: 0, calm: true };
+      addText('黑翼飛龍，參上！', 520, 170, '#ffe46b', 32);
+      G.shake = Math.max(G.shake, 8);
+      SFX.roar(); break;
     }
-    case 'sheep':
-      target.sheep = 5 + (r - 1); target.stun = 0; target.frz = 0;
-      burst(target.x, cy(target), 16, ['#ffffff', '#ffd6e8'], 220, 0, 7, 0.5);
-      addText('咩～', target.x, target.y - 70, '#ffffff', 26);
-      SFX.baa(); break;
+    case 'beam':
+      // 點地面就貼著地面掃，點天空就掃那個高度
+      G.zones.push({ kind: 'beam', y: y > 500 ? 560 : Math.max(240, y), t: 1, max: 1, dps: dmg, tick: 0, half: 46 + 4 * (r - 1) });
+      G.shake = Math.max(G.shake, 4);
+      SFX.holy(); break;
+    case 'siphon': {
+      const R = 130;
+      let n = 0;
+      for (const e of G.enemies) {
+        if (e.dead || Math.hypot(e.x - x, cy(e) - y) > R + ENEMY[e.type].r) continue;
+        damage(e, dmg, 'siphon'); n++;
+      }
+      const gain = Math.min(40 + 5 * (r - 1), n * 5);
+      if (gain > 0) { G.mp = Math.min(G.mpMax, G.mp + gain); addText('+' + gain + ' 魔力', WIZ.x + 70, WIZ.y - 190, '#7ad7ff', 28); }
+      G.fx.push({ type: 'ring', x, y, r: R, life: 0.4, max: 0.4, color: '#7ad7ff' });
+      for (let i = 0; i < 14; i++) G.fx.push({ type: 'p', x: x + (Math.random() - 0.5) * 120, y: y + (Math.random() - 0.5) * 80, vx: (WIZ.x - x) * 1.5, vy: (WIZ.y - 120 - y) * 1.5, g: 0, size: 6, color: i % 2 ? '#7ad7ff' : '#ffffff', life: 0.6, max: 0.6 });
+      SFX.surge(); break;
+    }
+    case 'giant': {
+      const hp = Math.round(G.castleMax * 0.5 * (1 + 0.2 * (r - 1)));
+      G.wall = { x: Math.min(Math.max(x, WALL_X + 140), W - 120), hp, max: hp, t: 12, dmg, atk: 0.5, swing: 0 };
+      burst(G.wall.x, 590, 16, ['#c98a4a', '#fff6e8', '#ff8fc8'], 240, 400, 7, 0.6);
+      SFX.blast(); break;
+    }
+    case 'rewind': {
+      const best = Math.max(G.castleHp, ...G.hist);
+      const heal = Math.min(best - G.castleHp, G.castleMax * (0.25 + 0.05 * (r - 1)));
+      if (heal >= 1) { G.castleHp += heal; addText('+' + Math.round(heal), 140, 420, '#ffd6a5', 32); }
+      for (const e of G.enemies) {
+        const d = ENEMY[e.type];
+        if (e.dead || d.boss) continue;
+        e.x = Math.min(W - 10, e.x + (d.heavy ? 100 : 260));
+        burst(e.x, cy(e), 3, ['#ffd6a5', '#ffffff'], 100, 0, 4, 0.4);
+      }
+      G.shots = [];
+      G.fx.push({ type: 'ring', x: 640, y: 360, r: 700, life: 0.6, max: 0.6, color: '#ffd6a5' });
+      G.fx.push({ type: 'screen', life: 0.2, max: 0.2 });
+      SFX.timestop(); break;
+    }
+    case 'comet':
+      G.comets.push({ x: Math.max(WALL_X + 40, x), y: Math.min(y, 590), t: 0, dur: 1.2, dmg, R: 170 + 10 * (r - 1) });
+      SFX.wind(); break;
+    case 'turret': {
+      const t = 15 + (r - 1);
+      G.turrets.push({ x: Math.min(Math.max(x, WALL_X + 70), 1060), t, max: t, cd: 0.3, dmg });
+      if (G.turrets.length > 3) G.turrets.shift();
+      burst(Math.min(Math.max(x, WALL_X + 70), 1060), 590, 12, ['#ff8fc8', '#ffffff', '#a98bff'], 220, 400, 6, 0.5);
+      SFX.buy(); break;
+    }
+    case 'mark': {
+      const R = 110, amp = 1.35 + 0.05 * (r - 1);
+      for (const e of G.enemies) {
+        if (e.dead || Math.hypot(e.x - target.x, cy(e) - cy(target)) > R + ENEMY[e.type].r) continue;
+        e.mark = 8; e.markAmp = amp;
+        burst(e.x, cy(e), 4, ['#ff6a6a', '#ffffff'], 120, 0, 4, 0.4);
+      }
+      addText('弱點！', target.x, target.y - ENEMY[target.type].h - 20, '#ff6a6a', 28);
+      SFX.crack(); break;
+    }
+    case 'phoenix': {
+      const amt = Math.round(G.castleMax * 0.05 * (1 + 0.2 * (r - 1)));
+      G.castleHp = Math.min(G.castleMax, G.castleHp + amt);
+      addText('+' + amt, 140, 420, '#ffb03d', 30);
+      G.phoenix = { x: WALL_X - 60, t: 0, dmg, hit: new Set() };
+      SFX.star(); break;
+    }
     case 'tornado': {
       const t = 2.5 + 0.25 * (r - 1);
       G.zones.push({ kind: 'tornado', x: Math.max(WALL_X + 80, x), t, max: t, dmg, tick: 0 });
       SFX.wind(); break;
-    }
-    case 'icewall': {
-      const hp = Math.round(G.castleMax * 0.5 * (1 + 0.2 * (r - 1)));
-      G.wall = { x: Math.min(Math.max(x, WALL_X + 140), W - 120), hp, max: hp, t: 12 };
-      burst(G.wall.x, 560, 16, ['#bfeaff', '#ffffff'], 240, 300, 7, 0.6);
-      SFX.ice(); break;
     }
     case 'holy':
       G.zones.push({ kind: 'holy', x: Math.max(WALL_X + 40, x), t: 2, max: 2, dps: dmg, tick: 0 });
@@ -2064,10 +2364,10 @@ function castChain(first, dmg, hits) {
   SFX.zap();
 }
 
-function explode(x, y, R, dmg, groundOnly) {
+function explode(x, y, R, dmg, groundOnly, kind) {
   for (const e of G.enemies) {
     if (e.dead || (groundOnly && ENEMY[e.type].air)) continue;
-    if (Math.hypot(e.x - x, (cy(e) - y) * 0.8) <= R + ENEMY[e.type].r * 0.5) damage(e, dmg, groundOnly ? 'meteor' : 'fire');
+    if (Math.hypot(e.x - x, (cy(e) - y) * 0.8) <= R + ENEMY[e.type].r * 0.5) damage(e, dmg, kind || (groundOnly ? 'meteor' : 'fire'));
   }
   G.fx.push({ type: 'ring', x, y, r: R, life: 0.3, max: 0.3, color: '#ffb03d' });
   G.fx.push({ type: 'flash', x, y, r: R * 0.9, life: 0.15, max: 0.15 });
@@ -2103,6 +2403,9 @@ function update(dt) {
   G.shake = Math.max(0, G.shake - 40 * dt);
   G.castleFlash -= dt; G.noMpT -= dt; G.hintT -= dt; G.reflectT -= dt; G.bossIntro -= dt; G.owlAnim -= dt;
   G.introT -= dt; G.goldBump = Math.max(0, G.goldBump - dt); G.mpFlash = Math.max(0, G.mpFlash - dt);
+  // 時光倒流用：記下最近 6 秒的城堡耐久
+  G.histT -= dt;
+  if (G.histT <= 0) { G.histT = 0.5; G.hist.push(G.castleHp); if (G.hist.length > 12) G.hist.shift(); }
   if (G.barrierT > 0) { G.barrierT -= dt; if (G.barrierT <= 0) G.barrier = 0; }
   if (P.down && P.onField && SPELL[G.sel].type === 'target') useSpell(G.sel, P.x, P.y, true);
 
@@ -2122,23 +2425,27 @@ function updateEnemies(dt) {
     e.flash -= dt; e.blockT -= dt; e.age += dt; e.kb = Math.max(0, e.kb - 50 * dt);
     e.swing = Math.max(0, e.swing - dt); e.frz = Math.max(0, e.frz - dt);
     if (e.slow > 0) e.slow -= dt;
-    if (e.sheep > 0) e.sheep -= dt;
-    if (e.syrup > 0) e.syrup -= dt;
+    if (e.mark > 0) e.mark -= dt;
     if (G.blizzard > 0) e.slow = Math.max(e.slow, 0.3);
+    // 幽靈：一下實體、一下透明
+    if (d.phasing) {
+      e.phaseT -= dt;
+      if (e.phaseT <= 0) { e.phased = !e.phased; e.phaseT = e.phased ? 1 : 3.5; }
+    }
     if (e.stun > 0) { e.stun -= dt; continue; }
     if (d.boss) { bossUpdate(e, dt); continue; }
-    let sm = e.slow > 0 ? (d.heavy ? 0.75 : 0.5) : 1;
-    if (e.syrup > 0) sm *= d.heavy ? 0.5 : 0.3;
-    if (e.sheep > 0) sm *= 0.4;
+    const sm = e.slow > 0 ? (d.heavy ? 0.75 : 0.5) : 1;
+    // 騎士血量剩一半開始衝鋒
+    if (d.charge && !e.dash && e.hp < e.max * 0.5) { e.dash = true; addText('衝鋒！', e.x, e.y - d.h - 20, '#ff8aa0', 24); }
     if (e.stealth && e.x < WALL_X + 420) {
       e.stealth = false; e.dash = true;
       burst(e.x, cy(e), 12, ['#2f3550', '#6a6a8a', '#ffffff'], 200, 0, 7, 0.5);
       addText('現形！', e.x, e.y - 100, '#ff8a8a', 22);
     }
-    // 冰晶城牆擋住地面的近戰敵人
+    // 薑餅巨人擋住地面的近戰敵人
     const wall = G.wall && !d.air && !d.range && e.x >= G.wall.x - 4 ? G.wall : null;
     const stop = wall ? Math.max(e.stopX, wall.x + (d.reach || d.r)) : e.stopX;
-    if (d.blink && e.sheep <= 0) {
+    if (d.blink) {
       e.blinkT -= dt;
       if (e.blinkT <= 0 && e.x - 150 > stop) {
         burst(e.x, cy(e), 8, ['#9a5ae0', '#ffffff'], 160, 0, 6, 0.4);
@@ -2152,7 +2459,6 @@ function updateEnemies(dt) {
       e.x = Math.max(stop, e.x - mv); e.walk += mv;
       if (d.air) e.y = e.baseY;
     } else {
-      if (e.sheep > 0) continue;
       if (d.bomber) {
         if (wall) wall.hp -= d.dmg * G.dmgMul; else hitCastle(d.dmg * G.dmgMul);
         G.fx.push({ type: 'ring', x: e.x, y: cy(e), r: 70, life: 0.3, max: 0.3, color: '#ff8a3d' });
@@ -2188,7 +2494,7 @@ function shamanHeal(e) {
 
 function bossUpdate(e, dt) {
   const d = ENEMY[e.type], ratio = e.hp / e.max;
-  const ph = d.boss === 3 || d.boss === 5 ? (ratio > 0.66 ? 1 : ratio > 0.33 ? 2 : 3) : (ratio > 0.5 ? 1 : 2);
+  const ph = d.boss === 3 || d.boss === 5 || d.boss === 6 ? (ratio > 0.66 ? 1 : ratio > 0.33 ? 2 : 3) : (ratio > 0.5 ? 1 : 2);
   if (ph !== e.phase) {
     e.phase = ph; G.shake = 12; SFX.roar();
     addText('狂暴化！', e.x, e.y - d.h - 20, '#ff5a5a', 34);
@@ -2258,6 +2564,33 @@ function bossUpdate(e, dt) {
       wave.forEach((t, i) => spawn(t, false, W + 40 + i * 50));
       addText('虛空召喚！', e.x, e.y - d.h - 30, '#c08aff', 28);
     }
+  } else if (d.boss === 6) {
+    // 暗影波比：暗影彈、封印玩家的魔法、召喚
+    if (!e.patrol && e.x > 900) e.x -= d.speed * sm * dt;
+    else { e.patrol = true; e.pt += dt * sm; e.x = 900 + Math.sin(e.pt * 0.5) * 130; }
+    e.y = e.baseY + Math.sin(e.age * 1.8) * 14;
+    if (e.patrol && ph >= 2) {
+      e.sealT -= dt;
+      if (e.sealT <= 0) {
+        e.sealT = ph === 3 ? 8 : 11;
+        const pool = G.loadout.filter(id => G.cds[id] < 6);
+        if (pool.length) {
+          const id = pool[Math.floor(Math.random() * pool.length)];
+          G.cds[id] = 6;
+          addText('封印：' + SPELL[id].name + '！', WIZ.x + 120, WIZ.y - 200, '#d0a8ff', 30);
+          burst(WIZ.x, WIZ.y - 80, 16, ['#8a3cff', '#d0a8ff'], 220, 0, 6, 0.5);
+          SFX.crack();
+        }
+      }
+    }
+    e.atk -= dt * sm;
+    if (e.atk <= 0 && e.patrol) { e.atk = ph === 1 ? 2 : ph === 2 ? 1.7 : 1.3; e.swing = 0.4; shoot(e, 'orb'); if (ph === 3) shoot(e, 'orb'); }
+    if (e.sumT <= 0) {
+      e.sumT = ph === 3 ? 12 : 14;
+      const wave = ph === 1 ? ['ghost', 'ghost', 'witch'] : ph === 2 ? ['knight', 'witch', 'ghost', 'ghost'] : ['golem', 'knight', 'knight', 'witch'];
+      wave.forEach((t, i) => spawn(t, false, W + 40 + i * 50));
+      addText('暗影召喚！', e.x, e.y - d.h - 30, '#c08aff', 28);
+    }
   } else {
     if (!e.patrol && e.x > 920) e.x -= d.speed * dt;
     else { e.patrol = true; e.pt += dt; e.x = 920 + Math.sin(e.pt * 0.4) * 90; }
@@ -2283,7 +2616,7 @@ function shoot(e, kind) {
   const sx = e.x - (d.boss ? 70 : 22), sy = e.y - (d.boss === 1 ? 120 : d.boss ? 70 : 30);
   const tx = WALL_X - 10 - Math.random() * 50, ty = 420 + Math.random() * 140;
   const dmg = d.boss ? d.dmg : d.dmg * G.dmgMul;
-  if (kind === 'orb') { const t = 1.6; G.shots.push({ kind, x: sx, y: sy, vx: (tx - sx) / t, vy: (ty - sy) / t, g: 0, dmg }); return; }
+  if (kind === 'orb' || kind === 'drain') { const t = 1.6; G.shots.push({ kind, x: sx, y: sy, vx: (tx - sx) / t, vy: (ty - sy) / t, g: 0, dmg }); return; }
   const t = kind === 'arrow' ? 0.9 : 1.2, g = kind === 'breath' ? 250 : 600;
   G.shots.push({ kind, x: sx, y: sy, vx: (tx - sx) / t, vy: (ty - sy) / t - 0.5 * g * t, g, dmg });
 }
@@ -2293,7 +2626,17 @@ function updateShots(dt) {
     a.vy += a.g * dt; a.x += a.vx * dt; a.y += a.vy * dt;
     if (a.kind === 'breath' && Math.random() < 0.7) G.fx.push({ type: 'p', x: a.x, y: a.y, vx: 0, vy: 0, g: -80, size: 10, color: Math.random() < 0.5 ? '#ff7a3d' : '#ffe36b', life: 0.3, max: 0.3 });
     if (a.x <= WALL_X) {
-      a.done = true; hitCastle(a.dmg);
+      a.done = true;
+      // 吸魔女巫的紫光：不傷城堡，吸走魔力
+      if (a.kind === 'drain') {
+        const lost = Math.min(G.mp, 12);
+        G.mp -= lost; G.mpFlash = 0.4;
+        addText('-' + Math.round(lost) + ' 魔力', WIZ.x + 70, WIZ.y - 150, '#c9a0ff', 24);
+        burst(WALL_X, a.y, 8, ['#7be38a', '#c9a0ff'], 180, 0, 5, 0.4);
+        SFX.fizzle();
+        continue;
+      }
+      hitCastle(a.dmg);
       if (a.kind !== 'arrow') { burst(WALL_X, a.y, 10, a.kind === 'orb' ? ['#9a5aff', '#e0d0ff'] : ['#ff7a3d', '#ffe36b', '#3a3550'], 220, 300, 7, 0.5); SFX.blast(); }
     }
   }
@@ -2304,7 +2647,7 @@ function updateMagic(dt) {
   // 火球
   for (const p of G.projs) {
     const dx = p.tx - p.x, dy = p.ty - p.y, dist = Math.hypot(dx, dy), step = 1400 * dt;
-    if (dist <= step) { p.done = true; explode(p.tx, p.ty, p.R, p.dmg, false); }
+    if (dist <= step) { p.done = true; explode(p.tx, p.ty, p.R, p.dmg, false, p.kind); }
     else { p.x += dx / dist * step; p.y += dy / dist * step; }
     if (G.fx.length < 380) G.fx.push({ type: 'p', x: p.x, y: p.y, vx: (Math.random() - 0.5) * 40, vy: (Math.random() - 0.5) * 40, g: -60, size: 6, color: Math.random() < 0.5 ? '#ffb03d' : '#ffe36b', life: 0.25, max: 0.25 });
   }
@@ -2341,13 +2684,82 @@ function updateMagic(dt) {
     if (dist < 24) { m.done = true; damage(t, m.dmg, 'missile'); burst(m.x, m.y, 5, ['#fff07a', '#ffffff'], 160, 0, 4, 0.3); }
   }
   G.missiles = G.missiles.filter(m => !m.done);
-  // 冰晶城牆
+  // 薑餅巨人：擋路，並揮拳打前方一群地面敵人
   if (G.wall) {
-    G.wall.t -= dt;
-    if (G.wall.hp <= 0 || G.wall.t <= 0) {
-      burst(G.wall.x, 540, 24, ['#bfeaff', '#ffffff', '#62cfff'], 300, 500, 8, 0.7);
+    const w = G.wall;
+    w.t -= dt; w.swing = Math.max(0, w.swing - dt * 3); w.atk -= dt;
+    if (w.atk <= 0) {
+      const inRange = G.enemies.filter(e => !e.dead && !e.stealth && !ENEMY[e.type].air && e.x >= w.x - 10 && e.x <= w.x + 140);
+      if (inRange.length) {
+        w.atk = 1; w.swing = 1;
+        for (const e of inRange) damage(e, w.dmg, 'giant');
+        burst(w.x + 70, 590, 6, ['#c98a4a', '#fff6e8'], 200, 400, 5, 0.4);
+        G.shake = Math.max(G.shake, 3); SFX.boom();
+      } else w.atk = 0.2;
+    }
+    if (w.hp <= 0 || w.t <= 0) {
+      burst(w.x, 540, 24, ['#c98a4a', '#fff6e8', '#ff8fc8'], 300, 500, 8, 0.7);
       SFX.crack(); G.wall = null;
     }
+  }
+  // 召喚飛龍：飛到敵人前方，連續噴火球；快結束時飛走
+  if (G.ally) {
+    const a = G.ally;
+    a.t -= dt; a.age += dt; a.swing = Math.max(0, a.swing - dt);
+    let tgt = null;
+    for (const e of G.enemies) if (!e.dead && !e.stealth && e.x < W - 20 && !(e.mirror > 0) && (!tgt || e.x < tgt.x)) tgt = e;
+    const leaving = a.t < 0.8;
+    const tx = leaving ? W + 260 : tgt ? Math.min(Math.max(tgt.x - 260, WALL_X + 60), 860) : 560;
+    a.x += (tx - a.x) * Math.min(1, (leaving ? 3 : 1.6) * dt);
+    a.y = 240 + Math.sin(a.age * 2) * 14;
+    a.atk -= dt;
+    if (a.atk <= 0 && tgt && !leaving) {
+      a.atk = 1.1; a.swing = 0.4;
+      G.projs.push({ x: a.x + 76, y: a.y - 56, tx: tgt.x, ty: cy(tgt), dmg: a.dmg, R: 90, kind: 'dragon' });
+      SFX.fire();
+    }
+    if (a.t <= 0) G.ally = null;
+  }
+  // 彗星衝擊
+  for (const c of G.comets) {
+    c.t += dt;
+    if (c.t < c.dur) continue;
+    c.done = true;
+    for (const e of G.enemies) {
+      if (e.dead || Math.hypot(e.x - c.x, (cy(e) - c.y) * 0.7) > c.R + ENEMY[e.type].r) continue;
+      damage(e, c.dmg, 'comet');
+    }
+    G.fx.push({ type: 'ring', x: c.x, y: c.y, r: c.R, life: 0.5, max: 0.5, color: '#8fd8ff' });
+    G.fx.push({ type: 'flash', x: c.x, y: c.y, r: c.R * 0.9, life: 0.2, max: 0.2 });
+    G.fx.push({ type: 'screen', life: 0.2, max: 0.2 });
+    burst(c.x, c.y, 26, ['#8fd8ff', '#ffffff', '#62a8ff'], 420, 300, 9, 0.7);
+    G.shake = Math.max(G.shake, 14); SFX.thunder();
+  }
+  G.comets = G.comets.filter(c => !c.done);
+  // 星光砲台
+  for (const t of G.turrets) {
+    t.t -= dt; t.cd -= dt;
+    if (t.cd > 0) continue;
+    let best = null, bd = 480;
+    for (const e of G.enemies) {
+      if (e.dead || e.stealth) continue;
+      const dd = Math.hypot(e.x - t.x, cy(e) - 540);
+      if (dd < bd) { bd = dd; best = e; }
+    }
+    if (best) { t.cd = 0.7; G.feathers.push({ x: t.x, y: 560, id: best.id, dmg: t.dmg, life: 3, kind: 'turret' }); }
+    else t.cd = 0.2;
+  }
+  G.turrets = G.turrets.filter(t => t.t > 0);
+  // 鳳凰衝擊
+  if (G.phoenix) {
+    const p = G.phoenix;
+    p.x += 820 * dt; p.t += dt;
+    for (const e of G.enemies) {
+      if (e.dead || p.hit.has(e.id) || Math.abs(e.x - p.x) > 70) continue;
+      p.hit.add(e.id); damage(e, p.dmg, 'phoenix');
+    }
+    if (G.fx.length < 380) for (let i = 0; i < 3; i++) G.fx.push({ type: 'p', x: p.x - 60, y: 430 + (Math.random() - 0.5) * 120, vx: -60, vy: (Math.random() - 0.5) * 60, g: -80, size: 8, color: i % 2 ? '#ffb03d' : '#ffe36b', life: 0.5, max: 0.5 });
+    if (p.x > W + 160) G.phoenix = null;
   }
   // 召喚精靈
   if (G.fairyT > 0) {
@@ -2364,7 +2776,7 @@ function updateMagic(dt) {
     });
     if (G.fairyT <= 0) G.fairies.forEach(f => burst(f.x, f.y, 6, ['#9ff0c8', '#ffffff'], 120, 0, 5, 0.4));
   }
-  // 範圍魔法：火焰牆、雷暴雲、糖漿、龍捲風、引力、聖光
+  // 範圍魔法：火焰牆、雷暴雲、彩虹光束、龍捲風、引力、聖光
   for (const z of G.zones) {
     z.t -= dt;
     if (z.kind === 'flame') {
@@ -2373,14 +2785,11 @@ function updateMagic(dt) {
         z.tick = 0.25;
         for (const e of G.enemies) if (!e.dead && !ENEMY[e.type].air && Math.abs(e.x - z.x) < 75) damage(e, z.dps * 0.25, 'flame');
       }
-    } else if (z.kind === 'syrup') {
+    } else if (z.kind === 'beam') {
       z.tick -= dt;
-      const hurt = z.tick <= 0;
-      if (hurt) z.tick = 0.25;
-      for (const e of G.enemies) {
-        if (e.dead || ENEMY[e.type].air || Math.abs(e.x - z.x) > 90) continue;
-        e.syrup = 0.15;
-        if (hurt) damage(e, z.dps * 0.25, 'syrup');
+      if (z.tick <= 0) {
+        z.tick = 0.2;
+        for (const e of G.enemies) if (!e.dead && e.x < W && Math.abs(cy(e) - z.y) < z.half + ENEMY[e.type].r) damage(e, z.dps * 0.2, 'beam');
       }
     } else if (z.kind === 'tornado') {
       z.x += 150 * dt;
@@ -2508,6 +2917,8 @@ function finish(win) {
       res.newSlot = slotsFor(to) > slotsBefore;
       const before = [...save.loadout];
       normalizeLoadout(true);
+      // 打敗第 20 關的黑翼飛龍：牠直接成為夥伴，放進出戰欄
+      if (G.stage === 20) { equipDragon(); save.seen.dragonOath = true; }
       res.equipped = save.loadout.filter(id => !before.includes(id));
       SFX.levelup();
     }
@@ -2616,10 +3027,14 @@ function drawMagicLayer() {
         const fx = z.x - 62 + i * 25, s = 0.9 + Math.sin(T * 12 + i * 1.7) * 0.18;
         flame(fx, 596 - 12 * s, s);
       }
-    } else if (z.kind === 'syrup') {
-      ell(z.x, 612, 94, 18); fillStroke('rgba(255,159,208,.85)', 3, '#e86aa8');
-      ctx.fillStyle = 'rgba(255,255,255,.55)'; ell(z.x - 30, 606, 22, 4); ctx.fill();
-      for (let i = 0; i < 4; i++) { const ph = (T * 0.8 + i * 0.25) % 1; circ(z.x - 60 + i * 40, 610 - ph * 20, 3 + ph * 3); ctx.fill(); }
+    } else if (z.kind === 'beam') {
+      const cols = ['#ff6a6a', '#ffb03d', '#ffe36b', '#7be38a', '#62a8ff', '#c9a0ff'], bh = z.half * 2 / cols.length;
+      const x0 = WALL_X - 40;
+      ctx.globalAlpha = a * 0.8;
+      cols.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(x0, z.y - z.half + i * bh + Math.sin(T * 30 + i) * 2, W - x0, bh + 1); });
+      ctx.globalAlpha = a * 0.9;
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(x0, z.y - 5, W - x0, 10);
+      drawGlow(x0, z.y, 70, '#ffffff', a);
     } else if (z.kind === 'tornado') {
       for (let i = 0; i < 7; i++) {
         ell(z.x + Math.sin(T * 10 + i) * 6, 604 - i * 26, 16 + i * 9, 7);
@@ -2646,19 +3061,37 @@ function drawMagicLayer() {
     }
     ctx.globalAlpha = 1;
   }
-  // 冰晶城牆
+  // 薑餅巨人
   if (G.wall) {
     const w = G.wall, r = Math.max(0, w.hp / w.max);
     ctx.globalAlpha = Math.min(1, w.t / 0.4);
-    rrect(w.x - 24, 466, 48, 146, 10); fillStroke('#cdefff', 4, '#3d9fd0');
-    ctx.fillStyle = 'rgba(255,255,255,.6)'; rrect(w.x - 16, 476, 8, 120, 4); ctx.fill();
-    ctx.strokeStyle = '#3d9fd0'; ctx.lineWidth = 2.5;
-    if (r < 0.66) { ctx.beginPath(); ctx.moveTo(w.x - 10, 490); ctx.lineTo(w.x + 4, 520); ctx.lineTo(w.x - 6, 548); ctx.stroke(); }
-    if (r < 0.33) { ctx.beginPath(); ctx.moveTo(w.x + 14, 500); ctx.lineTo(w.x + 2, 560); ctx.lineTo(w.x + 12, 600); ctx.stroke(); }
-    rrect(w.x - 30, 450, 60, 8, 4); ctx.fillStyle = OUT; ctx.fill();
-    rrect(w.x - 28, 452, 56 * r, 4, 2); ctx.fillStyle = '#7fd3ff'; ctx.fill();
+    drawGingerbread(w.x, 612, 1, w.swing, r);
+    rrect(w.x - 34, 436, 68, 8, 4); ctx.fillStyle = OUT; ctx.fill();
+    rrect(w.x - 32, 438, 64 * r, 4, 2); ctx.fillStyle = '#ffb03d'; ctx.fill();
     ctx.globalAlpha = 1;
   }
+  // 星光砲台
+  for (const t of G.turrets) { ctx.globalAlpha = Math.min(1, t.t / 0.3); drawTurret(t.x, 612, 1, t.t / t.max); ctx.globalAlpha = 1; }
+  // 召喚飛龍（面向右）
+  if (G.ally) {
+    const a = G.ally;
+    ctx.save(); ctx.translate(a.x, a.y); ctx.scale(-0.85, 0.85); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    drawDragon(a);
+    ctx.restore();
+  }
+  // 彗星衝擊
+  for (const c of G.comets) {
+    const p = Math.min(1, c.t / c.dur), x = c.x + 420 * (1 - p), y = c.y - 700 * (1 - p);
+    ctx.save(); ctx.setLineDash([12, 8]); ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(143,216,255,.9)';
+    ell(c.x, c.y, c.R * (1.15 - 0.15 * p), c.R * (1.15 - 0.15 * p) * 0.7); ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = 'rgba(143,216,255,.55)'; ctx.lineWidth = 22; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 120, y - 200); ctx.stroke();
+    drawGlow(x, y, 80, '#8fd8ff', 0.9);
+    circ(x, y, 32); fillStroke('#d9f4ff', 4, '#3d8fd0');
+    drawStar(x, y, 15, '#62a8ff', OUT, 0);
+  }
+  // 鳳凰衝擊
+  if (G.phoenix) drawPhoenix(G.phoenix.x, 430, 1.4, G.phoenix.t);
   // 星光飛彈
   for (const m of G.missiles) {
     if (m.delay > 0) continue;
@@ -2687,6 +3120,7 @@ function drawMagicLayer() {
   // 羽毛
   for (const f of G.feathers) {
     if (f.kind === 'fairy') { drawGlow(f.x, f.y, 14, '#9ff0c8', 0.9); drawStar(f.x, f.y, 6, '#d9fff0', OUT, 1.5); continue; }
+    if (f.kind === 'turret') { drawGlow(f.x, f.y, 14, '#ff8fc8', 0.9); drawStar(f.x, f.y, 7, '#ffe0f2', OUT, 1.5); continue; }
     ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang || 0);
     ell(0, 0, 12, 4); fillStroke('#f2dcc0', 2);
     ctx.restore();
@@ -2706,6 +3140,9 @@ function drawMagicLayer() {
       drawGlow(a.x, a.y, 36, '#ff7a3d', 0.9);
       circ(a.x, a.y, 16); fillStroke('#ff7a3d', 3);
       circ(a.x - 3, a.y - 3, 7); ctx.fillStyle = '#ffe36b'; ctx.fill();
+    } else if (a.kind === 'drain') {
+      drawGlow(a.x, a.y, 30, '#7be38a', 0.9);
+      circ(a.x, a.y, 11); fillStroke('#c9a0ff', 3, '#3a7a4a');
     } else {
       drawGlow(a.x, a.y, 34, '#9a5aff', 0.9);
       circ(a.x, a.y, 13); fillStroke('#5a2a9a', 3);
@@ -2888,13 +3325,16 @@ function drawReticle() {
   else if (id === 'frostnova') { circ(x, y, 120); ctx.strokeStyle = 'rgba(120,220,255,.8)'; ctx.stroke(); }
   else if (id === 'storm') { rrect(x - 260, 120, 520, 500, 20); ctx.strokeStyle = 'rgba(180,170,255,.6)'; ctx.stroke(); }
   else if (id === 'missiles') { circ(x, y, 260); ctx.strokeStyle = 'rgba(255,240,122,.6)'; ctx.stroke(); }
-  else if (id === 'syrup') { const gx = Math.max(WALL_X + 70, x); rrect(gx - 90, 586, 180, 50, 12); ctx.strokeStyle = 'rgba(255,120,190,.9)'; ctx.stroke(); }
+  else if (id === 'beam') { const by = y > 500 ? 560 : Math.max(240, y), hf = 46 + 4 * (r - 1); rrect(WALL_X, by - hf, W - WALL_X, hf * 2, 10); ctx.strokeStyle = 'rgba(255,140,200,.9)'; ctx.stroke(); }
+  else if (id === 'siphon') { circ(x, y, 130); ctx.strokeStyle = 'rgba(122,215,255,.8)'; ctx.stroke(); }
+  else if (id === 'comet') { const R = 170 + 10 * (r - 1); ell(Math.max(WALL_X + 40, x), Math.min(y, 590), R, R * 0.7); ctx.strokeStyle = 'rgba(143,216,255,.8)'; ctx.stroke(); }
+  else if (id === 'turret') { const gx = Math.min(Math.max(x, WALL_X + 70), 1060); rrect(gx - 26, 512, 52, 104, 12); ctx.strokeStyle = 'rgba(255,143,200,.9)'; ctx.stroke(); }
   else if (id === 'tornado') { const gx = Math.max(WALL_X + 80, x); rrect(gx - 55, 420, 110, 216, 20); ctx.strokeStyle = 'rgba(90,200,160,.9)'; ctx.stroke(); }
-  else if (id === 'icewall') { const gx = Math.min(Math.max(x, WALL_X + 140), W - 120); rrect(gx - 24, 466, 48, 146, 10); ctx.strokeStyle = 'rgba(80,190,255,.9)'; ctx.stroke(); }
+  else if (id === 'giant') { const gx = Math.min(Math.max(x, WALL_X + 140), W - 120); rrect(gx - 44, 452, 88 + 96, 164, 14); ctx.strokeStyle = 'rgba(217,160,102,.9)'; ctx.stroke(); }
   else if (id === 'holy') { const gx = Math.max(WALL_X + 40, x); rrect(gx - 60, 0, 120, 636, 20); ctx.strokeStyle = 'rgba(255,220,120,.8)'; ctx.stroke(); }
   else if (id === 'gravity') { circ(x, Math.min(y, 560), 220); ctx.strokeStyle = 'rgba(180,140,255,.7)'; ctx.stroke(); }
   else {
-    const t = id === 'sheep' ? nearestEnemy(x, y, 170, e => !ENEMY[e.type].boss) : nearestEnemy(x, y, 170);
+    const t = nearestEnemy(x, y, 170);
     if (t) { ctx.setLineDash([]); circ(t.x, cy(t), 40 + Math.sin(T * 10) * 3); ctx.strokeStyle = '#ffe14d'; ctx.lineWidth = 4; ctx.stroke(); }
     else { circ(x, y, 170); ctx.strokeStyle = 'rgba(255,225,77,.5)'; ctx.stroke(); }
   }
@@ -2925,6 +3365,7 @@ const CAST = {
   moen:   { name: '莫恩',     color: '#7a4fe0', x: sc => sc.calm ? 660 : 1040, y: 600, draw: s => { ctx.scale(1.7 * s, 1.7 * s); drawDarkMage(PE); } },
   hook:   { name: '鉤鉤船長', color: '#a8703f', x: 1010, y: 520, draw: s => { ctx.scale(1.1 * s, 1.1 * s); drawAirship(PE); } },
   nox:    { name: '諾克斯',   color: '#3a2a6a', x: 1050, y: 600, draw: s => { ctx.scale(1.15 * s, 1.15 * s); drawNox(PE); } },
+  shadow: { name: '暗影波比', color: '#3a2a6a', x: 1040, y: 610, draw: s => { ctx.scale(1.9 * s, 1.9 * s); drawShadowBobby(PE); } },
 };
 function renderStory() {
   const sc = story.sc, [who, text] = sc.lines[story.i];
@@ -3104,8 +3545,8 @@ function renderSelect() {
   soundButton(1180, 84);
   const open = Math.min(MAX_STAGE, save.cleared + 1);
   CHAPTERS.forEach((c, ci) => {
-    const ry = 222 + ci * 84;
-    rrect(76, ry - 31, 134, 62, 16); fillStroke(c.color, 3);
+    const ry = 204 + ci * 74;
+    rrect(76, ry - 29, 134, 58, 16); fillStroke(c.color, 3);
     txt(c.name, 143, ry - 12, 20, OUT); txt(c.sub, 143, ry + 14, 17, OUT);
     ctx.beginPath(); ctx.moveTo(268, ry); ctx.lineTo(1188, ry); ctx.lineWidth = 5; ctx.strokeStyle = '#e3d6ec'; ctx.setLineDash([2, 11]); ctx.lineCap = 'round'; ctx.stroke(); ctx.setLineDash([]);
     for (let i = 0; i < 10; i++) {
@@ -3114,9 +3555,9 @@ function renderSelect() {
       let r = boss ? 28 : 23;
       if (isOpen && !done) r += Math.sin(T * 5) * 2;
       circ(x, ry, r); fillStroke(done ? '#ffd25a' : isOpen ? '#7fd3ff' : '#d4cadd', 3.5);
-      if (isOpen) { txt(String(n), x, ry + 1, boss ? 22 : 19, OUT); buttons.push({ x: x - r, y: ry - r, w: r * 2, h: r * 2, fn: () => enterLevel(n) }); }
-      else drawLock(x, ry + 2, boss ? 0.9 : 0.75);
-      if (boss) txt('BOSS', x, ry - r - 7, 12, '#e8484f', 'center', 3, '#fff');
+      if (isOpen) { txt(String(n), x, ry - (boss ? 4 : -1), boss ? 20 : 19, OUT); buttons.push({ x: x - r, y: ry - r, w: r * 2, h: r * 2, fn: () => enterLevel(n) }); }
+      else drawLock(x, ry - (boss ? 5 : -2), boss ? 0.8 : 0.75);
+      if (boss) txt('BOSS', x, ry + 14, 11, '#e8484f', 'center', 3, '#fff');
       if (done) for (let k = 0; k < 3; k++) drawStar(x - 13 + k * 13, ry + r + 8, 6, k < st ? '#ffd84d' : '#e0d6e8', OUT, 1.5);
     }
   });
@@ -3144,17 +3585,17 @@ function renderBook() {
   button(1010, 46, 180, 50, '返回', () => { goState('select'); }, { size: 24, color: '#ff8fb8' });
   // 卡片
   SPELLS.forEach((s, i) => {
-    const x = 72 + (i % 5) * 142, y = 106 + Math.floor(i / 5) * 94;
+    const x = 72 + (i % 6) * 118, y = 104 + Math.floor(i / 6) * 96;
     const un = learned(s.id), sel = bookSel === s.id, eq = save.loadout.includes(s.id);
-    rrect(x, y, 134, 86, 16); fillStroke(sel ? '#fff3c0' : un ? '#ffffff' : '#e6dff0', sel ? 5 : 3, sel ? '#c98a00' : OUT);
-    circ(x + 30, y + 43, 22); fillStroke(un ? '#efe4ff' : '#d4cadd', 3);
-    if (un) drawSpellIcon(s.id, x + 30, y + 43, 0.74); else drawLock(x + 30, y + 45, 0.85);
-    txt(s.name, x + 58, y + 27, 17, un ? OUT : '#9a8fae', 'left');
-    if (un) for (let k = 0; k < MAX_RANK; k++) drawStar(x + 63 + k * 13, y + 50, 5.5, k < rankOf(s.id) ? '#ffd84d' : '#e0d6e8', OUT, 1.5);
-    else txt(`Lv${s.unlock} 學會`, x + 58, y + 50, 14, '#9a8fae', 'left');
-    if (eq) { rrect(x + 76, y + 63, 50, 18, 9); ctx.fillStyle = '#7be35a'; ctx.fill(); txt('出戰', x + 101, y + 72, 12, '#fff'); }
-    if (s.type === 'ult' && un) { rrect(x + 76, y + 63, 50, 18, 9); ctx.fillStyle = '#ffb84d'; ctx.fill(); txt('終極', x + 101, y + 72, 12, '#fff'); }
-    buttons.push({ x, y, w: 134, h: 86, fn: () => { bookSel = s.id; } });
+    rrect(x, y, 112, 90, 14); fillStroke(sel ? '#fff3c0' : un ? '#ffffff' : '#e6dff0', sel ? 5 : 3, sel ? '#c98a00' : OUT);
+    circ(x + 28, y + 27, 20); fillStroke(un ? '#efe4ff' : '#d4cadd', 3);
+    if (un) drawSpellIcon(s.id, x + 28, y + 27, 0.66); else drawLock(x + 28, y + 29, 0.75);
+    txt(s.name, x + 56, y + 60, 16, un ? OUT : '#9a8fae');
+    if (un) for (let k = 0; k < MAX_RANK; k++) drawStar(x + 30 + k * 13, y + 77, 5.5, k < rankOf(s.id) ? '#ffd84d' : '#e0d6e8', OUT, 1.5);
+    else txt(`Lv${s.unlock} 學會`, x + 56, y + 77, 13, '#9a8fae');
+    if (eq) { rrect(x + 54, y + 10, 50, 18, 9); ctx.fillStyle = '#7be35a'; ctx.fill(); txt('出戰', x + 79, y + 19, 12, '#fff'); }
+    if (s.type === 'ult' && un) { rrect(x + 54, y + 10, 50, 18, 9); ctx.fillStyle = '#ffb84d'; ctx.fill(); txt('終極', x + 79, y + 19, 12, '#fff'); }
+    buttons.push({ x, y, w: 112, h: 90, fn: () => { bookSel = s.id; } });
   });
   // 詳細說明
   const s = SPELL[bookSel], un = learned(s.id), rk = rankOf(s.id);
@@ -3272,7 +3713,7 @@ function frame(now) {
   else if (toast) { toast.t -= dt; if (toast.t <= 0) toast = null; }
   if (state === 'story') story.shown += dt * 30;
   setMusic(state === 'story' ? story.sc.music
-    : state === 'play' ? (G.over ? null : G.boss ? 'boss' : ['grass', 'snow', 'volcano', 'sky', 'void'][G.ch])
+    : state === 'play' ? (G.over ? null : G.boss ? 'boss' : ['grass', 'snow', 'volcano', 'sky', 'void', 'crystal'][G.ch])
     : 'title');
   ctx.setTransform(K, 0, 0, K, 0, 0);
   if (state === 'title') renderTitle();
@@ -3290,7 +3731,7 @@ initCloud();
 
 // 除錯／自動測試用
 window.__wtd = { startLevel, enterLevel, playStory, update, useSpell, spawn, go: s => { state = s; }, get story() { return story; }, Music, get G() { return G; }, get save() { return save; }, set save(v) { save = v; },
-  normalizeLoadout, spInfo, heroLv, upgradeCost, SPELLS, SPELL, ENEMY, LEVELS, BAL, UPGRADES };
+  normalizeLoadout, spInfo, heroLv, upgradeCost, applySave, SPELLS, SPELL, ENEMY, LEVELS, LEVEL_HP, BAL, UPGRADES, STORY };
 })();
 </script>
 </body>
