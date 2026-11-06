@@ -147,7 +147,7 @@ const ENEMY = {
   ghost:    { name: '糖晶幽靈', hp: 85,  speed: 75,  dmg: 12, atkCd: 1.1, gold: 8,  r: 22, h: 66,  air: true, fly: [360, 440], phasing: true },
   knight:   { name: '水晶騎士', hp: 180, speed: 36,  dmg: 20, atkCd: 1.4, gold: 12, r: 28, h: 100, shield: true, charge: true },
   witch:    { name: '吸魔女巫', hp: 80,  speed: 42,  dmg: 0,  atkCd: 3.2, gold: 11, r: 22, h: 92,  range: 560, shot: 'drain' },
-  boss6:    { name: '暗影波比', hp: 20000, speed: 50, dmg: 24, atkCd: 2, gold: 1300, r: 42, h: 200, boss: 6, air: true },
+  boss6:    { name: '暗影維維', hp: 20000, speed: 50, dmg: 24, atkCd: 2, gold: 1300, r: 42, h: 200, boss: 6, air: true },
 };
 // 這些魔法能打穿星石巨像的硬皮
 const ARMOR_PIERCE = { bolt: 1, holy: 1, quake: 1, star: 1, comet: 1 };
@@ -353,7 +353,7 @@ const LEVELS = [
   { name: '鳳凰衝擊', hint: '新魔法「鳳凰衝擊」：火鳳凰橫掃全場，還會修復城堡。最後決戰就快到了！',
     groups: [[2, 'knight', 9, 0.6], [8, 'golem', 5, 1.4], [14, 'ghost', 18, 0.3], [20, 'witch', 7, 0.7], [26, 'bandit', 32, 0.18],
              [32, 'balloon', 10, 0.6], [38, 'shield', 16, 0.38], [44, 'golem', 5, 1.3], [48, 'imp', 20, 0.28], [52, 'wolf', 22, 0.2]] },
-  { name: 'BOSS：暗影波比', hint: '暗影波比受傷後會封印你的魔法！多帶幾種魔法輪流用', boss: true,
+  { name: 'BOSS：暗影維維', hint: '暗影維維受傷後會封印你的魔法！多帶幾種魔法輪流用', boss: true,
     groups: [[2, 'ghost', 10, 0.6], [6, 'boss6', 1, 0], [16, 'knight', 6, 0.8], [26, 'witch', 4, 1.5], [36, 'golem', 2, 3], [46, 'imp', 10, 0.6], [56, 'balloon', 5, 1]] },
 ];
 
@@ -384,7 +384,7 @@ const LOSE_TIPS = [
 // ============================================================
 const STORY = {
   pre1: { title: '序章　見習法師的早晨', ch: 0, music: 'title', lines: [
-    ['owl', '波比！波比！快醒醒咕！'],
+    ['owl', '維維！維維！快醒醒咕！'],
     ['bobby', '嗯……咕咕？天還沒亮耶……'],
     ['owl', '大事不好了咕！一群強盜正往糖霜城衝過來！'],
     ['bobby', '什麼！？可是師父出遠門了，城裡只剩我一個法師……'],
@@ -403,7 +403,7 @@ const STORY = {
     ['barton', '哎唷唷……我、我認輸啦！'],
     ['bobby', '快說！到底是誰叫你來搶星之糖晶的？'],
     ['barton', '是一個穿黑袍的法師……他說北邊雪山還有更多手下……'],
-    ['owl', '黑袍法師……？這件事不簡單咕。波比，我們得做好準備！'],
+    ['owl', '黑袍法師……？這件事不簡單咕。維維，我們得做好準備！'],
     ['bobby', '嗯！不管來多少敵人，我都會守住大家！'],
   ] },
   pre11: { title: '第二章　冰雪山道', ch: 1, music: 'snow', lines: [
@@ -459,11 +459,11 @@ const STORY = {
     ['moen', '我……到底做了什麼……對不起，糖霜城的大家。'],
     ['bobby', '莫恩先生，現在回來還來得及！師父一定也會原諒你的。'],
     ['moen', '……謝謝你，小法師。你的星帽，比任何寶物都還要閃亮。'],
-    ['owl', '糖霜城得救了咕！波比，你是最棒的守護法師！'],
+    ['owl', '糖霜城得救了咕！維維，你是最棒的守護法師！'],
     ['bobby', '嘿嘿……大家一起回城裡吃糖霜蛋糕吧！'],
   ] },
   pre31: { title: '第四章　天空浮島', ch: 3, music: 'sky', calm: true, lines: [
-    ['moen', '波比，糖霜城的天空……出現了一道裂縫。'],
+    ['moen', '維維，糖霜城的天空……出現了一道裂縫。'],
     ['bobby', '莫恩先生！那是什麼？'],
     ['moen', '當年引誘我墮落的黑暗力量，就是從那道裂縫裡傳來的……'],
     ['owl', '天上還飛來好多熱氣球咕！是空賊！'],
@@ -504,19 +504,19 @@ const STORY = {
     ['moen', '裂縫正在關閉！諾克斯被送回虛空的另一頭了！'],
     ['owl', '天空恢復成藍色了咕！'],
     ['bobby', '我們做到了……糖霜城得救了！'],
-    ['moen', '波比，你已經是獨當一面的大法師了。你的師父一定會以你為榮。'],
+    ['moen', '維維，你已經是獨當一面的大法師了。你的師父一定會以你為榮。'],
     ['owl', '咕咕！今天的糖霜蛋糕要做兩倍大咕！'],
     ['bobby', '嘿嘿……謝謝大家。從今以後，我會一直守護這片星空！'],
   ] },
   pre51: { title: '第六章　糖晶聖殿', ch: 5, music: 'crystal', calm: true, lines: [
-    ['owl', '波比！蛋糕才吃到一半，城堡地底就傳來好大的聲音咕！'],
+    ['owl', '維維！蛋糕才吃到一半，城堡地底就傳來好大的聲音咕！'],
     ['moen', '是星之糖晶。它吸了太多虛空的力量，開始裂開了。'],
     ['dragon', '吼喔喔！'],
     ['bobby', '飛龍也感覺到了！聖殿裡有什麼東西跑出來了！'],
-    ['moen', '波比，學會這招「時光倒流」吧。接下來的敵人，會比虛空軍團更難纏。'],
+    ['moen', '維維，學會這招「時光倒流」吧。接下來的敵人，會比虛空軍團更難纏。'],
     ['bobby', '好！大家一起進聖殿，把糖晶修好！'],
   ] },
-  pre60: { title: '最終決戰　暗影波比', ch: 5, music: 'boss', calm: true, lines: [
+  pre60: { title: '最終決戰　暗影維維', ch: 5, music: 'boss', calm: true, lines: [
     ['shadow', '……你來了，另一個我。'],
     ['bobby', '那、那是我！？為什麼會有另一個我！'],
     ['moen', '糖晶映照出了你心裡的影子，還把它變成了真的。'],
@@ -596,6 +596,78 @@ async function cloudWrite() {
   catch (e) { if (!e || e.code !== 'unavailable') Cloud.ref = null; }
   Cloud.busy = false;
   if (Cloud.pending) { Cloud.pending = false; cloudWrite(); }
+}
+
+// ---------- 存檔檔案：把進度存成 .json，或從檔案讀回來 ----------
+const SAVE_FILE_ID = 'starhat-wizard';
+function saveFileText() {
+  return JSON.stringify({ game: SAVE_FILE_ID, version: 1, savedAt: Date.now(), save }, null, 2);
+}
+function saveFileName() {
+  const d = new Date(), pad = n => String(n).padStart(2, '0');
+  return `維維小法師存檔_第${save.cleared}關_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+}
+// 檢查檔案內容，不對就回傳 null
+function parseSaveFile(text) {
+  let o;
+  try { o = JSON.parse(text); } catch (e) { return null; }
+  if (!o || o.game !== SAVE_FILE_ID || !o.save || typeof o.save !== 'object') return null;
+  const s = o.save, isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+  if (!Number.isInteger(s.cleared) || s.cleared < 0 || s.cleared > MAX_STAGE) return null;
+  if (typeof s.gold !== 'number' || !isFinite(s.gold) || s.gold < 0) return null;
+  if (!isObj(s.stars) || !isObj(s.upgrades) || !isObj(s.ranks) || !Array.isArray(s.loadout)) return null;
+  return { s, savedAt: o.savedAt };
+}
+function saveSummary(s) {
+  const stars = Object.values(s.stars).reduce((a, b) => a + b, 0);
+  return [`Lv.${Math.min(MAX_STAGE, s.cleared + 1)}　已過 ${s.cleared} / ${MAX_STAGE} 關`, `星星 ${stars} / ${MAX_STAGE * 3}　金幣 ${s.gold}`];
+}
+async function exportSaveFile() {
+  const filename = saveFileName(), data = saveFileText();
+  // 在 claude.ai 開啟時要透過平台存檔（會先問玩家）；其他地方直接下載
+  const dl = window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null;
+  if (dl) {
+    try { await dl.save({ filename, data }); showToast('存檔檔案已儲存'); }
+    catch (e) { showToast(e && e.code === 'declined' ? '已取消存檔' : e && e.code === 'rate_limited' ? '請稍等一下再試' : '這裡無法儲存檔案'); }
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  showToast('存檔檔案已下載');
+}
+const fileInput = document.createElement('input');
+fileInput.type = 'file'; fileInput.accept = '.json,application/json'; fileInput.style.display = 'none';
+document.body.appendChild(fileInput);
+let pendingImport = null;   // 選好檔案、等玩家確認的存檔 { s, savedAt, name }
+fileInput.addEventListener('change', () => {
+  const f = fileInput.files && fileInput.files[0];
+  fileInput.value = '';
+  if (!f) return;
+  const bad = () => { pendingImport = null; showToast('這不是星帽小法師的存檔檔案'); };
+  if (f.size > 1024 * 1024) { bad(); return; }
+  const r = new FileReader();
+  r.onerror = bad;
+  r.onload = () => {
+    const parsed = parseSaveFile(String(r.result));
+    if (!parsed) { bad(); return; }
+    pendingImport = Object.assign(parsed, { name: f.name });
+  };
+  r.readAsText(f);
+});
+function confirmImport() {
+  if (!pendingImport) return;
+  // 音樂、音效開關是這台裝置的設定，不跟著存檔走
+  const { muted, musicOff } = save;
+  const ok = applySave(pendingImport.s);
+  pendingImport = null;
+  if (!ok) { showToast('這不是星帽小法師的存檔檔案'); return; }
+  save.muted = muted; save.musicOff = musicOff;
+  writeSave(); SFX.levelup();
+  showToast(`已讀取存檔（已過 ${save.cleared} 關）`);
+  goState('select');
 }
 
 function heroLv() { return Math.min(MAX_STAGE, save.cleared + 1); }
@@ -1356,7 +1428,7 @@ function drawCastle(ratio, flash, thorns) {
 }
 
 // ============================================================
-//  主角：小法師 波比、貓頭鷹 咕咕
+//  主角：維維小法師、貓頭鷹 咕咕
 // ============================================================
 const STAFF_CAST = 0.95;
 function staffTip() {
@@ -1921,11 +1993,12 @@ function drawEnemy(e) {
 // ============================================================
 //  狀態
 // ============================================================
-let state = 'title';   // title | select | book | shop | story | play
+let state = 'title';   // title | select | book | shop | saves | story | play
 let G = null;
 let T = 0;
 let buttons = [];
 let resetArmed = 0, respecArmed = 0;
+let afterTap = null;   // 等這次點擊完成後才執行的動作
 let bookSel = 'fire';
 let toast = null;      // { s, t }
 let transT = 0;        // 換畫面淡入
@@ -1981,7 +2054,7 @@ function startLevel(n) {
     owlLv: u.owl, owlT: 1, owlAnim: 0, thorns: BAL.thornsDmg * u.thorns,
     timeStop: 0, blizzard: 0, blizDps: 0, blizTick: 0, starfall: null,
     missiles: [], wall: null, surge: 0, fairyT: 0, fairies: [],
-    ally: null, comets: [], turrets: [], phoenix: null, hist: [], histT: 0,
+    ally: null, moen: null, comets: [], turrets: [], phoenix: null, hist: [], histT: 0,
     castAnim: 0, shake: 0, castleFlash: 0, noMpT: 0, reflectT: 0,
     gold: 0, kills: 0, over: null, overT: 0, paused: false, hintT: 7, nextId: 1,
     introT: 2.4, goldBump: 0, mpFlash: 0, castColor: '#ffd84d', postStory: null,
@@ -2046,7 +2119,7 @@ function applyStun(e, t) {
 
 const DMG_COLOR = { fire: '#ffb03d', ice: '#a8ecff', bolt: '#fff36b', meteor: '#ff9a3d', owl: '#f2dcc0', star: '#ffe46b', bomb: '#ff8a5a', thorns: '#c4cbe0',
   missile: '#fff07a', tornado: '#8fe8c8', quake: '#e8b878', fairy: '#9ff0c8',
-  dragon: '#ff8a5a', siphon: '#7ad7ff', giant: '#d9a066', comet: '#8fd8ff', turret: '#ff8fc8', phoenix: '#ffb03d' };
+  dragon: '#ff8a5a', moen: '#c9a0ff', siphon: '#7ad7ff', giant: '#d9a066', comet: '#8fd8ff', turret: '#ff8fc8', phoenix: '#ffb03d' };
 // 持續傷害：不跳數字、不擊退
 const DOT = { flame: 1, blizzard: 1, gravity: 1, holy: 1, beam: 1 };
 function damage(e, amt, kind) {
@@ -2058,7 +2131,7 @@ function damage(e, amt, kind) {
     return;
   }
   // 飛龍是自己人：大法師張開反射結界時，牠的火球只會被擋下，不會反彈到城牆
-  if (d.boss === 3 && e.mirror > 0 && kind === 'dragon') return;
+  if (d.boss === 3 && e.mirror > 0 && (kind === 'dragon' || kind === 'moen')) return;
   if (d.boss === 3 && e.mirror > 0 && kind !== 'star') {
     if (G.reflectT <= 0) { G.reflectT = 0.25; addText('反射！', e.x, e.y - 170, '#e0d0ff', 26); hitCastle(4); }
     return;
@@ -2335,6 +2408,18 @@ function useSpell(id, x, y, silent, free) {
   }
   return true;
 }
+// 召喚大法師莫恩助陣 10 秒；還在場時再按一次就重新計時，不會變成兩個
+function summonMoen() {
+  if (!G.moen) {
+    G.moen = { t: 10, x: WALL_X + 40, y: 400, atk: 0.5, age: 0, swing: 0, calm: true, mirror: 0, dmg: 45 * G.power };
+    addText('大法師莫恩，前來助陣！', 560, 210, '#e0d0ff', 30);
+    burst(WALL_X + 40, 300, 24, ['#c9a0ff', '#7af0ff', '#ffffff'], 300, 0, 7, 0.6);
+    SFX.holy();
+  } else {
+    G.moen.t = 10;
+    burst(G.moen.x, G.moen.y - 90, 10, ['#c9a0ff', '#ffffff'], 180, 0, 5, 0.4);
+  }
+}
 // 魔力爆發期間魔法消耗減半
 function spellCost(sp) { return G && G.surge > 0 ? Math.ceil(sp.cost / 2) : sp.cost; }
 
@@ -2565,7 +2650,7 @@ function bossUpdate(e, dt) {
       addText('虛空召喚！', e.x, e.y - d.h - 30, '#c08aff', 28);
     }
   } else if (d.boss === 6) {
-    // 暗影波比：暗影彈、封印玩家的魔法、召喚
+    // 暗影維維：暗影彈、封印玩家的魔法、召喚
     if (!e.patrol && e.x > 900) e.x -= d.speed * sm * dt;
     else { e.patrol = true; e.pt += dt * sm; e.x = 900 + Math.sin(e.pt * 0.5) * 130; }
     e.y = e.baseY + Math.sin(e.age * 1.8) * 14;
@@ -2719,6 +2804,22 @@ function updateMagic(dt) {
       SFX.fire();
     }
     if (a.t <= 0) G.ally = null;
+  }
+  // 大法師莫恩：飄到敵人前方，每秒對最前面的 3 個敵人射出追蹤星彈
+  if (G.moen) {
+    const m = G.moen;
+    m.t -= dt; m.age += dt; m.swing = Math.max(0, m.swing - dt);
+    const foes = G.enemies.filter(e => !e.dead && !e.stealth && e.x < W - 20 && !(e.mirror > 0)).sort((a, b) => a.x - b.x);
+    const tx = foes.length ? Math.min(Math.max(foes[0].x - 240, WALL_X + 90), 700) : WALL_X + 200;
+    m.x += (tx - m.x) * Math.min(1, 1.6 * dt);
+    m.y = 400 + Math.sin(m.age * 2) * 12;
+    m.atk -= dt;
+    if (m.atk <= 0 && foes.length) {
+      m.atk = 1; m.swing = 0.3;
+      for (let i = 0; i < 3; i++) G.feathers.push({ x: m.x + 44, y: m.y - 115, id: foes[i % Math.min(3, foes.length)].id, dmg: m.dmg, life: 3, kind: 'moen' });
+      SFX.missile();
+    }
+    if (m.t <= 0) { burst(m.x, m.y - 90, 18, ['#c9a0ff', '#7af0ff', '#ffffff'], 260, 0, 6, 0.5); G.moen = null; }
   }
   // 彗星衝擊
   for (const c of G.comets) {
@@ -3079,6 +3180,13 @@ function drawMagicLayer() {
     drawDragon(a);
     ctx.restore();
   }
+  // 大法師莫恩（面向右）
+  if (G.moen) {
+    const m = G.moen;
+    ctx.save(); ctx.translate(m.x, m.y); ctx.scale(-0.9, 0.9); ctx.globalAlpha = Math.min(1, m.t / 0.4); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    drawDarkMage(m);
+    ctx.restore();
+  }
   // 彗星衝擊
   for (const c of G.comets) {
     const p = Math.min(1, c.t / c.dur), x = c.x + 420 * (1 - p), y = c.y - 700 * (1 - p);
@@ -3120,6 +3228,7 @@ function drawMagicLayer() {
   // 羽毛
   for (const f of G.feathers) {
     if (f.kind === 'fairy') { drawGlow(f.x, f.y, 14, '#9ff0c8', 0.9); drawStar(f.x, f.y, 6, '#d9fff0', OUT, 1.5); continue; }
+    if (f.kind === 'moen') { drawGlow(f.x, f.y, 18, '#c9a0ff', 0.9); drawStar(f.x, f.y, 9, '#efe4ff', '#7a4fe0', 2); continue; }
     if (f.kind === 'turret') { drawGlow(f.x, f.y, 14, '#ff8fc8', 0.9); drawStar(f.x, f.y, 7, '#ffe0f2', OUT, 1.5); continue; }
     ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang || 0);
     ell(0, 0, 12, 4); fillStroke('#f2dcc0', 2);
@@ -3250,13 +3359,18 @@ function drawHUD() {
     rrect(160, 76, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, '#7ad7ff');
     txt(`魔力爆發 ${G.surge.toFixed(1)}`, 245, 93, 17, '#7ad7ff');
   }
-  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發，不限次數（畫面上不顯示）
+  if (G.moen) {
+    rrect(160, 116, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, '#c9a0ff');
+    txt(`莫恩助陣 ${Math.max(0, G.moen.t).toFixed(1)}`, 245, 133, 17, '#e0d0ff');
+  }
+  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發、點城堡大門＝莫恩助陣 10 秒，不限次數（畫面上不顯示）
   for (const [id, x, y, w, h] of [['quake', 80, 60, 40, 34], ['surge', 62, 282, 36, 52]]) {
     buttons.push({ x, y, w, h, fn: () => {
       if (G.over || G.paused) return;
       if (useSpell(id, null, null, true, true)) burst(x + w / 2, y + h / 2, 10, ['#ffd84d', '#ffffff'], 140, 0, 5, 0.5);
     } });
   }
+  buttons.push({ x: 160, y: 484, w: 80, h: 118, fn: () => { if (!G.over && !G.paused) summonMoen(); } });
   // 魔法列
   const { slots, ult, right } = hudLayout();
   rrect(12, 626, right - 12, 92, 24); ctx.fillStyle = 'rgba(58,42,74,.66)'; ctx.fill();
@@ -3357,7 +3471,7 @@ function drawPause() {
 // ============================================================
 const PE = { age: 0, swing: 0, walk: 0, x: 0, stopX: 0, mirror: 0, id: 1, phase: 1, vshield: 0, calm: false };   // 立繪用的假敵人狀態
 const CAST = {
-  bobby:  { name: '波比',     color: '#4f7cf0', x: 220,  y: 610, draw: s => drawWizard(0, 0, 2.3 * s, T, 0, '#ffd84d') },
+  bobby:  { name: '維維小法師', color: '#4f7cf0', x: 220,  y: 610, draw: s => drawWizard(0, 0, 2.3 * s, T, 0, '#ffd84d') },
   owl:    { name: '咕咕',     color: '#a8764a', x: 420,  y: 520, draw: s => drawOwl(0, 0, T, 0, 2.6 * s) },
   barton: { name: '巴頓',     color: '#e8484f', x: 1050, y: 600, draw: s => { ctx.scale(1.25 * s, 1.25 * s); drawBoss1(PE); } },
   dragon: { name: '黑翼飛龍', color: '#5a4680', x: 1020, y: 470, draw: s => { ctx.scale(1.5 * s, 1.5 * s); drawDragon(PE); } },
@@ -3365,7 +3479,7 @@ const CAST = {
   moen:   { name: '莫恩',     color: '#7a4fe0', x: sc => sc.calm ? 660 : 1040, y: 600, draw: s => { ctx.scale(1.7 * s, 1.7 * s); drawDarkMage(PE); } },
   hook:   { name: '鉤鉤船長', color: '#a8703f', x: 1010, y: 520, draw: s => { ctx.scale(1.1 * s, 1.1 * s); drawAirship(PE); } },
   nox:    { name: '諾克斯',   color: '#3a2a6a', x: 1050, y: 600, draw: s => { ctx.scale(1.15 * s, 1.15 * s); drawNox(PE); } },
-  shadow: { name: '暗影波比', color: '#3a2a6a', x: 1040, y: 610, draw: s => { ctx.scale(1.9 * s, 1.9 * s); drawShadowBobby(PE); } },
+  shadow: { name: '暗影維維', color: '#3a2a6a', x: 1040, y: 610, draw: s => { ctx.scale(1.9 * s, 1.9 * s); drawShadowBobby(PE); } },
 };
 function renderStory() {
   const sc = story.sc, [who, text] = sc.lines[story.i];
@@ -3530,7 +3644,7 @@ function renderSelect() {
   panel();
   drawWizard(112, 186, 0.62, T, 0, '#ffd84d');
   const lv = heroLv(), sp = spInfo();
-  txt('小法師 波比', 170, 74, 32, OUT, 'left');
+  txt('維維小法師', 170, 74, 32, OUT, 'left');
   rrect(366, 54, 104, 40, 20); fillStroke('#7a4fe0', 3);
   txt('Lv.' + lv, 418, 75, 24, '#fff');
   txt('出戰：', 170, 134, 20, '#7a6a8a', 'left');
@@ -3563,6 +3677,7 @@ function renderSelect() {
   });
   txt(Cloud.ref ? '進度會自動存到雲端，電腦和手機可以接著玩' : '三星過關可多得 1 個技能點', 76, 650, 20, '#7a6a8a', 'left');
   if (resetArmed > 0) resetArmed -= 1 / 60;
+  button(672, 624, 170, 52, '存檔／讀取', () => { pendingImport = null; goState('saves'); }, { size: 20, color: '#7be35a' });
   button(856, 624, 170, 52, resetArmed > 0 ? '再點一次確認' : '重置進度', () => {
     if (resetArmed > 0) { const m = save.muted; save = defSave(); save.muted = m; normalizeLoadout(true); writeSave(); resetArmed = 0; }
     else resetArmed = 2.5;
@@ -3633,6 +3748,45 @@ function renderBook() {
   drawToast();
 }
 
+function renderSaves() {
+  drawBg(0); panel();
+  txt('存檔與讀取', 90, 72, 40, '#7a4fe0', 'left');
+  button(1010, 46, 180, 50, '返回', () => { pendingImport = null; goState('select'); }, { size: 24, color: '#ff8fb8' });
+  // 左：存檔
+  rrect(80, 116, 545, 440, 22); fillStroke('#ffffff', 3);
+  txt('存檔到檔案', 352, 158, 30, OUT);
+  drawWizard(352, 340, 0.85, T, 0, '#ffd84d');
+  const cur = saveSummary(save);
+  txt('目前進度', 352, 376, 19, '#7a6a8a');
+  txt(cur[0], 352, 406, 24, OUT);
+  txt(cur[1], 352, 438, 20, OUT);
+  button(232, 470, 240, 64, '存檔到檔案', () => { afterTap = exportSaveFile; }, { size: 26, color: '#7be35a' });
+  // 右：讀取
+  rrect(655, 116, 545, 440, 22); fillStroke('#ffffff', 3);
+  if (pendingImport) {
+    const p = pendingImport, sum = saveSummary(p.s);
+    txt('要讀取這份存檔嗎？', 928, 158, 30, OUT);
+    txt(p.name.length > 30 ? p.name.slice(0, 29) + '…' : p.name, 928, 206, 18, '#7a6a8a');
+    txt(sum[0], 928, 266, 26, OUT);
+    txt(sum[1], 928, 306, 22, OUT);
+    if (p.savedAt) txt('存檔時間：' + new Date(p.savedAt).toLocaleString('zh-TW', { hour12: false }), 928, 346, 18, '#7a6a8a');
+    txt('讀取後，目前的進度會被這份存檔取代', 928, 410, 21, '#e8484f');
+    button(690, 470, 230, 64, '取消', () => { pendingImport = null; }, { size: 24, color: '#b9aec8' });
+    button(936, 470, 230, 64, '確認讀取', confirmImport, { size: 24, color: '#ff8a3d' });
+  } else {
+    txt('讀取存檔檔案', 928, 158, 30, OUT);
+    circ(928, 280, 66); fillStroke('#efe4ff', 3);
+    rrect(892, 244, 72, 72, 8); fillStroke('#a98bff', 3);
+    ctx.fillStyle = '#fff'; ctx.fillRect(904, 244, 48, 24);
+    ctx.fillStyle = '#7a4fe0'; ctx.fillRect(934, 249, 10, 14);
+    drawStar(928, 292, 14, '#ffd84d', OUT, 2);
+    wrapText('選擇之前存下的檔案，就能接著那份進度繼續玩。讀取前會先請你確認。', 700, 392, 456, 30, 20, OUT);
+    button(808, 470, 240, 64, '選擇檔案', () => { afterTap = () => fileInput.click(); }, { size: 26, color: '#a98bff' });
+  }
+  txt('遊戲平常會自動存檔。存檔檔案是額外的備份，可以存很多份，也能帶到別台電腦或手機。', 640, 610, 20, '#7a6a8a');
+  drawToast();
+}
+
 function renderShop() {
   drawBg(0); panel();
   txt('城堡工坊', 90, 72, 40, '#ff8a3d', 'left');
@@ -3688,6 +3842,8 @@ const release = () => { P.down = false; P.onField = false; };
 cv.addEventListener('pointerup', release);
 cv.addEventListener('pointercancel', release);
 cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') { P.x = -1; release(); } });
+// 開選檔視窗、下載檔案要等「點擊完成」才能做（手機按下去的當下瀏覽器不允許）
+cv.addEventListener('click', () => { if (afterTap) { const f = afterTap; afterTap = null; f(); } });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 window.addEventListener('keydown', e => {
   if (state === 'story') { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advanceStory(); } return; }
@@ -3719,6 +3875,7 @@ function frame(now) {
   if (state === 'title') renderTitle();
   else if (state === 'select') renderSelect();
   else if (state === 'book') renderBook();
+  else if (state === 'saves') renderSaves();
   else if (state === 'shop') renderShop();
   else if (state === 'story') renderStory();
   else renderPlay();
@@ -3731,7 +3888,7 @@ initCloud();
 
 // 除錯／自動測試用
 window.__wtd = { startLevel, enterLevel, playStory, update, useSpell, spawn, go: s => { state = s; }, get story() { return story; }, Music, get G() { return G; }, get save() { return save; }, set save(v) { save = v; },
-  normalizeLoadout, spInfo, heroLv, upgradeCost, applySave, SPELLS, SPELL, ENEMY, LEVELS, LEVEL_HP, BAL, UPGRADES, STORY };
+  normalizeLoadout, spInfo, heroLv, upgradeCost, applySave, saveFileText, parseSaveFile, fileInput, get pendingImport() { return pendingImport; }, confirmImport, SPELLS, SPELL, ENEMY, LEVELS, LEVEL_HP, BAL, UPGRADES, STORY };
 })();
 </script>
 </body>
