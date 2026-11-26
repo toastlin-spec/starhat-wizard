@@ -182,6 +182,8 @@ const ENEMY = {
   shark:    { name: '鯊魚騎士',   hp: 140, speed: 72,  dmg: 20, atkCd: 1.1, gold: 11, r: 30, h: 78,  stealth: true, dive: true },
   conch:    { name: '海螺號角手', hp: 90,  speed: 42,  dmg: 0,  atkCd: 5,   gold: 12, r: 22, h: 92,  range: 580, support: 'haste' },
   tentacle: { name: '巨妖觸手',   hp: 120, speed: 0,   dmg: 6,  atkCd: 2.4, gold: 6,  r: 26, h: 150, reach: 280, heavy: true },
+  // 祕技：點城堡大門召喚出來的敵方莫恩（不算關卡進度、不給金幣，但要打倒才能過關）
+  moenfoe:  { name: '墮落大法師 莫恩', hp: 600, speed: 50, dmg: 18, atkCd: 2.2, gold: 0, r: 30, h: 190, range: 520, shot: 'orb' },
   boss8:    { name: '深海巨妖 克拉肯', hp: 35000, speed: 40, dmg: 26, atkCd: 2.4, gold: 2000, r: 80, h: 220, boss: 8 },
 };
 // 這些魔法能打穿星石巨像、鉗子蟹的硬殼
@@ -2455,7 +2457,7 @@ const DRAWERS = { bandit: drawBandit, archer: drawArcher, shield: drawShieldman,
   sprout: drawSprout, firefly: drawFirefly, flower: drawFlower, treant: drawTreant,
   crab: drawCrab, jelly: drawJelly, shark: drawShark, conch: drawConch, tentacle: drawTentacle,
   boss1: drawBoss1, boss2: drawDragon, boss3: drawDarkMage, boss4: drawAirship, boss5: drawNox, boss6: drawShadowBobby,
-  boss7: drawOak, boss8: drawKraken };
+  boss7: drawOak, boss8: drawKraken, moenfoe: drawDarkMage };
 const HAS_FEET = { bandit: 1, archer: 1, shield: 1, bomber: 1, assassin: 1, knight: 1 };
 
 function drawEnemy(e) {
@@ -3118,6 +3120,23 @@ function summonMoen() {
     G.moen.t = 10;
     burst(G.moen.x, G.moen.y - 90, 10, ['#c9a0ff', '#ffffff'], 180, 0, 5, 0.4);
   }
+}
+// 祕技：點城堡大門召喚敵方的墮落大法師莫恩（每按一次出現一個）
+function summonMoenFoe() {
+  const e = spawn('moenfoe', false);
+  addText('墮落大法師莫恩，前來搗亂！', 640, 210, '#c9a0ff', 30);
+  burst(e.x - 60, e.y - 100, 24, ['#9a5aff', '#3a2858', '#ffffff'], 300, 0, 7, 0.6);
+  SFX.roar();
+}
+// 祕技：點右上角金幣，花 100 金幣放一次星辰隕落（不佔用每關一次的 Q）
+function coinStarfall() {
+  if (G.over || G.paused) return;
+  if (G.gold < 100) { addText('金幣不足 100！', 1130, 100, '#ff8a8a', 22); SFX.fizzle(); return; }
+  const used = G.ultUsed;
+  if (!useSpell('starfall', null, null, true, true)) return;
+  G.ultUsed = used;
+  G.gold -= 100; G.goldBump = 0.25;
+  addText('-100', 1130, 100, '#ffd84d', 24);
 }
 // 魔力爆發期間魔法消耗減半
 function spellCost(sp) { return G && G.surge > 0 ? Math.ceil(sp.cost / 2) : sp.cost; }
@@ -4389,14 +4408,15 @@ function drawHUD() {
     rrect(160, 76 + i * 40, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, c);
     txt(s, 245, 93 + i * 40, 17, c);
   });
-  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發、點城堡大門＝莫恩助陣 10 秒，不限次數（畫面上不顯示）
+  // 作者的祕密：點塔頂旗子＝免費大地震、點塔樓小窗＝免費魔力爆發、點城堡大門＝召喚敵方莫恩、點右上角金幣＝花 100 金幣放星辰隕落，不限次數（畫面上不顯示）
   for (const [id, x, y, w, h] of [['quake', 80, 60, 40, 34], ['surge', 62, 282, 36, 52]]) {
     buttons.push({ x, y, w, h, fn: () => {
       if (G.over || G.paused) return;
       if (useSpell(id, null, null, true, true)) burst(x + w / 2, y + h / 2, 10, ['#ffd84d', '#ffffff'], 140, 0, 5, 0.5);
     } });
   }
-  buttons.push({ x: 160, y: 484, w: 80, h: 118, fn: () => { if (!G.over && !G.paused) summonMoen(); } });
+  buttons.push({ x: 160, y: 484, w: 80, h: 118, fn: () => { if (!G.over && !G.paused) summonMoenFoe(); } });
+  buttons.push({ x: 1066, y: 18, w: 128, h: 46, fn: coinStarfall });
   // 魔法列
   const { slots, ult, right } = hudLayout();
   rrect(12, 626, right - 12, 92, 24); ctx.fillStyle = 'rgba(58,42,74,.66)'; ctx.fill();
