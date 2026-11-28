@@ -39,7 +39,7 @@ const WIZ = { x: 150, y: 392 };   // 法師站立點（腳底）
 const OWL = { x: 62, y: 390 };    // 貓頭鷹咕咕站立點
 const OUT = '#3a2a4a';            // Q版粗輪廓色
 const FONT = '"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",sans-serif';
-const MAX_STAGE = 80;
+const MAX_STAGE = 100;
 const MAX_RANK = 5;
 const COIN_POS = { x: 1092, y: 40 };
 const MAX_RES = 1.6;              // 畫布解析度上限（避免高解析螢幕 lag）
@@ -135,6 +135,28 @@ const SPELLS = [
     desc: '海神三叉戟從天而降，重創目標並打穿硬殼；目標附近所有濕透的敵人也會被電到。', up: '傷害 +12%' },
   { id: 'whale',     name: '召喚鯨魚', type: 'target', cost: 80, cd: 24,   dmg: 260, unlock: 79, color: '#62a8ff',
     desc: '1 秒後，大鯨魚從點擊處的地底躍出，重創周圍地面和空中的敵人（潛水的也躲不掉），把它們撞暈並讓它們濕透。', up: '傷害 +12%，範圍變大' },
+  // ---------- 第九章新魔法 ----------
+  { id: 'kcall',     name: '召喚巨妖', type: 'self',   cost: 70, cd: 28,   dmg: 70,  unlock: 81, color: '#ff8fd0',
+    desc: '被你救回的深海巨妖從地底伸出 3 條觸手助陣 8 秒，輪流拍打附近的地面和空中敵人，還會讓它們濕透。', up: '傷害 +12%，3 級和 5 級各多 1 條觸手' },
+  { id: 'prism',     name: '稜鏡火球', type: 'target', cost: 30, cd: 3,    dmg: 46,  unlock: 83, color: '#ff9fd0',
+    desc: '火球穿過稜鏡分裂成 3 顆，在點擊處和左右兩邊一起爆炸，地面空中都打得到。', up: '傷害 +12%，爆炸範圍變大' },
+  { id: 'hourglass', name: '時之沙漏', type: 'self',   cost: 60, cd: 30,   dmg: 0,   unlock: 85, color: '#ffd6a5',
+    desc: '按下立即翻轉沙漏 8 秒：全場敵人變慢，敵人射來的箭、砲彈、魔法彈也飛得很慢。還能打亂發條皇帝的時間倒轉。', up: '持續 +0.5 秒' },
+  { id: 'mecha',     name: '機械魔像', type: 'self',   cost: 65, cd: 26,   dmg: 80,  unlock: 87, color: '#d9a066',
+    desc: '召喚發條魔像 14 秒，它會自己走向最前面的地面敵人，揮拳打中前方一群敵人並讓它們暈眩。', up: '傷害 +12%，持續 +1 秒' },
+  { id: 'bell',      name: '星之鐘',   type: 'self',   cost: 85, cd: 35,   dmg: 60,  unlock: 89, color: '#ffe46b',
+    desc: '敲響星之鐘：全場敵人暈眩 1.5 秒，並受到最大血量 10% 的傷害（至少 60 點；BOSS 為 2%），能打穿硬殼。', up: '暈眩更久，最低傷害 +12%' },
+  // ---------- 第十章新魔法 ----------
+  { id: 'gear',      name: '時之齒輪', type: 'self',   cost: 50, cd: 32,   dmg: 0,   unlock: 91, color: '#e0c89a',
+    desc: '發條皇帝送你的齒輪：其他魔法的冷卻立刻減少一半，接下來 6 秒冷卻快一倍。', up: '持續 +0.5 秒' },
+  { id: 'dream',     name: '夢之泡泡', type: 'target', cost: 40, cd: 14,   dmg: 30,  unlock: 93, color: '#c9b8ff',
+    desc: '吹出夢之泡泡，點擊處附近的敵人睡著 4 秒，不能移動也不能攻擊，連攻城槌和巨像都會睡著。睡著時受到的傷害 +30%。BOSS 只會變慢。', up: '睡眠時間 +0.4 秒' },
+  { id: 'river',     name: '流星之河', type: 'target', cost: 70, cd: 16,   dmg: 75,  unlock: 95, color: '#8fd8ff',
+    desc: '一整排流星落在點擊處左右兩邊，每顆流星都會打中路徑上的地面和空中敵人。', up: '傷害 +12%，流星 +1 顆' },
+  { id: 'angel',     name: '守護天使', type: 'self',   cost: 70, cd: 34,   dmg: 40,  unlock: 97, color: '#fff3a8',
+    desc: '守護天使降臨城堡 10 秒：城堡受到的傷害減半，天使還會射出光之羽毛攻擊最前面的敵人。', up: '傷害 +12%，持續 +1 秒' },
+  { id: 'miracle',   name: '星帽奇蹟', type: 'ult',    cost: 0,  cd: 0,    dmg: 60,  unlock: 99, color: '#ffd84d',
+    desc: '第二個終極魔法，每關只能用一次（按 W）：飛龍、莫恩、影子分身、樹王的祝福、巨妖觸手全部一起登場 8 秒！', up: '夥伴的傷害 +12%' },
 ];
 const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
 const TYPE_LABEL = { target: '指定目標：先選魔法再點敵人', self: '立即施放：按下按鈕就發動', ult: '終極魔法：每關限用一次' };
@@ -185,9 +207,22 @@ const ENEMY = {
   // 祕技：點城堡大門召喚出來的敵方莫恩（不算關卡進度、不給金幣，但要打倒才能過關）
   moenfoe:  { name: '墮落大法師 莫恩', hp: 600, speed: 50, dmg: 18, atkCd: 2.2, gold: 0, r: 30, h: 190, range: 520, shot: 'orb' },
   boss8:    { name: '深海巨妖 克拉肯', hp: 35000, speed: 40, dmg: 26, atkCd: 2.4, gold: 2000, r: 80, h: 220, boss: 8 },
+  // ---------- 第九章 ----------
+  gearspider: { name: '齒輪蜘蛛',   hp: 95,  speed: 85,  dmg: 12, atkCd: 1.0, gold: 8,  r: 22, h: 50,  climb: true },
+  windup:   { name: '發條士兵',   hp: 180, speed: 62,  dmg: 20, atkCd: 1.2, gold: 11, r: 24, h: 104, windup: true },
+  cannonbot: { name: '砲台機器人', hp: 160, speed: 34,  dmg: 24, atkCd: 3.6, gold: 12, r: 28, h: 96,  range: 760, shot: 'shell' },
+  clockmage: { name: '時鐘法師',   hp: 95,  speed: 40,  dmg: 0,  atkCd: 6,   gold: 13, r: 22, h: 104, range: 600, support: 'clock' },
+  boss9:    { name: '發條皇帝 克羅諾', hp: 72000, speed: 36, dmg: 26, atkCd: 2.4, gold: 2300, r: 70, h: 250, boss: 9 },
+  // ---------- 第十章 ----------
+  sheep:    { name: '瞌睡綿羊',   hp: 110, speed: 40,  dmg: 0,  atkCd: 7,   gold: 13, r: 24, h: 76,  range: 620, support: 'sleep' },
+  mknight:  { name: '鏡像士兵',   hp: 170, speed: 46,  dmg: 20, atkCd: 1.2, gold: 12, r: 26, h: 100, mref: true },
+  moth:     { name: '夜之蝶',     hp: 85,  speed: 70,  dmg: 10, atkCd: 1.1, gold: 6,  r: 22, h: 60,  air: true, fly: [340, 440], mothSplit: true },
+  mothlet:  { name: '小蝴蝶',     hp: 28,  speed: 95,  dmg: 5,  atkCd: 0.9, gold: 1,  r: 13, h: 34,  air: true, fly: [360, 470] },
+  giantz:   { name: '夢遊巨人',   hp: 1100, speed: 14, dmg: 44, atkCd: 2.4, gold: 34, r: 42, h: 160, reach: 50, heavy: true, sleeper: true },
+  boss10:   { name: '夢魘之王 奈特梅爾', hp: 74000, speed: 50, dmg: 26, atkCd: 2, gold: 3000, r: 60, h: 230, boss: 10, air: true },
 };
 // 這些魔法能打穿星石巨像、鉗子蟹的硬殼
-const ARMOR_PIERCE = { bolt: 1, holy: 1, quake: 1, star: 1, comet: 1, trident: 1, whale: 1 };
+const ARMOR_PIERCE = { bolt: 1, holy: 1, quake: 1, star: 1, comet: 1, trident: 1, whale: 1, bell: 1 };
 // 火系：燒到的巨木守衛、迷霧樹王 3 秒內不會再生，樹精寶寶被火燒倒就不會長回來
 const FIRE_KIND = { fire: 1, flame: 1, meteor: 1, dragon: 1, phoenix: 1 };
 // 雷電系：濕透的敵人受到 +50% 傷害；電電水母會吸收
@@ -460,6 +495,66 @@ const LEVELS = [
              [30, 'golem', 5, 1.3], [36, 'flower', 5, 1], [42, 'shark', 14, 0.45], [46, 'bandit', 34, 0.17], [52, 'crab', 16, 0.4]] },
   { name: 'BOSS：深海巨妖', hint: '巨妖的觸手會拍打城牆，先把觸手打掉！墨汁可以用鏡之結界彈回去', boss: true,
     groups: [[2, 'crab', 10, 0.6], [6, 'boss8', 1, 0], [16, 'shark', 8, 0.8], [26, 'jelly', 10, 0.6], [36, 'conch', 3, 2], [46, 'treant', 2, 3], [56, 'crab', 12, 0.5]] },
+  // ---------- 第九章：發條鐘塔 ----------
+  { name: '發條鐘塔', hint: '新魔法「召喚巨妖」！齒輪蜘蛛會直接爬過薑餅巨人，別讓牠們溜過來',
+    groups: [[2, 'gearspider', 8, 0.7], [8, 'crab', 8, 0.8], [14, 'gearspider', 12, 0.45], [20, 'wolf', 20, 0.26], [26, 'knight', 8, 0.7],
+             [32, 'gearspider', 14, 0.4], [38, 'jelly', 10, 0.6], [44, 'shark', 8, 0.8], [48, 'gearspider', 16, 0.35], [54, 'golem', 2, 2]] },
+  { name: '發條士兵', hint: '發條士兵轉完發條會停下來上發條，這時打它傷害加倍！',
+    groups: [[2, 'windup', 4, 1.4], [8, 'gearspider', 12, 0.5], [14, 'windup', 6, 1], [20, 'crab', 10, 0.6], [26, 'firefly', 24, 0.2],
+             [30, 'windup', 8, 0.8], [36, 'knight', 8, 0.7], [42, 'gearspider', 14, 0.4], [46, 'windup', 8, 0.7], [52, 'treant', 2, 3]] },
+  { name: '稜鏡火球', hint: '新魔法「稜鏡火球」：一顆火球分裂成三顆一起爆炸！',
+    groups: [[2, 'gearspider', 16, 0.35], [8, 'windup', 6, 1], [14, 'harpy', 16, 0.35], [20, 'bandit', 32, 0.18], [26, 'windup', 8, 0.8],
+             [30, 'jelly', 12, 0.5], [36, 'gearspider', 18, 0.3], [42, 'golem', 4, 1.6], [46, 'windup', 8, 0.7], [52, 'firefly', 28, 0.16]] },
+  { name: '砲台機器人', hint: '砲台機器人站在很遠的地方開砲，記得把魔法放到畫面右邊打它',
+    groups: [[2, 'cannonbot', 3, 2], [8, 'windup', 8, 0.8], [14, 'gearspider', 14, 0.4], [20, 'cannonbot', 4, 1.5], [26, 'crab', 12, 0.5],
+             [30, 'shark', 8, 0.8], [36, 'cannonbot', 4, 1.4], [42, 'windup', 8, 0.7], [46, 'gearspider', 16, 0.35], [52, 'cannonbot', 4, 1.2]] },
+  { name: '時之沙漏', hint: '新魔法「時之沙漏」：敵人和飛來的砲彈都變慢 8 秒',
+    groups: [[2, 'cannonbot', 4, 1.4], [8, 'gearspider', 16, 0.35], [14, 'windup', 8, 0.8], [20, 'balloon', 10, 0.6], [26, 'cannonbot', 4, 1.3],
+             [30, 'knight', 10, 0.6], [36, 'windup', 10, 0.6], [42, 'harpy', 18, 0.3], [46, 'golem', 4, 1.5], [52, 'gearspider', 18, 0.3]] },
+  { name: '時鐘法師', hint: '時鐘法師會讓你的魔法冷卻變慢，要優先打倒！',
+    groups: [[2, 'clockmage', 3, 2], [8, 'windup', 8, 0.8], [14, 'gearspider', 16, 0.35], [20, 'clockmage', 4, 1.5], [26, 'cannonbot', 4, 1.3],
+             [30, 'crab', 12, 0.5], [36, 'clockmage', 4, 1.2], [40, 'wolf', 24, 0.22], [46, 'windup', 10, 0.6], [52, 'cannonbot', 4, 1.2]] },
+  { name: '機械魔像', hint: '新魔法「機械魔像」：會自己走向敵人戰鬥的召喚獸！',
+    groups: [[2, 'windup', 10, 0.6], [8, 'clockmage', 4, 1.4], [14, 'cannonbot', 5, 1.2], [20, 'golem', 5, 1.4], [26, 'gearspider', 18, 0.3],
+             [30, 'windup', 10, 0.6], [36, 'witch', 7, 0.8], [42, 'treant', 3, 2], [46, 'cannonbot', 5, 1.1], [52, 'windup', 12, 0.5]] },
+  { name: '齒輪風暴', hint: '鐘塔裡的機關全部動起來了，記得帶上範圍魔法',
+    groups: [[2, 'gearspider', 20, 0.28], [8, 'cannonbot', 5, 1.2], [14, 'clockmage', 5, 1.2], [20, 'windup', 12, 0.5], [26, 'shark', 12, 0.5],
+             [30, 'golem', 5, 1.3], [36, 'gearspider', 20, 0.28], [42, 'conch', 4, 1.2], [46, 'windup', 12, 0.5], [52, 'cannonbot', 6, 1]] },
+  { name: '星之鐘', hint: '新魔法「星之鐘」：全場暈眩，還會削掉敵人最大血量的 10%！',
+    groups: [[2, 'treant', 3, 2], [8, 'windup', 12, 0.5], [14, 'clockmage', 5, 1.2], [20, 'cannonbot', 6, 1], [26, 'gearspider', 20, 0.28],
+             [30, 'knight', 11, 0.55], [36, 'golem', 5, 1.3], [42, 'windup', 14, 0.45], [46, 'jelly', 16, 0.4], [52, 'cannonbot', 6, 1]] },
+  { name: 'BOSS：發條皇帝', hint: '皇帝每 20 秒會把血量倒轉回去！倒轉前放「時間凍結」或「時之沙漏」就能打亂它', boss: true,
+    groups: [[2, 'gearspider', 12, 0.6], [6, 'boss9', 1, 0], [16, 'windup', 8, 0.8], [26, 'clockmage', 3, 2], [36, 'cannonbot', 3, 2], [46, 'golem', 2, 3], [56, 'gearspider', 16, 0.35]] },
+  // ---------- 第十章：夢之彼岸 ----------
+  { name: '夢之彼岸', hint: '新魔法「時之齒輪」！瞌睡綿羊會讓你的魔法睡著，要優先打倒',
+    groups: [[2, 'sheep', 3, 2], [8, 'bandit', 30, 0.2], [14, 'gearspider', 14, 0.4], [20, 'sheep', 4, 1.5], [26, 'ghost', 16, 0.35],
+             [30, 'windup', 8, 0.8], [36, 'sheep', 4, 1.2], [42, 'wolf', 22, 0.24], [46, 'harpy', 16, 0.35], [52, 'knight', 10, 0.6]] },
+  { name: '鏡像士兵', hint: '鏡像士兵的第一下攻擊會被反彈到城牆！先用便宜的魔法打破鏡子',
+    groups: [[2, 'mknight', 6, 1], [8, 'sheep', 3, 1.8], [14, 'mknight', 8, 0.8], [20, 'firefly', 26, 0.18], [26, 'crab', 12, 0.5],
+             [30, 'mknight', 10, 0.6], [36, 'ghost', 16, 0.35], [42, 'sheep', 4, 1.2], [46, 'mknight', 10, 0.55], [52, 'golem', 3, 1.8]] },
+  { name: '夢之泡泡', hint: '新魔法「夢之泡泡」：讓敵人睡著，睡著時受到的傷害增加',
+    groups: [[2, 'mknight', 8, 0.8], [8, 'sheep', 4, 1.4], [14, 'treant', 3, 2.5], [20, 'bandit', 34, 0.17], [26, 'mknight', 10, 0.6],
+             [30, 'jelly', 14, 0.45], [36, 'windup', 10, 0.6], [42, 'sheep', 4, 1.2], [46, 'mknight', 12, 0.5], [52, 'golem', 4, 1.5]] },
+  { name: '夜之蝶', hint: '夜之蝶被打倒會散成三隻小蝴蝶，用範圍魔法一起收拾',
+    groups: [[2, 'moth', 8, 0.8], [8, 'mknight', 8, 0.8], [14, 'moth', 10, 0.6], [20, 'sheep', 4, 1.4], [26, 'wolf', 22, 0.24],
+             [30, 'moth', 12, 0.5], [36, 'cannonbot', 4, 1.3], [42, 'mknight', 10, 0.6], [46, 'moth', 14, 0.45], [52, 'crab', 14, 0.45]] },
+  { name: '流星之河', hint: '新魔法「流星之河」：一整排流星從天而降，空中地面都打得到',
+    groups: [[2, 'moth', 12, 0.5], [8, 'windup', 10, 0.6], [14, 'sheep', 5, 1.2], [20, 'mknight', 12, 0.5], [26, 'moth', 14, 0.45],
+             [30, 'golem', 5, 1.3], [36, 'clockmage', 4, 1.3], [42, 'moth', 16, 0.4], [46, 'shark', 12, 0.5], [52, 'mknight', 12, 0.5]] },
+  { name: '夢遊巨人', hint: '夢遊巨人睡著時打不痛，被吵醒就會暴走！醒來後趕快集中火力',
+    groups: [[2, 'giantz', 1, 0], [6, 'moth', 12, 0.5], [12, 'giantz', 2, 4], [18, 'mknight', 10, 0.6], [24, 'sheep', 4, 1.4],
+             [28, 'moth', 14, 0.45], [34, 'giantz', 2, 3], [40, 'gearspider', 20, 0.28], [46, 'mknight', 12, 0.5], [52, 'giantz', 2, 2.5]] },
+  { name: '守護天使', hint: '新魔法「守護天使」：天使守護城牆，敵人造成的傷害減半！',
+    groups: [[2, 'giantz', 2, 3], [8, 'mknight', 12, 0.5], [14, 'moth', 14, 0.45], [20, 'cannonbot', 5, 1.2], [26, 'giantz', 2, 3],
+             [30, 'sheep', 5, 1.2], [36, 'treant', 3, 2], [42, 'moth', 16, 0.4], [46, 'windup', 12, 0.5], [52, 'giantz', 3, 2]] },
+  { name: '惡夢迴廊', hint: '以前的敵人都變成惡夢回來了，把最強的魔法都帶上',
+    groups: [[2, 'knight', 12, 0.5], [8, 'giantz', 2, 3], [14, 'witch', 8, 0.7], [20, 'moth', 16, 0.4], [26, 'mknight', 12, 0.5],
+             [30, 'golem', 5, 1.3], [36, 'shark', 12, 0.5], [42, 'sheep', 5, 1.2], [46, 'treant', 3, 2], [52, 'cannonbot', 6, 1]] },
+  { name: '星帽奇蹟', hint: '第二個終極魔法「星帽奇蹟」（按 W）：所有夥伴一起登場！',
+    groups: [[2, 'giantz', 3, 2], [8, 'mknight', 14, 0.45], [14, 'moth', 16, 0.4], [20, 'clockmage', 5, 1.2], [26, 'windup', 14, 0.45],
+             [30, 'sheep', 5, 1.2], [36, 'golem', 5, 1.3], [42, 'moth', 18, 0.35], [46, 'giantz', 3, 2], [52, 'mknight', 14, 0.45]] },
+  { name: 'BOSS：夢魘之王', hint: '夢魘之王會輪流使用所有 BOSS 的招式！看清楚血條上的提示', boss: true,
+    groups: [[2, 'moth', 10, 0.6], [6, 'boss10', 1, 0], [16, 'mknight', 8, 0.8], [26, 'sheep', 3, 2], [36, 'giantz', 2, 3], [46, 'moth', 12, 0.5], [56, 'windup', 8, 0.8]] },
 ];
 
 // 第四～六章各關的敵人血量加成（用整段戰役模擬調出來的數值）
@@ -467,7 +562,10 @@ const LEVEL_HP = { 31: 1.2, 32: 1.4, 33: 1.15, 34: 1.35, 35: 1.4, 37: 1.35, 38: 
   51: 1.15, 52: 1.15, 54: 1.2, 55: 0.9, 56: 0.8, 57: 0.9, 58: 0.9, 59: 0.85,
   // 第七、八章：用自動玩家從第 60 關存檔模擬校準（每章前兩關放緩，第 8、9 關最難）
   61: 1.6, 62: 1.2, 63: 0.9, 64: 1.05, 65: 1.7, 66: 1.2, 67: 1.5, 68: 1.6, 69: 1.7, 70: 1.2,
-  71: 1.6, 72: 0.85, 73: 1.7, 74: 1.1, 75: 1.15, 76: 1.7, 77: 0.95, 78: 1.05, 79: 1.45, 80: 1.05 };
+  71: 1.6, 72: 0.85, 73: 1.7, 74: 1.1, 75: 1.15, 76: 1.7, 77: 0.95, 78: 1.05, 79: 1.45, 80: 1.05,
+  // 第九、十章：用自動玩家從第 80 關存檔模擬校準，再整體調高 20%
+  81: 0.78, 82: 1.92, 83: 2.4, 84: 2.46, 85: 2.52, 86: 3.12, 87: 2.4, 88: 1.62, 89: 2.1, 90: 1.44,
+  91: 1.86, 92: 1.92, 93: 3, 94: 2.46, 95: 1.92, 96: 1.68, 97: 1.74, 98: 1.38, 99: 2.4, 100: 1.44 };
 
 const CHAPTERS = [
   { name: '第一章', sub: '草原小鎮', color: '#a6e58a' },
@@ -478,9 +576,8 @@ const CHAPTERS = [
   { name: '第六章', sub: '糖晶聖殿', color: '#ffc2e8' },
   { name: '第七章', sub: '迷霧森林', color: '#9fe0b0' },
   { name: '第八章', sub: '珊瑚海灣', color: '#8fd8ff' },
-  // 之後的章節（還沒做，選關畫面顯示「即將推出」）
-  { name: '第九章', sub: '發條鐘塔', color: '#e0c89a', soon: true },
-  { name: '第十章', sub: '夢之彼岸', color: '#c9b8ff', soon: true },
+  { name: '第九章', sub: '發條鐘塔', color: '#e0c89a' },
+  { name: '第十章', sub: '夢之彼岸', color: '#c9b8ff' },
 ];
 const PLAY_CHAPTERS = MAX_STAGE / 10;   // 目前做好的章節數
 
@@ -494,6 +591,9 @@ const LOSE_TIPS = [
   '樹精寶寶和巨木守衛怕火，用火系魔法收尾',
   '濕透的敵人受到雷電傷害 +50%，先用潮汐巨浪再放雷電',
   '通過第 60 關後，城堡工坊可以強化法杖',
+  '發條士兵停下來上發條時，受到的傷害加倍',
+  '鏡像士兵的第一下會被反彈，先用便宜的魔法打破鏡子',
+  '夢遊巨人醒來後會暴走，先放好陷阱再吵醒它',
 ];
 
 // ============================================================
@@ -701,6 +801,56 @@ const STORY = {
     ['owl', '維維，下一站就是鐘塔咕！'],
     ['bobby', '師父，再等我一下！我們一定會找到你！'],
   ] },
+  pre81: { title: '第九章　發條鐘塔', ch: 8, music: 'clock', calm: true, lines: [
+    ['bobby', '這就是發條鐘塔……好高！時鐘的指針一動也不動。'],
+    ['moen', '夢魘把這裡的時間停住了，裡面的機關全都亂成一團。'],
+    ['kraken', '咕嚕嚕～小法師，我說過需要幫忙就叫我一聲吧！'],
+    ['owl', '巨妖來幫忙了咕！學會「召喚巨妖」了，出戰欄位也增加到 8 格咕！'],
+    ['bobby', '謝謝你，巨妖先生！師父，我們來救你了！'],
+  ] },
+  pre90: { title: '第九章 BOSS　發條皇帝', ch: 8, music: 'boss', lines: [
+    ['chrono', '滴答、滴答……擅闖鐘塔的小法師，時間會吞掉你的一切。'],
+    ['bobby', '你就是鐘塔的主人？快把師父還來！'],
+    ['chrono', '那個老法師？他的時間已經被我凍住了。夢魘大人說，要讓所有的時間停在最黑暗的那一刻。'],
+    ['owl', '小心咕！皇帝每 20 秒會把自己的血量倒轉回 6 秒前！'],
+    ['owl', '倒轉之前先放「時間凍結」或「時之沙漏」，時間線就會亂掉，倒轉不回去咕！'],
+    ['bobby', '時間是用來往前走的！我不會讓你停住它！'],
+  ] },
+  post90: { title: '凍結的師父', ch: 8, music: 'clock', calm: true, lines: [
+    ['chrono', '滴……答……齒輪……又轉起來了……謝謝你，小法師。'],
+    ['bobby', '鐘塔頂樓有一大塊冰晶……裡面的人是……師父！'],
+    ['master', '…………'],
+    ['moen', '他被凍在時間裡。身體救回來了，可是他的夢被夢魘吸走了。'],
+    ['chrono', '帶著我的齒輪吧。它能讓時間轉得更快，也能打開夢的入口。'],
+    ['owl', '學會「時之齒輪」了咕！下一站……是師父的夢裡！'],
+  ] },
+  pre91: { title: '第十章　夢之彼岸', ch: 9, music: 'dream', calm: true, lines: [
+    ['bobby', '這裡就是師父的夢……天空是粉紅色的，地上有好多星星。'],
+    ['shadow', '小心，這裡的東西會變成我們心裡害怕的樣子。'],
+    ['owl', '有綿羊！好可愛……咦，牠一叫我就好想睡咕……'],
+    ['moen', '那是瞌睡綿羊，會讓你的魔法睡著。先把牠們打倒！'],
+    ['bobby', '好！大家一起把師父叫醒！'],
+  ] },
+  pre100: { title: '最終決戰　夢魘之王', ch: 9, music: 'boss', lines: [
+    ['night', '呵呵呵……小小的星光，竟然闖進了夢的最深處。'],
+    ['bobby', '你就是夢魘之王！快放開師父的夢！'],
+    ['night', '強盜、飛龍、虛空、暗影、樹王、巨妖、皇帝……你打倒的一切，都是我的惡夢。'],
+    ['night', '現在，就讓你一次嘗遍所有的惡夢吧！'],
+    ['owl', '它會輪流用反射結界、虛空護盾、封印、再生和墨汁！看血條上的提示換招咕！'],
+    ['bobby', '我不怕！因為我的夥伴們，全都在這裡！'],
+  ] },
+  post100: { title: '終章　星帽大法師', ch: 9, music: 'title', calm: true,
+    pos: { dragon: [1070, 300], moen: [600, 600], shadow: [1110, 620], master: [840, 610] }, lines: [
+    ['dragon', '吼喔喔喔～！'],
+    ['moen', '夢魘消失了……天亮了。'],
+    ['master', '……維維？是你嗎？我好像做了一個好長、好長的夢。'],
+    ['bobby', '師父！！你終於醒來了！'],
+    ['master', '我在夢裡一直看著你。你守住了糖霜城，還交到了這麼多朋友。'],
+    ['master', '這頂星帽，從今天起就交給你了。你已經是真正的「星帽大法師」了。'],
+    ['shadow', '恭喜你，另一個我。'],
+    ['owl', '咕咕！全部 100 關都通過了！今天的糖霜蛋糕要做一百倍大咕！'],
+    ['bobby', '謝謝大家！我會戴著這頂星帽，繼續守護大家的笑容！'],
+  ] },
 };
 
 // ============================================================
@@ -719,6 +869,9 @@ function applySave(s) {
   save = Object.assign(defSave(), s);
   save.upgrades = Object.assign(defSave().upgrades, s.upgrades || {});
   save.stars = Object.assign({}, s.stars); save.ranks = Object.assign({}, s.ranks); save.seen = Object.assign({}, s.seen);
+  // 別台裝置的版本關卡比較多（例如 100 關）：過關數調成本版最多關，超出的關卡星星不算
+  if (save.cleared > MAX_STAGE) save.cleared = MAX_STAGE;
+  for (const k of Object.keys(save.stars)) if (+k > MAX_STAGE) delete save.stars[k];
   // 已刪除的魔法：投入的技能點自動退回，空出來的出戰欄位自動補上
   for (const k of Object.keys(save.ranks)) if (!SPELL[k]) delete save.ranks[k];
   const needFill = !Array.isArray(s.loadout) || s.loadout.some(id => !SPELL[id]);
@@ -783,12 +936,14 @@ function parseSaveFile(text) {
   try { o = JSON.parse(text); } catch (e) { return null; }
   if (!o || o.game !== SAVE_FILE_ID || !o.save || typeof o.save !== 'object') return null;
   const s = o.save, isObj = v => v && typeof v === 'object' && !Array.isArray(v);
-  if (!Number.isInteger(s.cleared) || s.cleared < 0 || s.cleared > MAX_STAGE) return null;
+  if (!Number.isInteger(s.cleared) || s.cleared < 0) return null;
   if (typeof s.gold !== 'number' || !isFinite(s.gold) || s.gold < 0) return null;
   if (!isObj(s.stars) || !isObj(s.upgrades) || !isObj(s.ranks) || !Array.isArray(s.loadout)) return null;
   return { s, savedAt: o.savedAt };
 }
 function saveSummary(s) {
+  s = Object.assign({}, s, { cleared: Math.min(s.cleared, MAX_STAGE),
+    stars: Object.fromEntries(Object.entries(s.stars).filter(([k]) => +k <= MAX_STAGE)) });
   const stars = Object.values(s.stars).reduce((a, b) => a + b, 0);
   return [`Lv.${Math.min(MAX_STAGE, s.cleared + 1)}　已過 ${s.cleared} / ${MAX_STAGE} 關`, `星星 ${stars} / ${MAX_STAGE * 3}　金幣 ${s.gold}`];
 }
@@ -841,7 +996,7 @@ function confirmImport() {
 }
 
 function heroLv() { return Math.min(MAX_STAGE, save.cleared + 1); }
-function slotsFor(lv) { return lv >= 61 ? 7 : lv >= 30 ? 6 : lv >= 14 ? 5 : lv >= 6 ? 4 : 3; }
+function slotsFor(lv) { return lv >= 81 ? 8 : lv >= 61 ? 7 : lv >= 30 ? 6 : lv >= 14 ? 5 : lv >= 6 ? 4 : 3; }
 function learned(id) { return heroLv() >= SPELL[id].unlock; }
 function rankOf(id) { return save.ranks[id] || 1; }
 function spInfo() {
@@ -927,6 +1082,8 @@ const SOUNDS = {
   holy:    [120, () => [880, 1109, 1319].forEach((f, i) => tone(f, 0.6, 'sine', 0.05, 0, i * 0.04))],
   surge:   [200, () => [523, 784, 1047, 1568].forEach((f, i) => tone(f, 0.25, 'square', 0.04, 1.1, i * 0.06))],
   crack:   [150, () => { noise(0.3, 0.15, 5000); tone(1800, 0.2, 'triangle', 0.05, 0.4); }],
+  bell:    [300, () => [523, 784, 1047, 1568].forEach((f, i) => tone(f, 1.4 - i * 0.2, 'sine', 0.1 - i * 0.02, 0, i * 0.02))],
+  tick:    [150, () => { tone(1800, 0.04, 'square', 0.04); tone(1200, 0.04, 'square', 0.04, 0, 0.12); }],
 };
 const sfxLast = {};
 const SFX = {};
@@ -983,6 +1140,14 @@ const TRACKS = {
              chords: [[65, 69, 72], [62, 65, 69], [58, 62, 65], [60, 64, 67]], bass: [41, 38, 46, 48],
              mel: [77, 0, 81, 0, 84, 81, 0, 77, 79, 0, 77, 0, 74, 0, 0, 0, 74, 0, 77, 0, 82, 0, 81, 79, 79, 0, 77, 0, 76, 0, 0, 0],
              kick: [0, 4], snare: [4], hat: [2, 6] },
+  clock:   { bpm: 108, lead: 'square', leadVol: 0.035, len: 0.9, padVol: 0.016, bassType: 'triangle', bassVol: 0.08, bassPat: [0, 2, 4, 6],
+             chords: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 56, 59]], bass: [45, 41, 43, 40],
+             mel: [76, 0, 72, 0, 69, 0, 72, 76, 74, 0, 71, 0, 67, 0, 71, 74, 72, 0, 69, 0, 65, 0, 69, 72, 71, 0, 68, 0, 64, 0, 0, 0],
+             kick: [0, 4], hat: ALL8 },
+  dream:   { bpm: 84, lead: 'sine', leadVol: 0.08, len: 3, padVol: 0.02, bassType: 'sine', bassVol: 0.07, bassPat: [0, 4],
+             chords: [[65, 69, 72], [62, 65, 69], [58, 62, 65], [60, 64, 67]], bass: [41, 38, 34, 36],
+             mel: [84, 0, 81, 0, 77, 0, 81, 0, 79, 0, 0, 0, 76, 0, 0, 0, 81, 0, 77, 0, 74, 0, 77, 0, 76, 0, 0, 0, 72, 0, 0, 0],
+             kick: [0], hat: [4] },
 };
 const Music = { cur: null, step: 0, next: 0, gain: null };
 function setMusic(name) {
@@ -1312,7 +1477,117 @@ function drawSpellIcon(id, x, y, s = 1) {
       ctx.lineWidth = 7; ctx.strokeStyle = OUT; ctx.stroke(); ctx.lineWidth = 4; ctx.strokeStyle = '#ffd84d'; ctx.stroke();
       break;
     case 'whale': drawWhale(0, 6, 0.2, 0); break;
+    // ---------- 第九、十章 ----------
+    case 'kcall': ctx.save(); ctx.translate(-2, 21); ctx.scale(0.27, 0.27); drawTentacle({ age: T, swing: 0 }); ctx.restore(); break;
+    case 'prism':
+      for (const [c, a] of [['#ff6a6a', -0.55], ['#ffd84d', 0], ['#62a8ff', 0.55]]) {
+        ctx.strokeStyle = c; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(0, 2); ctx.lineTo(Math.cos(a) * 20, 2 + Math.sin(a) * 20); ctx.stroke();
+        circ(Math.cos(a) * 20, 2 + Math.sin(a) * 20, 4.5); fillStroke(c, 2);
+      }
+      ctx.beginPath(); ctx.moveTo(-8, -18); ctx.lineTo(4, 14); ctx.lineTo(-22, 14); ctx.closePath(); fillStroke('rgba(235,248,255,.95)', 3);
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-9, -10); ctx.lineTo(-15, 8); ctx.stroke();
+      break;
+    case 'hourglass':
+      ctx.beginPath(); ctx.moveTo(-11, -17); ctx.lineTo(11, -17); ctx.lineTo(2, 0); ctx.lineTo(11, 17); ctx.lineTo(-11, 17); ctx.lineTo(-2, 0); ctx.closePath();
+      fillStroke('rgba(235,248,255,.95)', 3);
+      ctx.fillStyle = '#ffc56b'; ctx.beginPath(); ctx.moveTo(-6, -10); ctx.lineTo(6, -10); ctx.lineTo(0, -2); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-9, 16); ctx.quadraticCurveTo(0, 4, 9, 16); ctx.closePath(); ctx.fill();
+      rrect(-16, -23, 32, 7, 3); fillStroke('#a8703f', 2.5); rrect(-16, 16, 32, 7, 3); fillStroke('#a8703f', 2.5);
+      break;
+    case 'mecha': drawMecha(0, 22, 0.23, 0, T); break;
+    case 'bell':
+      ctx.beginPath(); ctx.moveTo(-18, 12); ctx.quadraticCurveTo(-14, 8, -13, -4); ctx.quadraticCurveTo(-12, -20, 0, -20); ctx.quadraticCurveTo(12, -20, 13, -4); ctx.quadraticCurveTo(14, 8, 18, 12); ctx.closePath();
+      fillStroke('#ffd84d', 3);
+      ctx.strokeStyle = '#c98a00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-14, 6); ctx.lineTo(14, 6); ctx.stroke();
+      circ(0, 15, 4.5); fillStroke('#c98a00', 2);
+      drawStar(0, -24, 5, '#fff6c0', OUT, 1.5);
+      break;
+    case 'gear':
+      drawGear(0, 0, 19, 10, '#e0c89a', T * 0.8);
+      ctx.strokeStyle = OUT; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -6); ctx.moveTo(0, 0); ctx.lineTo(5, 2); ctx.stroke();
+      break;
+    case 'dream':
+      circ(0, 0, 19); fillStroke('rgba(220,205,255,.9)', 3);
+      ctx.fillStyle = '#fff'; ell(-8, -9, 5, 3); ctx.fill();
+      txt('Zz', 3, 4, 17, '#7a4fe0');
+      break;
+    case 'river':
+      for (const [sx, sy, r] of [[-12, -12, 6], [0, 2, 7], [12, 14, 6]]) {
+        ctx.strokeStyle = 'rgba(143,216,255,.9)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sx + 10, sy - 12); ctx.lineTo(sx, sy); ctx.stroke();
+        drawStar(sx, sy, r, '#d9f4ff', OUT, 2);
+      }
+      break;
+    case 'angel': drawAngel(0, 8, 0.36, T); break;
+    case 'miracle':
+      drawGlow(0, 0, 26, '#ffd84d', 0.8);
+      ctx.beginPath(); ctx.moveTo(-18, 12); ctx.quadraticCurveTo(-8, -10, 14, -22); ctx.quadraticCurveTo(6, -4, 18, 12); ctx.closePath(); fillStroke('#7a4fe0', 3);
+      ell(0, 13, 22, 6); fillStroke('#6a3fd0', 3);
+      drawStar(14, -22, 8, '#ffd84d', OUT, 2.5); drawStar(-16, -14, 4, '#fff', OUT, 1); drawStar(-2, -4, 3.5, '#fff6c0', OUT, 0);
+      break;
   }
+  ctx.restore();
+}
+// 齒輪（魔法圖示、背景、敵人共用）
+function drawGear(x, y, r, n, fill, rot = 0, c = ctx, lw = 3) {
+  c.beginPath();
+  for (let i = 0; i < n; i++) {
+    const a = rot + i * Math.PI * 2 / n, w = Math.PI / n * 0.55;
+    c.lineTo(x + Math.cos(a - w * 1.25) * r * 0.8, y + Math.sin(a - w * 1.25) * r * 0.8);
+    c.lineTo(x + Math.cos(a - w * 0.7) * r, y + Math.sin(a - w * 0.7) * r);
+    c.lineTo(x + Math.cos(a + w * 0.7) * r, y + Math.sin(a + w * 0.7) * r);
+    c.lineTo(x + Math.cos(a + w * 1.25) * r * 0.8, y + Math.sin(a + w * 1.25) * r * 0.8);
+  }
+  c.closePath();
+  if (lw > 0) fillStroke(fill, lw, OUT, c); else { c.fillStyle = fill; c.fill(); }
+  circ(x, y, r * 0.3, c);
+  if (lw > 0) fillStroke('#fff6e8', Math.max(1.5, lw - 1), OUT, c); else { c.fillStyle = 'rgba(0,0,0,.25)'; c.fill(); }
+}
+// 機械魔像（原點在腳底，面向右）swing：揮拳動畫 0～1
+function drawMecha(x, y, s, swing, t) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.save(); ctx.translate(-44, -112); ctx.rotate(0.35); rrect(-10, 0, 20, 52, 9); fillStroke('#c08850', 4); circ(0, 58, 14); fillStroke('#a8703f', 4); ctx.restore();
+  rrect(-34, -42, 26, 42, 8); fillStroke('#a8703f', 4); rrect(8, -42, 26, 42, 8); fillStroke('#a8703f', 4);
+  rrect(-46, -132, 92, 94, 24); fillStroke('#d9a066', 4);
+  drawGear(0, -86, 22, 8, '#ffd27a', t * 2);
+  for (const [bx, by] of [[-34, -120], [34, -120], [-34, -50], [34, -50]]) { circ(bx, by, 3.5); ctx.fillStyle = '#8a5a32'; ctx.fill(); }
+  rrect(-30, -178, 60, 48, 16); fillStroke('#d9a066', 4);
+  rrect(-18, -164, 44, 18, 9); fillStroke('#2a3a5a', 3);
+  drawGlow(10, -155, 20, '#7af0ff', 0.6);
+  ctx.fillStyle = '#7af0ff'; circ(0, -155, 4); ctx.fill(); circ(16, -155, 4); ctx.fill();
+  ctx.strokeStyle = OUT; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(0, -178); ctx.lineTo(0, -196); ctx.stroke();
+  circ(0, -200, 6); fillStroke(Math.sin(t * 8) > 0 ? '#ff6a6a' : '#ffd84d', 3);
+  ctx.save(); ctx.translate(40, -112); ctx.rotate(-0.35 - swing * 1.3);
+  rrect(-10, 0, 22, 54, 9); fillStroke('#c08850', 4); circ(1, 62, 17); fillStroke('#a8703f', 4);
+  ctx.restore();
+  ctx.restore();
+}
+// 守護天使（原點在身體中間）
+function drawAngel(x, y, s, t) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  drawGlow(0, -10, 80, '#fff3a8', 0.6);
+  const f = Math.sin(t * 6) * 0.25;
+  for (const sd of [-1, 1]) {
+    ctx.save(); ctx.scale(sd, 1); ctx.translate(6, -6); ctx.rotate(-f);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(30, -50, 58, -26); ctx.quadraticCurveTo(52, -12, 42, -10); ctx.quadraticCurveTo(48, 2, 34, 6); ctx.quadraticCurveTo(22, 10, 0, 6); ctx.closePath();
+    fillStroke('#ffffff', 3);
+    ctx.strokeStyle = '#e6dcf5'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(14, -6); ctx.lineTo(40, -22); ctx.moveTo(14, 0); ctx.lineTo(36, -6); ctx.stroke();
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.moveTo(-20, 32); ctx.quadraticCurveTo(-16, -6, 0, -10); ctx.quadraticCurveTo(16, -6, 20, 32); ctx.quadraticCurveTo(0, 38, -20, 32); ctx.closePath(); fillStroke('#fff8e0', 3);
+  circ(0, -26, 17); fillStroke('#ffe3c8', 3);
+  ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(0, -28, 17, Math.PI * 1.05, Math.PI * 1.95); ctx.lineTo(10, -34); ctx.quadraticCurveTo(0, -30, -10, -34); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = OUT; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.arc(-6, -24, 3, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.beginPath(); ctx.arc(6, -24, 3, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,140,170,.5)'; ell(-11, -18, 4, 2.5); ctx.fill(); ell(11, -18, 4, 2.5); ctx.fill();
+  ell(0, -52, 17, 5); ctx.lineWidth = 5; ctx.strokeStyle = '#ffd84d'; ctx.stroke();
+  ctx.restore();
+}
+// 師父的白鬍子（畫在師父立繪上）
+function drawBeard(s) {
+  ctx.save(); ctx.scale(s, s); ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(-22, -70); ctx.quadraticCurveTo(-20, -40, 2, -32); ctx.quadraticCurveTo(24, -40, 26, -70);
+  ctx.quadraticCurveTo(14, -60, 2, -63); ctx.quadraticCurveTo(-10, -60, -22, -70); ctx.closePath();
+  fillStroke('#f4f4fa', 3);
   ctx.restore();
 }
 function drawHeart(x, y, r, color) {
@@ -1437,13 +1712,15 @@ function paintBg(g, ch) {
     { sky: ['#5a2a7a', '#ffb8d8'], mtn: '#c58ad0', cap: '#ffffff', hill1: '#e8b0dc', hill2: '#d89ad0', grass: '#f6cfe6', path: '#fff0f6', edge: '#e8b8d4', low: '#e2a8d0', stone: '#d890c0' },
     { sky: ['#1d3838', '#a8d8b8'], mtn: '#2f5a4a', cap: '#ffffff', hill1: '#3f7a5a', hill2: '#4f8a64', grass: '#4a8a52', path: '#8a6a4a', edge: '#6a5038', low: '#3a6a44', stone: '#a08060' },
     { sky: ['#4ab8ff', '#e0fbff'], mtn: '#ffffff', cap: '#ffffff', hill1: '#f6e2b0', hill2: '#f0d69a', grass: '#f6e0a8', path: '#fff1d2', edge: '#e8c88a', low: '#e8cf98', stone: '#f0b8a8' },
+    { sky: ['#4a3a5a', '#f2d2a0'], mtn: '#6a5a6a', cap: '#ffffff', hill1: '#b8987a', hill2: '#a88a6a', grass: '#c0a47c', path: '#ead2a2', edge: '#c0a070', low: '#a88c66', stone: '#8a6a4a' },
+    { sky: ['#2a1f5a', '#ffb8e0'], mtn: '#8a70c8', cap: '#ffffff', hill1: '#c9a8f0', hill2: '#b898e8', grass: '#d8c0f8', path: '#fff0fa', edge: '#e8c8f0', low: '#c8a8e8', stone: '#ffd0ec' },
   ][ch];
   const sky = g.createLinearGradient(0, 0, 0, GROUND);
   sky.addColorStop(0, P.sky[0]); sky.addColorStop(1, P.sky[1]);
   g.fillStyle = sky; g.fillRect(0, 0, W, H);
   // 太陽／月亮
   const sun = g.createRadialGradient(1110, 110, 10, 1110, 110, 120);
-  const sc = ch === 2 ? '255,120,90' : ch === 4 ? '170,120,255' : ch === 5 ? '255,220,170' : ch === 6 ? '220,255,225' : '255,244,170';
+  const sc = ch === 2 ? '255,120,90' : ch === 4 ? '170,120,255' : ch === 5 ? '255,220,170' : ch === 6 ? '220,255,225' : ch === 8 ? '255,210,140' : ch === 9 ? '255,240,210' : '255,244,170';
   sun.addColorStop(0, `rgba(${sc},1)`); sun.addColorStop(0.35, `rgba(${sc},.7)`); sun.addColorStop(1, `rgba(${sc},0)`);
   g.fillStyle = sun; g.fillRect(980, 0, 260, 240);
   if (ch === 3) {
@@ -1514,6 +1791,38 @@ function paintBg(g, ch) {
       g.strokeStyle = c; g.lineWidth = 9; g.lineCap = 'round';
       g.beginPath(); g.moveTo(x, 578); g.lineTo(x, 522); g.moveTo(x, 548); g.lineTo(x - 18, 524); g.lineTo(x - 22, 504); g.moveTo(x, 538); g.lineTo(x + 20, 512); g.lineTo(x + 18, 494); g.stroke();
     }
+  } else if (ch === 8) {
+    // 發條鐘塔：遠方的大齒輪、矮房子、高聳的鐘塔
+    for (const [x, y, r, n, rot] of [[300, 300, 90, 14, 0.2], [460, 220, 60, 10, 0.5], [1180, 330, 110, 16, 0.1], [1020, 210, 50, 9, 0.7]]) drawGear(x, y, r, n, 'rgba(120,90,80,.35)', rot, g, 0);
+    for (const [x, w, h] of [[360, 90, 120], [470, 70, 160], [1000, 80, 140], [1110, 100, 110], [1220, 80, 170]]) {
+      g.fillStyle = '#7a5e60'; g.fillRect(x - w / 2, 560 - h, w, h);
+      g.fillStyle = '#5e4650'; g.beginPath(); g.moveTo(x - w / 2 - 8, 560 - h); g.lineTo(x, 560 - h - 40); g.lineTo(x + w / 2 + 8, 560 - h); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,214,140,.8)'; for (let k = 0; k < 2; k++) g.fillRect(x - w / 4 + k * w / 4 - 6, 560 - h + 30, 12, 16);
+    }
+    g.fillStyle = '#6a4e58'; g.fillRect(680, 150, 150, 410);
+    g.fillStyle = '#5a404a'; g.fillRect(668, 140, 174, 22); g.fillRect(668, 300, 174, 14);
+    g.beginPath(); g.moveTo(660, 140); g.lineTo(755, 40); g.lineTo(850, 140); g.closePath(); g.fill();
+    g.fillStyle = '#ffd84d'; circ(755, 34, 8, g); g.fill();
+    g.fillStyle = '#f6e6c8'; circ(755, 225, 58, g); g.fill();
+    g.strokeStyle = '#5a404a'; g.lineWidth = 6; circ(755, 225, 58, g); g.stroke();
+    g.lineWidth = 3; for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; g.beginPath(); g.moveTo(755 + Math.cos(a) * 46, 225 + Math.sin(a) * 46); g.lineTo(755 + Math.cos(a) * 54, 225 + Math.sin(a) * 54); g.stroke(); }
+    g.lineWidth = 6; g.lineCap = 'round'; g.beginPath(); g.moveTo(755, 225); g.lineTo(755, 186); g.moveTo(755, 225); g.lineTo(782, 238); g.stroke();
+    g.fillStyle = 'rgba(255,214,140,.75)'; for (let k = 0; k < 3; k++) g.fillRect(720 + k * 28, 360, 14, 34);
+  } else if (ch === 9) {
+    // 夢之彼岸：滿天星星、彎彎的月亮、漂浮的小島
+    for (let i = 0; i < 110; i++) {
+      g.fillStyle = `rgba(255,255,255,${0.3 + (i % 5) * 0.14})`;
+      circ((i * 197) % W, (i * 89) % 420, 0.8 + (i % 3) * 0.7, g); g.fill();
+    }
+    g.fillStyle = '#fff6d8'; circ(1110, 110, 50, g); g.fill();
+    g.fillStyle = '#4a3a7a'; circ(1132, 96, 44, g); g.fill();
+    for (const [x, y, s, c] of [[330, 300, 1, '#ffd0ec'], [620, 230, 0.7, '#d0c0ff'], [960, 330, 1.1, '#c0e8ff']]) {
+      g.fillStyle = '#b89ae0'; g.beginPath(); g.moveTo(x - 70 * s, y); g.lineTo(x + 70 * s, y); g.lineTo(x + 20 * s, y + 50 * s); g.lineTo(x, y + 80 * s); g.lineTo(x - 25 * s, y + 46 * s); g.closePath(); g.fill();
+      g.fillStyle = c; ell(x, y, 74 * s, 14 * s, g); g.fill();
+      g.fillStyle = '#fff6fa'; g.fillRect(x - 14 * s, y - 34 * s, 28 * s, 26 * s);
+      g.fillStyle = '#ff9fd0'; g.beginPath(); g.moveTo(x - 20 * s, y - 34 * s); g.lineTo(x, y - 54 * s); g.lineTo(x + 20 * s, y - 34 * s); g.closePath(); g.fill();
+      g.fillStyle = '#ffe46b'; g.fillRect(x - 5 * s, y - 26 * s, 10 * s, 10 * s);
+    }
   } else {
   // 遠山
   const peaks = [[330, 360], [440, 450], [560, 330], [700, 470], [820, 380], [960, 480], [1080, 350], [1280, 470]];
@@ -1555,6 +1864,16 @@ function paintBg(g, ch) {
       g.fillStyle = '#e8f0d8'; g.fillRect(x - 3, y - 4, 6, 14);
       g.fillStyle = 'rgba(160,255,200,.35)'; circ(x, y - 8, 16, g); g.fill();
       g.fillStyle = '#7af0b0'; g.beginPath(); g.arc(x, y - 4, 11, Math.PI, 0); g.closePath(); g.fill();
+    } else if (ch === 8) {
+      // 路燈
+      g.fillStyle = '#4a3a4a'; g.fillRect(x - 2, y - 30, 4, 44);
+      g.fillStyle = 'rgba(255,214,140,.45)'; circ(x, y - 34, 14, g); g.fill();
+      g.fillStyle = '#ffd27a'; circ(x, y - 34, 6, g); g.fill();
+    } else if (ch === 9) {
+      // 會發光的月亮花
+      g.strokeStyle = '#8a70c8'; g.lineWidth = 3; g.beginPath(); g.moveTo(x, y + 12); g.quadraticCurveTo(x + 6, y, x, y - 14); g.stroke();
+      g.fillStyle = 'rgba(255,240,200,.4)'; circ(x, y - 18, 14, g); g.fill();
+      g.fillStyle = '#fff0b8'; circ(x, y - 18, 7, g); g.fill();
     } else if (ch === 7) {
       // 棕櫚樹
       g.strokeStyle = '#a8703f'; g.lineWidth = 5; g.lineCap = 'round';
@@ -1592,6 +1911,12 @@ function paintBg(g, ch) {
       g.strokeStyle = '#2f6a3c'; g.lineWidth = 3; g.lineCap = 'round';
       g.beginPath(); g.moveTo(x - 5, y); g.lineTo(x - 8, y - 9); g.moveTo(x, y); g.lineTo(x, y - 12); g.moveTo(x + 5, y); g.lineTo(x + 8, y - 9); g.stroke();
       if (i % 4 === 1) { g.fillStyle = '#7af0b0'; g.beginPath(); g.arc(x + 14, y, 5, Math.PI, 0); g.closePath(); g.fill(); }
+    } else if (ch === 8) {
+      if (i % 3 === 0) drawGear(x, y, 7, 7, '#8a6a4a', i, g, 0);
+      else if (i % 4 === 1) { g.fillStyle = '#9a8a8a'; g.fillRect(x - 6, y - 2, 12, 4); }
+    } else if (ch === 9) {
+      if (i % 3 === 0) { g.fillStyle = '#fff6c0'; circ(x, y, 3, g); g.fill(); }
+      else if (i % 4 === 1) { g.fillStyle = '#ffb8e0'; ell(x, y, 8, 4, g); g.fill(); }
     } else if (ch === 7) {
       if (i % 3 === 0) { g.fillStyle = '#ffd0c0'; g.beginPath(); g.arc(x, y, 7, Math.PI, 0); g.closePath(); g.fill(); }
       else if (i % 5 === 1) {
@@ -1611,7 +1936,7 @@ function drawBg(ch = 0) {
 const clouds = [{ x: 200, y: 90, s: 1.1, v: 8 }, { x: 620, y: 60, s: 0.8, v: 12 }, { x: 980, y: 150, s: 1.3, v: 6 }, { x: 1250, y: 80, s: 0.9, v: 10 }];
 function drawClouds(ch = 0) {
   if (ch === 4) return;
-  ctx.fillStyle = ch === 2 ? 'rgba(90,60,90,.75)' : ch === 5 ? 'rgba(255,225,245,.7)' : ch === 6 ? 'rgba(210,240,225,.45)' : 'rgba(255,255,255,.92)';
+  ctx.fillStyle = ch === 2 ? 'rgba(90,60,90,.75)' : ch === 5 ? 'rgba(255,225,245,.7)' : ch === 6 ? 'rgba(210,240,225,.45)' : ch === 8 ? 'rgba(255,236,210,.6)' : ch === 9 ? 'rgba(255,220,245,.55)' : 'rgba(255,255,255,.92)';
   for (const c of clouds) {
     const x = ((c.x + T * c.v) % (W + 300)) - 150;
     ctx.save(); ctx.translate(x, c.y); ctx.scale(c.s, c.s);
@@ -1620,7 +1945,29 @@ function drawClouds(ch = 0) {
   }
 }
 function drawAmbient(ch) {
-  if (ch === 6) {
+  if (ch === 8) {
+    // 轉動的齒輪剪影與飄落的銅色火花
+    ctx.globalAlpha = 0.28;
+    drawGear(40, 690, 70, 12, '#5a4040', T * 0.4, ctx, 0); drawGear(1240, 690, 90, 14, '#5a4040', -T * 0.3, ctx, 0);
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 20; i++) {
+      const x = (i * 131 + Math.sin(T + i) * 20) % W, y = (i * 61 + T * 40 * (1 + i % 2)) % H;
+      ctx.globalAlpha = 0.6; ctx.fillStyle = i % 2 ? '#ffd27a' : '#e8a860'; circ(x, y, 1.8 + i % 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  } else if (ch === 9) {
+    // 飄上去的 Z 泡泡和閃爍的星星
+    for (let i = 0; i < 14; i++) {
+      const y = H - ((i * 89 + T * 24 * (1 + i % 3)) % H), x = (i * 157 + Math.sin(T * 1.2 + i) * 20) % W;
+      ctx.globalAlpha = 0.55; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; circ(x, y, 7 + i % 4); ctx.stroke();
+      txt('z', x, y + 1, 10 + i % 4, '#ffe0f4');
+    }
+    for (let i = 0; i < 18; i++) {
+      ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(T * (1 + i % 3) + i));
+      drawStar((i * 173 + 60) % W, (i * 97) % 380, 2.5 + i % 3, i % 3 ? '#ffffff' : '#ffe46b', OUT, 0);
+    }
+    ctx.globalAlpha = 1;
+  } else if (ch === 6) {
     // 飄來飄去的螢火
     for (let i = 0; i < 22; i++) {
       const x = (i * 157 + Math.sin(T * 0.7 + i) * 60 + T * 12) % W, y = 120 + (i * 83) % 460 + Math.cos(T * 0.9 + i * 2) * 26;
@@ -1755,6 +2102,7 @@ function staffTip() {
   return { x: WIZ.x + 16 + Math.sin(STAFF_CAST) * 72, y: WIZ.y - 34 - Math.cos(STAFF_CAST) * 72 };
 }
 const WIZ_PAL = { boot: '#6b4a3a', robe: '#4f7cf0', trim: '#ffd84d', hair: '#8a5a3c', skin: '#ffe3c8', eye: OUT, blush: 'rgba(255,120,150,.55)', hat: '#7a4fe0', brim: '#6a3fd0', staff: '#fdf6ff', orb: '#ff8fc8' };
+const MASTER_PAL = { boot: '#5a3a2a', robe: '#2f4fa8', trim: '#ffd84d', hair: '#f0f0f8', skin: '#ffe0c4', eye: OUT, blush: 'rgba(255,120,150,.4)', hat: '#3a3a9a', brim: '#2a2a80', staff: '#c9a06a', orb: '#7af0ff' };
 const SHADOW_PAL = { boot: '#1a1228', robe: '#2b1f48', trim: '#8a5ae0', hair: '#14102a', skin: '#4a3a6a', eye: '#ff4a6a', blush: 'rgba(160,60,200,.5)', hat: '#1e1438', brim: '#14102a', staff: '#3a2a5a', orb: '#8a3cff' };
 function drawWizard(x, y, s, t, cast, glowColor, pal = WIZ_PAL) {
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
@@ -2451,14 +2799,247 @@ function drawKraken(e) {
   ctx.restore();
 }
 
+// ---------- 第九章 ----------
+function drawGearSpider(e) {
+  const step = e.x > e.stopX ? e.walk * 0.25 : 0;
+  ctx.strokeStyle = OUT; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+  for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+    const ph = Math.sin(step + k * 2 + (sd > 0 ? 1 : 0)) * 5;
+    ctx.beginPath(); ctx.moveTo(sd * 8, -24); ctx.lineTo(sd * (18 + k * 7), -38 + ph); ctx.lineTo(sd * (24 + k * 8), 0); ctx.stroke();
+  }
+  drawGear(0, -26, 22, 8, '#c9a06a', -e.walk * 0.05);
+  ell(-2, -26, 12, 10); fillStroke('#8a6a4a', 3);
+  drawGlow(-10, -30, 10, '#ff6a6a', 0.6);
+  ctx.fillStyle = '#ff5a5a'; circ(-12, -30, 3.5); ctx.fill(); circ(-4, -32, 3); ctx.fill();
+}
+function drawWindup(e) {
+  const sw = swingOf(e), down = e.rew > 0 ? 6 : 0;
+  ctx.save(); ctx.translate(0, down);
+  ctx.save(); ctx.translate(18, -46); ctx.rotate(e.age * (e.rew > 0 ? 16 : 3));
+  ctx.strokeStyle = OUT; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-4, 0); ctx.lineTo(10, 0); ctx.stroke();
+  ell(14, -6, 5, 4.5); fillStroke('#ffd84d', 2.5); ell(14, 6, 5, 4.5); fillStroke('#ffd84d', 2.5);
+  ctx.restore();
+  rrect(-15, -60, 30, 44, 8); fillStroke('#e8484f', 3.5);
+  ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-15, -40); ctx.lineTo(15, -40); ctx.stroke();
+  ctx.fillStyle = '#ffd84d'; circ(0, -52, 2.5); ctx.fill(); circ(0, -30, 2.5); ctx.fill();
+  head(0, -74, 14, '#ffe0c8');
+  if (e.rew > 0) { ctx.strokeStyle = OUT; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(-9, -74); ctx.lineTo(-3, -74); ctx.moveTo(1, -74); ctx.lineTo(7, -74); ctx.stroke(); }
+  else { ctx.fillStyle = OUT; circ(-6, -74, 2.2); ctx.fill(); circ(3, -74, 2.2); ctx.fill(); }
+  ctx.fillStyle = 'rgba(255,90,120,.6)'; circ(-9, -68, 3); ctx.fill(); circ(7, -68, 3); ctx.fill();
+  rrect(-12, -106, 24, 24, 5); fillStroke('#2a3a8a', 3);
+  ctx.fillStyle = '#ffd84d'; ctx.fillRect(-12, -86, 24, 4);
+  circ(0, -110, 5); fillStroke('#ff6a6a', 2);
+  ctx.save(); ctx.translate(-14, -52); ctx.rotate(-0.3 - sw * 1.2);
+  rrect(-3, -34, 6, 38, 3); fillStroke('#c4cbe0', 2.5);
+  ctx.restore();
+  ctx.restore();
+}
+function drawCannonbot(e) {
+  const sw = swingOf(e, 0.3);
+  rrect(-30, -20, 60, 20, 10); fillStroke('#6a6a8a', 3.5);
+  for (let i = 0; i < 4; i++) { circ(-21 + i * 14, -10, 5); fillStroke('#9a9ab8', 2); }
+  rrect(-24, -66, 48, 48, 10); fillStroke('#a8b8d0', 3.5);
+  rrect(-18, -58, 26, 16, 6); fillStroke('#3a2a4a', 2.5);
+  drawGlow(-9, -50, 12, '#ff6a6a', 0.7);
+  ctx.fillStyle = '#ff6a6a'; circ(-9, -50, 4); ctx.fill();
+  ctx.strokeStyle = OUT; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(14, -66); ctx.lineTo(18, -84); ctx.stroke();
+  circ(18, -88, 4); fillStroke(Math.sin(e.age * 6) > 0 ? '#7be35a' : '#ffd84d', 2);
+  ctx.save(); ctx.translate(-2, -70); ctx.rotate(-0.45 + sw * 0.3);
+  rrect(-46, -10, 50, 20, 8); fillStroke('#5a5a7a', 3.5);
+  ell(-46, 0, 5, 10); ctx.fillStyle = OUT; ctx.fill();
+  ctx.restore();
+  if (e.swing > 0) { ctx.globalAlpha = e.swing / 0.3; ctx.fillStyle = '#c9bfd3'; circ(-52, -100, 10); ctx.fill(); circ(-62, -110, 7); ctx.fill(); ctx.globalAlpha = 1; }
+}
+function drawClockMage(e) {
+  const sw = swingOf(e, 0.6), bob = Math.sin(e.age * 2) * 2;
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.quadraticCurveTo(-20, -40, -11, -58); ctx.lineTo(11, -58); ctx.quadraticCurveTo(20, -40, 22, 0); ctx.closePath(); fillStroke('#a8763a', 4);
+  circ(0, -34, 12); fillStroke('#fff6e0', 3);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -34); ctx.lineTo(Math.cos(e.age * 2) * 8, -34 + Math.sin(e.age * 2) * 8); ctx.moveTo(0, -34); ctx.lineTo(Math.cos(e.age * 0.3) * 5, -34 + Math.sin(e.age * 0.3) * 5); ctx.stroke();
+  head(0, -72 + bob, 15, '#ffe0c8');
+  ctx.fillStyle = OUT; circ(-6, -73 + bob, 2.2); ctx.fill(); circ(3, -73 + bob, 2.2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-18, -80 + bob); ctx.lineTo(4, -118 + bob); ctx.lineTo(18, -80 + bob); ctx.closePath(); fillStroke('#5a3a8a', 3);
+  drawGear(2, -96 + bob, 6, 6, '#ffd84d', e.age, ctx, 2);
+  ctx.save(); ctx.translate(-20, -16); ctx.rotate(-0.15 - sw * 0.4);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -80); ctx.stroke();
+  ctx.translate(0, -92); ctx.rotate(e.swing > 0 ? sw * 3 : 0);
+  ctx.beginPath(); ctx.moveTo(-8, -12); ctx.lineTo(8, -12); ctx.lineTo(1, 0); ctx.lineTo(8, 12); ctx.lineTo(-8, 12); ctx.lineTo(-1, 0); ctx.closePath(); fillStroke('rgba(235,248,255,.95)', 2.5);
+  ctx.fillStyle = '#ffc56b'; ctx.beginPath(); ctx.moveTo(-6, 11); ctx.lineTo(6, 11); ctx.lineTo(0, 4); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  if (e.swing > 0) { ctx.globalAlpha = Math.min(1, e.swing / 0.3) * 0.7; ctx.strokeStyle = '#e0c89a'; ctx.lineWidth = 3; circ(-20, -108, 26 + (0.6 - e.swing) * 30); ctx.stroke(); ctx.globalAlpha = 1; }
+}
+// 發條皇帝（原點在腳底，面向左）
+function drawChrono(e) {
+  const t = e.age, sw = swingOf(e, 0.4), calm = e.calm, back = e.rwFx > 0;
+  ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (!calm) drawGlow(0, -150, 180, back ? '#7af0ff' : '#ffd27a', 0.28 + Math.sin(t * 2) * 0.08);
+  drawGear(-82, -196, 38, 11, '#c9a06a', t * 0.8); drawGear(80, -176, 30, 9, '#b08a5a', -t);
+  for (const x of [-34, 34]) { rrect(x - 12, -62, 24, 62, 8); fillStroke('#8a6a4a', 4); ell(x, -3, 24, 10); fillStroke('#5a4030', 4); }
+  ctx.save(); ctx.translate(0, -84); ctx.rotate(Math.sin(t * 2.4) * 0.35);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 62); ctx.stroke();
+  circ(0, 72, 16); fillStroke('#ffd84d', 4);
+  ctx.restore();
+  circ(0, -150, 86); fillStroke('#d9b070', 5);
+  circ(0, -150, 70); fillStroke('#fff6e0', 4);
+  ctx.strokeStyle = '#8a6a4a'; ctx.lineWidth = 4;
+  for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 58, -150 + Math.sin(a) * 58); ctx.lineTo(Math.cos(a) * 66, -150 + Math.sin(a) * 66); ctx.stroke(); }
+  const ha = (back ? -t * 8 : t * 0.5), ma = (back ? -t * 14 : t * 2);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(0, -150); ctx.lineTo(Math.cos(ha) * 32, -150 + Math.sin(ha) * 32); ctx.stroke();
+  ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(0, -150); ctx.lineTo(Math.cos(ma) * 50, -150 + Math.sin(ma) * 50); ctx.stroke();
+  circ(0, -150, 7); fillStroke('#ffd84d', 3);
+  if (calm) {
+    ctx.fillStyle = OUT; ell(-26, -170, 6, 8); ctx.fill(); ell(26, -170, 6, 8); ctx.fill();
+    ctx.fillStyle = 'rgba(255,140,170,.5)'; ell(-40, -150, 9, 5); ctx.fill(); ell(40, -150, 9, 5); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -128, 12, 0.15 * Math.PI, 0.85 * Math.PI); ctx.lineWidth = 4; ctx.strokeStyle = OUT; ctx.stroke();
+  } else {
+    drawGlow(-26, -170, 16, '#ffd84d', 0.8); drawGlow(26, -170, 16, '#ffd84d', 0.8);
+    ctx.fillStyle = '#ffd84d'; ell(-26, -170, 8, 5); ctx.fill(); ell(26, -170, 8, 5); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-42, -188); ctx.lineTo(-14, -178); ctx.moveTo(42, -188); ctx.lineTo(14, -178); ctx.lineWidth = 5; ctx.strokeStyle = OUT; ctx.stroke();
+    rrect(-16, -132, 32, 9, 4); ctx.fillStyle = OUT; ctx.fill();
+  }
+  ctx.save(); ctx.translate(-82, -150); ctx.rotate(0.35 - sw * 1.1);
+  rrect(-10, 0, 20, 62, 9); fillStroke('#b08a5a', 4);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(0, 60); ctx.lineTo(0, 140); ctx.stroke();
+  ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-12, 132); ctx.lineTo(0, 156); ctx.lineTo(12, 132); ctx.closePath(); fillStroke('#ffd84d', 3);
+  circ(0, 64, 12); fillStroke('#c9a06a', 3.5);
+  ctx.restore();
+  ctx.save(); ctx.translate(82, -150); ctx.rotate(-0.3); rrect(-10, 0, 20, 58, 9); fillStroke('#b08a5a', 4); circ(0, 62, 12); fillStroke('#c9a06a', 3.5); ctx.restore();
+  ctx.beginPath(); ctx.moveTo(-48, -226); ctx.lineTo(-48, -262); ctx.lineTo(-24, -244); ctx.lineTo(0, -274); ctx.lineTo(24, -244); ctx.lineTo(48, -262); ctx.lineTo(48, -226); ctx.closePath();
+  fillStroke('#ffd84d', 4);
+  for (const x of [-24, 0, 24]) { circ(x, -236, 5); fillStroke(x ? '#7af0ff' : '#ff6a8a', 2); }
+  ctx.restore();
+}
+// ---------- 第十章 ----------
+function drawSheep(e) {
+  const sw = swingOf(e, 0.6), bob = Math.sin(e.age * 2.5) * 1.5, step = e.x > e.stopX ? Math.sin(e.walk * 0.15) * 3 : 0;
+  ctx.fillStyle = OUT;
+  for (const [x, ph] of [[-16, 1], [-6, -1], [8, 1], [18, -1]]) { rrect(x - 3, -18 + ph * step * 0.5, 6, 18, 3); ctx.fill(); }
+  for (const [x, y, r] of [[-16, -34, 14], [0, -40, 16], [16, -34, 14], [-8, -24, 14], [10, -24, 14], [20, -44, 11], [-4, -54, 13]]) { circ(x, y + bob, r); fillStroke('#ffffff', 3); }
+  ell(-24, -46 + bob, 12, 14); fillStroke('#6a5a7a', 3);
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.arc(-29, -48 + bob, 3.5, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.arc(-19, -48 + bob, 3.5, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,150,190,.7)'; circ(-32, -40 + bob, 3); ctx.fill(); circ(-15, -40 + bob, 3); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-36, -56 + bob); ctx.quadraticCurveTo(-26, -82 + bob, -4, -86 + bob); ctx.quadraticCurveTo(-14, -70 + bob, -12, -58 + bob); ctx.closePath(); fillStroke('#7a8cff', 2.5);
+  circ(-4, -86 + bob, 5); fillStroke('#ffffff', 2);
+  if (e.swing > 0) for (let i = 0; i < 3; i++) { ctx.globalAlpha = Math.min(1, e.swing / 0.3); txt('z', -40 - i * 10, -90 - i * 14 - sw * 10, 14 + i * 4, '#c9b8ff', 'center', 3); }
+  ctx.globalAlpha = 1;
+}
+function drawMirrorKnight(e) {
+  const sw = swingOf(e);
+  rrect(-16, -62, 32, 46, 10); fillStroke('#c8c0e8', 3.5);
+  ctx.strokeStyle = '#8a80b8'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(-16, -40); ctx.lineTo(16, -40); ctx.stroke();
+  head(0, -76, 15, '#d8d0f0');
+  rrect(-15, -80, 30, 7, 3); ctx.fillStyle = OUT; ctx.fill();
+  ctx.fillStyle = '#ff7ab8'; circ(-6, -77, 2); ctx.fill(); circ(4, -77, 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0, -92); ctx.quadraticCurveTo(14, -108, 24, -98); ctx.quadraticCurveTo(14, -100, 4, -88); ctx.closePath(); fillStroke('#ff9fd0', 2.5);
+  ctx.save(); ctx.translate(14, -52); ctx.rotate(0.3 + sw * 0.8);
+  rrect(-3, -40, 6, 44, 3); fillStroke('#e8f0ff', 2.5); rrect(-9, 0, 18, 6, 3); fillStroke('#c9b8ff', 2);
+  ctx.restore();
+  const on = e.mref > 0;
+  if (on) drawGlow(-24, -48, 34, '#e8f8ff', 0.7 + Math.sin(e.age * 6) * 0.2);
+  ell(-24, -48, 14, 24); fillStroke(on ? '#eef8ff' : '#9a90b8', 3.5, on ? '#7aa8e0' : OUT);
+  if (on) { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-30, -36); ctx.lineTo(-20, -62); ctx.moveTo(-24, -30); ctx.lineTo(-17, -48); ctx.stroke(); }
+  else { ctx.strokeStyle = '#6a6080'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-30, -60); ctx.lineTo(-22, -48); ctx.lineTo(-28, -38); ctx.stroke(); }
+}
+function drawMoth(e, s = 1) {
+  ctx.save(); ctx.scale(s, s);
+  const f = Math.sin(e.age * 16 + e.id) * 0.35;
+  drawGlow(0, -26, 32, '#b8a0ff', 0.45);
+  for (const sd of [-1, 1]) {
+    ctx.save(); ctx.translate(0, -26); ctx.scale(sd, 1); ctx.rotate(-0.15 + f);
+    ell(15, -8, 17, 12); fillStroke('#6a4ac8', 2.5); ell(12, 9, 11, 8); fillStroke('#8a6ae0', 2.5);
+    circ(17, -9, 4.5); ctx.fillStyle = '#ffe46b'; ctx.fill();
+    ctx.restore();
+  }
+  ell(0, -26, 5, 13); fillStroke('#2a1d40', 2.5);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-2, -38); ctx.quadraticCurveTo(-8, -48, -12, -48); ctx.moveTo(2, -38); ctx.quadraticCurveTo(6, -48, 10, -48); ctx.stroke();
+  ctx.fillStyle = '#ff9fd0'; circ(-3, -32, 1.8); ctx.fill(); circ(3, -32, 1.8); ctx.fill();
+  ctx.restore();
+}
+function drawSleepGiant(e) {
+  const sw = swingOf(e, 0.4), step = e.x > e.stopX ? Math.sin(e.walk * 0.08) * 3 : 0, awake = e.awake;
+  rrect(-32, -34 + step, 24, 34 - step, 8); fillStroke('#7a90d8', 3.5);
+  rrect(8, -34 - step, 24, 34 + step, 8); fillStroke('#7a90d8', 3.5);
+  rrect(-42, -122, 84, 94, 30); fillStroke('#8fa8e8', 4);
+  ctx.strokeStyle = '#c9d8ff'; ctx.lineWidth = 5;
+  for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.moveTo(-30 + k * 20, -116); ctx.lineTo(-30 + k * 20, -34); ctx.stroke(); }
+  ctx.save(); ctx.translate(-40, -104); ctx.rotate(-0.4 - sw * 1.3);
+  rrect(-9, 0, 18, 52, 9); fillStroke('#8fa8e8', 3.5);
+  rrect(-26, 44, 46, 30, 12); fillStroke('#ffffff', 3.5);
+  ctx.restore();
+  rrect(34, -106, 18, 50, 9); fillStroke('#8fa8e8', 3.5);
+  circ(0, -146, 32); fillStroke('#ffd5ad', 4);
+  if (awake) {
+    ctx.fillStyle = '#ff4a5a'; ell(-12, -150, 6, 5); ctx.fill(); ell(12, -150, 6, 5); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-24, -164); ctx.lineTo(-6, -156); ctx.moveTo(24, -164); ctx.lineTo(6, -156); ctx.lineWidth = 4; ctx.strokeStyle = OUT; ctx.stroke();
+    ell(0, -130, 10, 7); ctx.fillStyle = OUT; ctx.fill();
+  } else {
+    ctx.strokeStyle = OUT; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(-12, -150, 6, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.arc(12, -150, 6, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    ell(0, -132, 6, 4 + Math.sin(e.age * 2) * 1.5); ctx.fillStyle = OUT; ctx.fill();
+    ctx.fillStyle = 'rgba(255,140,170,.55)'; ell(-22, -138, 7, 4); ctx.fill(); ell(22, -138, 7, 4); ctx.fill();
+  }
+  ctx.beginPath(); ctx.moveTo(-32, -158); ctx.quadraticCurveTo(-10, -196, 30, -210); ctx.quadraticCurveTo(14, -182, 32, -160); ctx.closePath(); fillStroke('#5a6ac8', 3.5);
+  circ(30, -210, 8); fillStroke('#ffffff', 2.5);
+}
+// 夢魘之王（原點在身體下方，面向左）
+function drawNightmare(e) {
+  const t = e.age, sw = swingOf(e, 0.4);
+  ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  drawGlow(0, -110, 180, '#5a2a9a', 0.45 + Math.sin(t * 2) * 0.1);
+  ctx.beginPath(); ctx.moveTo(-70, -150);
+  ctx.quadraticCurveTo(-96, -80, -80, -20);
+  for (let i = 0; i <= 8; i++) ctx.lineTo(-80 + i * 20, -10 + (i % 2 ? -16 : 0) + Math.sin(t * 4 + i) * 6);
+  ctx.quadraticCurveTo(96, -80, 70, -150); ctx.closePath();
+  fillStroke('#2a1d40', 5);
+  for (const [x, y, r] of [[-40, -60, 5], [20, -90, 6], [44, -40, 4], [-14, -112, 4]]) drawStar(x, y, r, '#c9a0ff', OUT, 0);
+  for (const [hx, hy, ph] of [[-104, -100, 0], [104, -112, 2]]) {
+    const yy = hy + Math.sin(t * 2 + ph) * 10 + (hx < 0 ? sw * 30 : 0);
+    circ(hx, yy, 18); fillStroke('#3a2a5a', 4);
+    ctx.strokeStyle = '#c9a0ff'; ctx.lineWidth = 3;
+    for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(hx + k * 8, yy + 14); ctx.lineTo(hx + k * 10, yy + 28); ctx.stroke(); }
+  }
+  circ(0, -170, 48); fillStroke('#f4ecff', 5);
+  ctx.fillStyle = '#c9b8ff'; ctx.beginPath(); ctx.arc(0, -170, 48, -0.4 * Math.PI, 0.4 * Math.PI); ctx.quadraticCurveTo(26, -170, 0, -218); ctx.closePath(); ctx.fill();
+  drawGlow(-18, -176, 16, '#ff4aa8', 0.8); drawGlow(14, -176, 16, '#ff4aa8', 0.8);
+  ctx.fillStyle = '#ff4aa8';
+  ctx.beginPath(); ctx.moveTo(-30, -182); ctx.lineTo(-8, -176); ctx.lineTo(-26, -170); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(26, -182); ctx.lineTo(4, -176); ctx.lineTo(22, -170); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-22, -150);
+  for (let i = 1; i <= 8; i++) ctx.lineTo(-22 + i * 5.5, -150 + (i % 2 ? 7 : 0) + sw * 6);
+  ctx.lineWidth = 3.5; ctx.strokeStyle = OUT; ctx.stroke();
+  for (let i = 0; i < 5; i++) {
+    const x = -40 + i * 20, hh = i === 2 ? 40 : i % 2 ? 26 : 32;
+    ctx.beginPath(); ctx.moveTo(x - 9, -212); ctx.lineTo(x, -212 - hh); ctx.lineTo(x + 9, -212); ctx.closePath(); fillStroke('#4a2a7a', 3);
+    drawStar(x, -214 - hh, 5, '#ffe46b', OUT, 1.5);
+  }
+  if (e.mirror > 0) {
+    ctx.globalAlpha = 0.35 + Math.sin(t * 20) * 0.1;
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 + t; ctx.lineTo(Math.cos(a) * 130, -120 + Math.sin(a) * 140); }
+    ctx.closePath(); ctx.fillStyle = '#e0d0ff'; ctx.fill();
+    ctx.globalAlpha = 1; ctx.lineWidth = 4; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+  }
+  if (e.vshield > 0) {
+    ctx.globalAlpha = 0.3 + Math.sin(t * 6) * 0.08; circ(0, -120, 140); ctx.fillStyle = '#7af0ff'; ctx.fill();
+    ctx.globalAlpha = 0.9; ctx.lineWidth = 4; ctx.strokeStyle = '#bff8ff'; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+
 const DRAWERS = { bandit: drawBandit, archer: drawArcher, shield: drawShieldman, bomber: drawBomber, wolf: drawWolf, bat: drawBat,
   shaman: drawShaman, ram: drawRam, slime: e => drawSlime(e), slimelet: e => drawSlime(e, 0.6), assassin: drawAssassin, harpy: drawHarpy,
   balloon: drawBalloon, imp: drawImp, golem: drawGolem, ghost: drawGhost, knight: drawKnight, witch: drawWitch,
   sprout: drawSprout, firefly: drawFirefly, flower: drawFlower, treant: drawTreant,
   crab: drawCrab, jelly: drawJelly, shark: drawShark, conch: drawConch, tentacle: drawTentacle,
   boss1: drawBoss1, boss2: drawDragon, boss3: drawDarkMage, boss4: drawAirship, boss5: drawNox, boss6: drawShadowBobby,
-  boss7: drawOak, boss8: drawKraken, moenfoe: drawDarkMage };
-const HAS_FEET = { bandit: 1, archer: 1, shield: 1, bomber: 1, assassin: 1, knight: 1 };
+  boss7: drawOak, boss8: drawKraken, moenfoe: drawDarkMage,
+  gearspider: drawGearSpider, windup: drawWindup, cannonbot: drawCannonbot, clockmage: drawClockMage, boss9: drawChrono,
+  sheep: drawSheep, mknight: drawMirrorKnight, moth: e => drawMoth(e), mothlet: e => drawMoth(e, 0.55), giantz: drawSleepGiant, boss10: drawNightmare };
+const HAS_FEET = { bandit: 1, archer: 1, shield: 1, bomber: 1, assassin: 1, knight: 1, windup: 1, mknight: 1 };
 
 function drawEnemy(e) {
   const d = ENEMY[e.type];
@@ -2533,6 +3114,20 @@ function drawStatus(e, d) {
   if (e.charm > 0) {
     for (let i = 0; i < 2; i++) drawHeart(-8 + i * 16, -h - 16 - Math.sin(t * 5 + i) * 5, 8, '#ff8fc8');
   }
+  if (e.sleep > 0) {
+    ctx.globalAlpha = 0.28; ctx.fillStyle = '#c9b8ff'; ell(0, -h * 0.5, d.r + 12, h * 0.55); ctx.fill(); ctx.globalAlpha = 1;
+    for (let i = 0; i < 3; i++) { const p = (t * 0.7 + i / 3) % 1; ctx.globalAlpha = 1 - p; txt('Z', 10 + p * 20 + i * 4, -h - 6 - p * 30, 14 + i * 3, '#ffffff', 'center', 3, '#7a4fe0'); }
+    ctx.globalAlpha = 1;
+  }
+  if (d.sleeper && !e.awake && !(e.sleep > 0)) {
+    const p = (t * 0.5) % 1; ctx.globalAlpha = 1 - p;
+    txt('z', 26 + p * 16, -h + 10 - p * 26, 16, '#ffffff', 'center', 3, '#5a6ac8'); ctx.globalAlpha = 1;
+  }
+  if (d.sleeper && e.awake) {
+    ctx.strokeStyle = '#ff4a5a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { ctx.beginPath(); ctx.moveTo(32 + dx * 3, -h + 12 + dy * 9); ctx.quadraticCurveTo(32 + dx * 3, -h + 12 + dy * 3, 32 + dx * 9, -h + 12 + dy * 3); ctx.stroke(); }
+  }
+  if (e.rew > 0) txt('×2', 0, -h - 10, 18, '#ffd84d', 'center', 4);
   if (e.bub > 0) {
     const R = Math.max(d.r + 16, h * 0.62);
     ctx.globalAlpha = 0.35; ctx.fillStyle = '#bfefff'; circ(0, -h * 0.5, R); ctx.fill();
@@ -2565,7 +3160,7 @@ function enterLevel(n) {
   if (save.cleared >= 20 && !save.seen.dragonOath) { equipDragon(); playStory('dragonOath', () => enterLevel(n)); return; }
   const id = 'pre' + n;
   // 第二部開場：影子成為夥伴，「影子分身」自動放進新的第 7 格
-  if (STORY[id] && !save.seen[id]) playStory(id, () => { if (n === 61) { equipSpell('clone'); writeSave(); } startLevel(n); });
+  if (STORY[id] && !save.seen[id]) playStory(id, () => { if (n === 61) { equipSpell('clone'); writeSave(); } if (n === 81) { equipSpell('kcall'); writeSave(); } startLevel(n); });
   else startLevel(n);
 }
 function playStory(id, onDone) {
@@ -2613,6 +3208,7 @@ function startLevel(n) {
     introT: 2.4, goldBump: 0, mpFlash: 0, castColor: '#ffd84d', postStory: null,
     boss: null, bossIntro: 0, stars: 0, result: null,
     clone: null, cloneQ: [], mirrorT: 0, mirrorDmg: 0, bless: null, waves: [], whales: [], regrow: [], psnTick: 0.5, inkT: 0, inkBlobs: [],
+    ult2Used: false, tents: [], mecha: null, angel: null, rivers: [], hourglass: 0, hourMax: 8, gearT: 0, cdSlow: 0, sleepCd: 0,
   };
   for (const s of SPELLS) G.cds[s.id] = 0;
   P.down = false;
@@ -2624,7 +3220,7 @@ function spawn(type, fromQueue, x) {
   const hp = Math.round(d.boss ? d.hp : d.hp * G.hpMul);
   let y;
   if (d.boss === 2) y = 250; else if (d.boss === 3) y = 330; else if (d.boss === 4) y = 240; else if (d.boss === 5) y = 320; else if (d.boss === 6) y = 350;
-  else if (d.boss === 7) y = GROUND + 6; else if (d.boss === 8) y = GROUND + 4;
+  else if (d.boss === 7) y = GROUND + 6; else if (d.boss === 8 || d.boss === 9) y = GROUND + 4; else if (d.boss === 10) y = 330;
   else if (d.air) y = d.fly[0] + Math.random() * (d.fly[1] - d.fly[0]);
   else y = GROUND - 8 + Math.random() * 28;
   const e = {
@@ -2637,6 +3233,7 @@ function spawn(type, fromQueue, x) {
     mark: 0, markAmp: 1, phased: false, phaseT: 2.5 + Math.random() * 1.5,
     root: 0, psn: 0, psnDps: 0, wet: 0, charm: 0, bub: 0, bubMax: 0, bubDmg: 0, pshield: 0, haste: 0, burnT: 0, revived: false,
     sub: 0, subT: 12, inkT: 10, tentT: 6,
+    windT: 3.5 + Math.random(), rew: 0, mref: d.mref ? 1 : 0, awake: false, noise: 0, sleep: 0, hh: [], hhT: 1, rwT: 20, rwFx: 0, jamT: 12,
   };
   if (d.boss) { e.x = W + 120; G.boss = e; G.bossIntro = 2.5; G.shake = 12; SFX.roar(); }
   G.enemies.push(e);
@@ -2679,7 +3276,8 @@ function applyStun(e, t) {
 const DMG_COLOR = { fire: '#ffb03d', ice: '#a8ecff', bolt: '#fff36b', meteor: '#ff9a3d', owl: '#f2dcc0', star: '#ffe46b', bomb: '#ff8a5a', thorns: '#c4cbe0',
   missile: '#fff07a', tornado: '#8fe8c8', quake: '#e8b878', fairy: '#9ff0c8',
   dragon: '#ff8a5a', moen: '#c9a0ff', siphon: '#7ad7ff', giant: '#d9a066', comet: '#8fd8ff', turret: '#ff8fc8', phoenix: '#ffb03d',
-  charm: '#ff8fc8', mirror: '#bfe8ff', wave: '#4fb8ff', bubble: '#9fe6ff', trident: '#ffd84d', whale: '#62a8ff', ally: '#ff8fc8' };
+  charm: '#ff8fc8', mirror: '#bfe8ff', wave: '#4fb8ff', bubble: '#9fe6ff', trident: '#ffd84d', whale: '#62a8ff', ally: '#ff8fc8',
+  kcall: '#ff8fd0', mecha: '#d9a066', bell: '#ffe46b', dream: '#c9b8ff', river: '#8fd8ff', angel: '#fff3a8' };
 // 持續傷害：不跳數字、不擊退
 const DOT = { flame: 1, blizzard: 1, gravity: 1, holy: 1, beam: 1, vine: 1, poison: 1 };
 function damage(e, amt, kind) {
@@ -2708,9 +3306,17 @@ function damage(e, amt, kind) {
     if (e.blockT <= 0 && !DOT[kind]) { e.blockT = 0.5; addText('穿過了！', e.x, e.y - d.h - 20, '#ffd9f0', 20); }
     return;
   }
-  // 飛龍是自己人：大法師張開反射結界時，牠的火球只會被擋下，不會反彈到城牆
-  if (d.boss === 3 && e.mirror > 0 && (kind === 'dragon' || kind === 'moen')) return;
-  if (d.boss === 3 && e.mirror > 0 && kind !== 'star') {
+  // 鏡像士兵：第一下攻擊被鏡子反彈到城牆
+  if (e.mref > 0 && kind !== 'star') {
+    e.mref = 0; e.flash = 0.1;
+    addText('反彈！', e.x, e.y - d.h - 20, '#e0d8ff', 24);
+    burst(e.x - 24, cy(e), 10, ['#e8f8ff', '#c9b8ff', '#ffffff'], 220, 0, 6, 0.4);
+    hitCastle(6); SFX.shield();
+    return;
+  }
+  // 飛龍是自己人：大法師張開反射結界時，牠的火球只會被擋下，不會反彈到城牆（夢魘之王也一樣）
+  if ((d.boss === 3 || d.boss === 10) && e.mirror > 0 && (kind === 'dragon' || kind === 'moen' || kind === 'kcall' || kind === 'angel' || kind === 'mecha')) return;
+  if ((d.boss === 3 || d.boss === 10) && e.mirror > 0 && kind !== 'star') {
     if (G.reflectT <= 0) { G.reflectT = 0.25; addText('反射！', e.x, e.y - 170, '#e0d0ff', 26); hitCastle(4); }
     return;
   }
@@ -2742,6 +3348,14 @@ function damage(e, amt, kind) {
     if (e.blockT <= 0 && !DOT[kind]) { e.blockT = 0.6; addText('好硬！', e.x + 6, e.y - d.h - 30, '#bff8ff', 20); }
   }
   if (e.stealth && !d.dive) amt *= 0.25;
+  // 發條士兵上發條時、睡著的敵人受到更多傷害；夢遊巨人睡著時打不痛，被吵醒就暴走
+  if (e.rew > 0) amt *= 2;
+  if (e.sleep > 0) amt *= 1.3;
+  if (d.sleeper && !e.awake) {
+    amt *= 0.35;
+    if (!DOT[kind]) e.noise++;
+    if (e.noise >= 6 || e.hp - amt < e.max * 0.7) wakeGiant(e);
+  }
   if (d.heavy && kind === 'flame') amt *= 2;
   if (e.wet > 0 && SHOCK_KIND[kind]) amt *= 1.5;
   if (e.mark > 0) amt *= e.markAmp;
@@ -2749,6 +3363,13 @@ function damage(e, amt, kind) {
   if (!d.boss && !d.heavy && !DOT[kind]) e.kb = Math.min(12, e.kb + 5);
   if (!DOT[kind]) addText(Math.max(1, Math.round(amt)), e.x + (Math.random() - 0.5) * 20, e.y - d.h, DMG_COLOR[kind] || '#fff', d.boss ? 30 : 24);
   if (e.hp <= 0) kill(e);
+}
+function wakeGiant(e) {
+  if (e.awake) return;
+  e.awake = true; e.sleep = 0;
+  addText('醒來了！暴走！', e.x, e.y - ENEMY[e.type].h - 30, '#ff5a6a', 28);
+  burst(e.x, cy(e), 16, ['#ff8a9a', '#ffffff'], 240, 0, 7, 0.5);
+  G.shake = Math.max(G.shake, 8); SFX.roar();
 }
 function kill(e, opt = {}) {
   if (e.dead) return;
@@ -2764,6 +3385,7 @@ function kill(e, opt = {}) {
   burst(e.x, cy(e), d.boss ? 40 : 12, ['#ffffff', '#f0e6ff', '#ffd84d'], d.boss ? 400 : 220, 200, d.boss ? 12 : 7, 0.6);
   G.fx.push({ type: 'pop', x: e.x, y: cy(e), life: 0.35, max: 0.35 });
   G.fx.push({ type: 'die', e: Object.assign({}, e), life: d.boss ? 1.2 : 0.4, max: d.boss ? 1.2 : 0.4 });
+  if (d.mothSplit) for (const off of [-22, 0, 22]) { const s = spawn('mothlet', false, e.x + off); s.y = s.baseY = Math.max(300, Math.min(480, e.y + (Math.random() - 0.5) * 50)); }
   if (d.splits) for (const off of [-14, 18]) { const s = spawn('slimelet', false, e.x + off); s.y = s.baseY = Math.min(622, Math.max(592, e.y + (Math.random() - 0.5) * 10)); }
   if (d.bomber && !opt.self) {
     G.fx.push({ type: 'ring', x: e.x, y: cy(e), r: 75, life: 0.3, max: 0.3, color: '#ff8a3d' });
@@ -2788,6 +3410,7 @@ function kill(e, opt = {}) {
   if (d.boss) { G.boss = null; G.shake = 16; G.fx.push({ type: 'screen', life: 0.3, max: 0.3 }); SFX.thunder(); }
 }
 function hitCastle(dmg) {
+  if (G.angel) dmg *= 0.5;
   if (G.barrier > 0) {
     const a = Math.min(G.barrier, dmg); G.barrier -= a; dmg -= a;
     burst(WALL_X + 10, 470 + Math.random() * 100, 3, ['#c9a8ff', '#ffffff'], 120, 0, 5, 0.4);
@@ -2811,7 +3434,7 @@ function useSpell(id, x, y, silent, free, cloneMul) {
   const copy = cloneMul != null;
   if (!free && !copy) {
     if (!learned(id)) return false;
-    if (sp.type === 'ult') { if (G.ultUsed) { if (!silent) msg('每關只能用一次'); return false; } }
+    if (sp.type === 'ult') { if (id === 'miracle' ? G.ult2Used : G.ultUsed) { if (!silent) msg('每關只能用一次'); return false; } }
     else if (!G.loadout.includes(id)) return false;
     if (G.cds[id] > 0) return false;
   }
@@ -2890,6 +3513,7 @@ function useSpell(id, x, y, silent, free, cloneMul) {
     }
     case 'timestop':
       G.timeStop = 3 + 0.5 * (r - 1);
+      eraseBossHistory();
       G.fx.push({ type: 'ring', x: 640, y: 360, r: 700, life: 0.6, max: 0.6, color: '#d0a8ff' });
       SFX.timestop(); break;
     case 'blizzard':
@@ -3105,8 +3729,105 @@ function useSpell(id, x, y, silent, free, cloneMul) {
       G.whales.push({ x: Math.max(WALL_X + 60, Math.min(x, W - 80)), t: 0, dur: 0.9, dmg, R: 150 + 10 * (r - 1), hit: false });
       burst(Math.max(WALL_X + 60, Math.min(x, W - 80)), 610, 10, ['#bfe8ff', '#ffffff'], 160, 300, 5, 0.5);
       SFX.wind(); break;
+    // ---------- 第九、十章 ----------
+    case 'kcall':
+      spawnTents(3 + (r >= 3 ? 1 : 0) + (r >= 5 ? 1 : 0), 8, dmg);
+      addText('深海巨妖，伸出觸手！', 620, 200, '#ff8fd0', 30);
+      G.shake = Math.max(G.shake, 8);
+      SFX.quake(); break;
+    case 'prism': {
+      const R = 52 + 4 * (r - 1);
+      for (const off of [-95, 0, 95]) G.projs.push({ x: tip.x, y: tip.y, tx: Math.max(WALL_X + 40, Math.min(W - 20, x + off)), ty: y, dmg, R, kind: 'fire', prism: true });
+      SFX.fire(); break;
+    }
+    case 'hourglass':
+      G.hourglass = G.hourMax = 8 + 0.5 * (r - 1);
+      eraseBossHistory();
+      G.fx.push({ type: 'ring', x: 640, y: 360, r: 700, life: 0.6, max: 0.6, color: '#ffd6a5' });
+      SFX.timestop(); break;
+    case 'mecha':
+      G.mecha = { x: WALL_X + 30, t: 14 + (r - 1), dmg, atk: 0.6, swing: 0, walk: 0 };
+      burst(WALL_X + 30, 560, 18, ['#d9a066', '#ffd27a', '#ffffff'], 260, 300, 7, 0.5);
+      SFX.blast(); break;
+    case 'bell': {
+      const st = 1.5 + 0.2 * (r - 1);
+      for (const e of G.enemies) {
+        if (e.dead || e.charm > 0) continue;
+        damage(e, ENEMY[e.type].boss ? e.max * 0.02 : Math.max(dmg, e.max * 0.1), 'bell');
+        if (!e.dead) applyStun(e, st);
+      }
+      G.fx.push({ type: 'bell', life: 1.1, max: 1.1 });
+      for (let i = 0; i < 3; i++) G.fx.push({ type: 'ring', x: 640, y: 180, r: 300 + i * 200, life: 0.5 + i * 0.15, max: 0.5 + i * 0.15, color: '#ffe46b' });
+      G.shake = Math.max(G.shake, 12);
+      SFX.bell(); break;
+    }
+    case 'gear':
+      for (const k in G.cds) if (k !== 'gear') G.cds[k] *= 0.5;
+      G.gearT = 6 + 0.5 * (r - 1);
+      burst(WIZ.x, WIZ.y - 80, 20, ['#e0c89a', '#ffd84d', '#ffffff'], 260, 0, 6, 0.5);
+      SFX.tick(); SFX.surge(); break;
+    case 'dream': {
+      const R = 130, st = 4 + 0.4 * (r - 1);
+      for (const e of G.enemies) {
+        if (e.dead || e.charm > 0 || e.sub > 0 || Math.hypot(e.x - x, cy(e) - y) > R + ENEMY[e.type].r) continue;
+        damage(e, dmg, 'dream');
+        if (e.dead) continue;
+        if (ENEMY[e.type].boss) e.slow = Math.max(e.slow, 3); else { e.sleep = st; e.stun = 0; }
+      }
+      G.fx.push({ type: 'ring', x, y, r: R, life: 0.5, max: 0.5, color: '#c9b8ff' });
+      for (let i = 0; i < 14; i++) G.fx.push({ type: 'p', x: x + (Math.random() - 0.5) * 160, y: y + (Math.random() - 0.5) * 120, vx: (Math.random() - 0.5) * 30, vy: -40 - Math.random() * 40, g: 0, size: 10, color: i % 2 ? 'rgba(220,205,255,.8)' : '#ffffff', life: 1, max: 1 });
+      SFX.poof(); break;
+    }
+    case 'river': {
+      const n = 10 + (r - 1);
+      for (let i = 0; i < n; i++) G.rivers.push({ x: Math.min(W - 30, Math.max(WALL_X + 40, x - 280 + 560 * (i + 0.2 + Math.random() * 0.6) / n)), delay: i * 0.1, t: 0, dmg });
+      SFX.star(); break;
+    }
+    case 'angel':
+      G.angel = { t: 10 + (r - 1), dmg, atk: 0.4, age: 0 };
+      addText('守護天使降臨！', 420, 190, '#fff3a8', 30);
+      burst(ANGEL.x, ANGEL.y, 22, ['#fff3a8', '#ffffff'], 260, 0, 7, 0.6);
+      SFX.holy(); break;
+    case 'miracle': {
+      G.ult2Used = true;
+      const m = G.power * (1 + BAL.rankBonus * (r - 1));
+      G.ally = { t: 8, x: -140, y: 240, atk: 0.6, dmg: SPELL.dragon.dmg * m, age: 0, swing: 0, calm: true };
+      G.moen = { t: 8, x: WALL_X + 40, y: 400, atk: 0.5, age: 0, swing: 0, calm: true, mirror: 0, dmg: 45 * m };
+      G.clone = { t: 8, max: 8, pow: 0.8, age: 0, cast: 0 };
+      G.bless = { t: 8, rate: 0.015, leaf: 0 };
+      spawnTents(3, 8, SPELL.kcall.dmg * m);
+      addText('星帽奇蹟！', 640, 220, '#ffd84d', 46);
+      G.fx.push({ type: 'screen', life: 0.4, max: 0.4 });
+      for (let i = 0; i < 60; i++) G.fx.push({ type: 'fstar', x: Math.random() * W, y: -30 - Math.random() * 200, vx: -80, vy: 700, life: 0.9, max: 0.9 });
+      G.shake = 14; SFX.star(); SFX.roar(); break;
+    }
   }
   return true;
+}
+const ANGEL = { x: 390, y: 230 };
+// 召喚巨妖：沿著戰場長出幾條觸手
+function spawnTents(n, t, dmg) {
+  G.tents = [];
+  for (let i = 0; i < n; i++) {
+    const x = n > 1 ? WALL_X + 150 + i * 620 / (n - 1) : WALL_X + 400;
+    G.tents.push({ x, t, max: t, dmg, atk: 0.4 + i * 0.25, swing: 0, age: Math.random() * 3 });
+    burst(x, GROUND, 14, ['#c9a0d8', '#ffffff', '#4fb8ff'], 260, 500, 7, 0.6);
+  }
+}
+// 時間凍結、時之沙漏：打亂發條皇帝的時間線，讓它倒轉不回去
+function eraseBossHistory() {
+  const b = G.boss;
+  if (b && !b.dead && b.type === 'boss9' && b.hh.length) { b.hh = []; addText('時間線亂掉了！', b.x, b.y - 280, '#bfe8ff', 28); }
+}
+// 封印一個出戰魔法（暗影維維、夢魘之王）
+function sealSpell(t) {
+  const pool = G.loadout.filter(id => G.cds[id] < t);
+  if (!pool.length) return;
+  const id = pool[Math.floor(Math.random() * pool.length)];
+  G.cds[id] = t;
+  addText('封印：' + SPELL[id].name + '！', WIZ.x + 120, WIZ.y - 200, '#d0a8ff', 30);
+  burst(WIZ.x, WIZ.y - 80, 16, ['#8a3cff', '#d0a8ff'], 220, 0, 6, 0.5);
+  SFX.crack();
 }
 const CLONE_POS = { x: WIZ.x + 82, y: WIZ.y + 4 };
 // 召喚大法師莫恩助陣 10 秒；還在場時再按一次就重新計時，不會變成兩個
@@ -3200,8 +3921,13 @@ function update(dt) {
   }
   const surge = G.surge > 0;
   if (surge) G.surge -= dt;
+  if (G.gearT > 0) G.gearT -= dt;
+  if (G.cdSlow > 0) G.cdSlow -= dt;
+  if (G.hourglass > 0) G.hourglass -= dt;
+  G.sleepCd -= dt;
   G.mp = Math.min(G.mpMax, G.mp + G.mpRegen * (surge ? 1.5 : 1) * dt);
-  for (const k in G.cds) if (G.cds[k] > 0) G.cds[k] = Math.max(0, G.cds[k] - dt * (surge ? 2 : 1));
+  const cdk = (surge ? 2 : 1) * (G.gearT > 0 ? 2 : 1) * (G.cdSlow > 0 ? 0.5 : 1);
+  for (const k in G.cds) if (G.cds[k] > 0) G.cds[k] = Math.max(0, G.cds[k] - dt * cdk);
   G.castAnim = Math.max(0, G.castAnim - dt);
   G.shake = Math.max(0, G.shake - 40 * dt);
   G.castleFlash -= dt; G.noMpT -= dt; G.hintT -= dt; G.reflectT -= dt; G.bossIntro -= dt; G.owlAnim -= dt;
@@ -3214,7 +3940,7 @@ function update(dt) {
 
   if (!frozen) updateEnemies(dt);
   updateMagic(dt);
-  if (!frozen) updateShots(dt);
+  if (!frozen) updateShots(G.hourglass > 0 ? dt * 0.45 : dt);
 
   G.enemies = G.enemies.filter(e => !e.dead);
   if (G.castleHp <= 0) finish(false);
@@ -3233,7 +3959,7 @@ function updateEnemies(dt) {
     if (e.wet > 0) e.wet -= dt;
     if (e.haste > 0) e.haste -= dt;
     if (e.burnT > 0) e.burnT -= dt;
-    if (G.blizzard > 0) e.slow = Math.max(e.slow, 0.3);
+    if (G.blizzard > 0 || G.hourglass > 0) e.slow = Math.max(e.slow, 0.3);
     // 幽靈：一下實體、一下透明
     if (d.phasing) {
       e.phaseT -= dt;
@@ -3247,10 +3973,18 @@ function updateEnemies(dt) {
       if (e.bub <= 0) popBubble(e);
       continue;
     }
+    // 夢之泡泡：睡著時不能動
+    if (e.sleep > 0) { e.sleep -= dt; continue; }
     if (e.stun > 0) { e.stun -= dt; continue; }
     if (e.charm > 0) { charmedUpdate(e, d, dt); continue; }
     if (d.boss) { bossUpdate(e, dt); continue; }
     const sm = (e.slow > 0 ? (d.heavy ? 0.75 : 0.5) : 1) * (e.haste > 0 ? 1.6 : 1);
+    // 發條士兵：發條轉完就停下來上發條
+    if (d.windup) {
+      if (e.rew > 0) { e.rew -= dt; if (e.rew <= 0) addText('上緊了！', e.x, e.y - d.h - 20, '#ffd84d', 20); continue; }
+      e.windT -= dt * sm;
+      if (e.windT <= 0) { e.windT = 4.5; e.rew = 2; addText('上發條…', e.x, e.y - d.h - 20, '#ffe46b', 20); SFX.tick(); continue; }
+    }
     // 騎士血量剩一半開始衝鋒
     if (d.charge && !e.dash && e.hp < e.max * 0.5) { e.dash = true; addText('衝鋒！', e.x, e.y - d.h - 20, '#ff8aa0', 24); }
     if (e.stealth && e.x < WALL_X + (d.dive ? 300 : 420)) {
@@ -3269,7 +4003,7 @@ function updateEnemies(dt) {
       if (e.atk <= 0) { e.atk = d.atkCd; e.swing = 0.6; supportCast(e, d); }
     }
     // 薑餅巨人擋住地面的近戰敵人
-    const wall = G.wall && !d.air && !d.range && e.x >= G.wall.x - 4 ? G.wall : null;
+    const wall = G.wall && !d.air && !d.range && !d.climb && e.x >= G.wall.x - 4 ? G.wall : null;
     const stop = wall ? Math.max(e.stopX, wall.x + (d.reach || d.r)) : e.stopX;
     // 被藤蔓、樹根綁住：不能移動，但還是能攻擊
     if (e.root > 0 && e.x > stop) continue;
@@ -3287,7 +4021,7 @@ function updateEnemies(dt) {
       }
     }
     if (e.x > stop) {
-      const mv = d.speed * (e.dash ? 2 : 1) * sm * dt;
+      const mv = d.speed * (e.dash ? 2 : 1) * (e.awake ? 2.6 : 1) * sm * dt;
       e.x = Math.max(stop, e.x - mv); e.walk += mv;
       if (d.air) e.y = e.baseY;
     } else {
@@ -3308,7 +4042,7 @@ function updateEnemies(dt) {
         }
         else if (d.healer) shamanHeal(e);
         else if (d.range) shoot(e, d.shot || 'arrow');
-        else { hitCastle(d.dmg * G.dmgMul); if (G.thorns) damage(e, G.thorns, 'thorns'); }
+        else { hitCastle(d.dmg * G.dmgMul * (e.awake ? 1.5 : 1)); if (G.thorns) damage(e, G.thorns, 'thorns'); }
       }
     }
   }
@@ -3367,6 +4101,23 @@ function supportCast(e, d) {
     G.fx.push({ type: 'ring', x: e.x, y: cy(e), r: 220, life: 0.5, max: 0.5, color: '#ff9fd0' });
     burst(e.x, e.y - 60, 10, ['#ff9fd0', '#ffd0e8'], 180, -30, 6, 0.6);
     SFX.heal2();
+  } else if (d.support === 'clock') {
+    // 時鐘法師：讓你的魔法冷卻變慢
+    G.cdSlow = Math.max(G.cdSlow, 4);
+    addText('冷卻變慢了！', WIZ.x + 120, WIZ.y - 200, '#e0c89a', 26);
+    G.fx.push({ type: 'ring', x: e.x - 20, y: e.y - 108, r: 160, life: 0.5, max: 0.5, color: '#e0c89a' });
+    SFX.tick();
+  } else if (d.support === 'sleep') {
+    // 瞌睡綿羊：讓一個魔法睡著 4 秒（全場 2.5 秒最多一次）
+    if (G.sleepCd > 0) return;
+    const pool = G.loadout.filter(id => G.cds[id] < 4);
+    if (!pool.length) return;
+    G.sleepCd = 2.5;
+    const id = pool[Math.floor(Math.random() * pool.length)];
+    G.cds[id] = Math.max(G.cds[id], 4);
+    addText(SPELL[id].name + ' 睡著了…', WIZ.x + 120, WIZ.y - 200, '#c9b8ff', 26);
+    burst(e.x - 30, e.y - 70, 8, ['#c9b8ff', '#ffffff'], 140, -40, 6, 0.6);
+    SFX.poof();
   } else {
     for (const o of G.enemies) {
       if (o.dead || o === e || o.charm > 0 || ENEMY[o.type].boss || Math.abs(o.x - e.x) > 300) continue;
@@ -3387,12 +4138,14 @@ function shamanHeal(e) {
   if (n) { G.fx.push({ type: 'ring', x: e.x, y: cy(e), r: 180, life: 0.5, max: 0.5, color: '#7be38a' }); SFX.heal2(); }
 }
 
+const NM_PHASE = ['反射結界', '虛空護盾', '封印魔法', '再生', '墨汁'];
 function bossUpdate(e, dt) {
   const d = ENEMY[e.type], ratio = e.hp / e.max;
-  const ph = d.boss === 3 || d.boss >= 5 ? (ratio > 0.66 ? 1 : ratio > 0.33 ? 2 : 3) : (ratio > 0.5 ? 1 : 2);
+  const ph = d.boss === 10 ? (ratio > 0.8 ? 1 : ratio > 0.6 ? 2 : ratio > 0.4 ? 3 : ratio > 0.2 ? 4 : 5)
+    : d.boss === 3 || d.boss >= 5 ? (ratio > 0.66 ? 1 : ratio > 0.33 ? 2 : 3) : (ratio > 0.5 ? 1 : 2);
   if (ph !== e.phase) {
     e.phase = ph; G.shake = 12; SFX.roar();
-    addText('狂暴化！', e.x, e.y - d.h - 20, '#ff5a5a', 34);
+    addText(d.boss === 10 ? '惡夢：' + NM_PHASE[ph - 1] + '！' : '狂暴化！', e.x, e.y - d.h - 20, '#ff5a5a', 34);
   }
   const sm = e.slow > 0 ? 0.75 : 1;
   e.sumT -= dt;
@@ -3541,6 +4294,73 @@ function bossUpdate(e, dt) {
       wave.forEach((t, i) => spawn(t, false, W + 40 + i * 50));
       addText('海底軍團！', e.x, e.y - d.h - 30, '#8fd8ff', 28);
     }
+  } else if (d.boss === 9) {
+    // 發條皇帝：走到右邊站定，射齒輪、每 20 秒把血量倒轉回 6 秒前、讓你的魔法停擺
+    if (!e.patrol && e.x > 1000) { const mv = d.speed * sm * dt; e.x -= mv; e.walk += mv; }
+    else e.patrol = true;
+    if (e.rwFx > 0) e.rwFx -= dt;
+    if (!e.patrol) return;
+    e.hhT -= dt;
+    if (e.hhT <= 0) { e.hhT = 1; e.hh.push(e.hp); if (e.hh.length > 6) e.hh.shift(); }
+    e.rwT -= dt;
+    if (e.rwT <= 0) {
+      e.rwT = ph === 3 ? 16 : 20;
+      if (e.hh.length >= 5 && e.hh[0] > e.hp) {
+        const gain = e.hh[0] - e.hp;
+        e.hp = e.hh[0]; e.rwFx = 1.2;
+        addText('時間倒轉！+' + Math.round(gain), e.x, e.y - d.h - 30, '#ffd27a', 32);
+        G.fx.push({ type: 'ring', x: e.x, y: e.y - 150, r: 220, life: 0.6, max: 0.6, color: '#7af0ff' });
+        SFX.timestop();
+      } else addText('倒轉失敗！', e.x, e.y - d.h - 30, '#bfe8ff', 30);
+      e.hh = [];
+    }
+    if (ph >= 2) {
+      e.jamT -= dt;
+      if (e.jamT <= 0) {
+        e.jamT = ph === 3 ? 10 : 13;
+        for (const id of G.loadout) G.cds[id] = Math.max(G.cds[id], 2);
+        addText('魔法停擺！', WIZ.x + 120, WIZ.y - 200, '#e0c89a', 30);
+        burst(WIZ.x, WIZ.y - 80, 14, ['#e0c89a', '#ffffff'], 200, 0, 6, 0.5);
+        SFX.tick();
+      }
+    }
+    e.atk -= dt * sm;
+    if (e.atk <= 0) { e.atk = ph === 1 ? 2.4 : ph === 2 ? 2 : 1.6; e.swing = 0.4; shoot(e, 'gear'); if (ph === 3) shoot(e, 'gear'); }
+    if (e.sumT <= 0) {
+      e.sumT = ph === 3 ? 12 : 14;
+      const wave = ph === 1 ? ['gearspider', 'gearspider', 'gearspider', 'windup'] : ph === 2 ? ['windup', 'cannonbot', 'clockmage'] : ['windup', 'windup', 'gearspider', 'gearspider', 'cannonbot'];
+      wave.forEach((t, i) => spawn(t, false, W + 40 + i * 50));
+      addText('齒輪軍團！', e.x, e.y - d.h - 30, '#e0c89a', 28);
+    }
+  } else if (d.boss === 10) {
+    // 夢魘之王：五個階段輪流使用反射結界、虛空護盾、封印、再生、墨汁
+    if (!e.patrol && e.x > 900) e.x -= d.speed * sm * dt;
+    else { e.patrol = true; e.pt += dt * sm; e.x = 900 + Math.sin(e.pt * 0.45) * 140; }
+    e.y = e.baseY + Math.sin(e.age * 1.6) * 16;
+    if (e.mirror > 0) e.mirror -= dt;
+    if (!e.patrol) return;
+    if (ph === 1) {
+      e.mirT -= dt;
+      if (e.mirror <= 0 && e.mirT <= 0) { e.mirror = 2.5; e.mirT = 9; addText('反射結界！', e.x, e.y - d.h - 30, '#e0d0ff', 30); SFX.shield(); }
+    } else if (ph === 2) {
+      if (e.vshield <= 0) { e.vsT -= dt; if (e.vsT <= 0) { e.vshield = 1500; e.vsT = 9; addText('虛空護盾！', e.x, e.y - d.h - 30, '#7af0ff', 30); SFX.shield(); } }
+    } else if (ph === 3 || ph === 5) {
+      e.sealT -= dt;
+      if (e.sealT <= 0) { e.sealT = ph === 3 ? 7 : 10; sealSpell(6); }
+    }
+    if (ph === 4 && e.burnT <= 0 && e.hp < e.max) e.hp = Math.min(e.max, e.hp + e.max * 0.008 * dt);
+    if (ph === 5) {
+      e.inkT -= dt;
+      if (e.inkT <= 0) { e.inkT = 9; shoot(e, 'ink'); addText('惡夢墨汁！', e.x, e.y - d.h - 30, '#b0a0c8', 28); }
+    }
+    e.atk -= dt * sm;
+    if (e.atk <= 0) { e.atk = [2.2, 2, 1.8, 1.7, 1.4][ph - 1]; e.swing = 0.4; shoot(e, 'orb'); if (ph >= 4) shoot(e, 'orb'); }
+    if (e.sumT <= 0) {
+      e.sumT = ph >= 4 ? 12 : 14;
+      const wave = [['moth', 'moth', 'sheep'], ['mknight', 'mknight', 'moth'], ['sheep', 'windup', 'mknight', 'moth'], ['treant', 'moth', 'moth', 'mknight'], ['giantz', 'mknight', 'moth', 'sheep']][ph - 1];
+      wave.forEach((t, i) => spawn(t, false, W + 40 + i * 50));
+      addText('惡夢召喚！', e.x, e.y - d.h - 30, '#c08aff', 28);
+    }
   } else {
     if (!e.patrol && e.x > 920) e.x -= d.speed * dt;
     else { e.patrol = true; e.pt += dt; e.x = 920 + Math.sin(e.pt * 0.4) * 90; }
@@ -3568,7 +4388,7 @@ function shoot(e, kind) {
   const dmg = d.boss ? d.dmg : d.dmg * G.dmgMul;
   // 樹根：沿著地面竄向城牆
   if (kind === 'root') { const x0 = e.x - 60, t = 1.8; G.shots.push({ kind, x: x0, y: 600, vx: (WALL_X - x0) / t, vy: 0, g: 0, dmg }); return; }
-  if (kind === 'orb' || kind === 'drain' || kind === 'water' || kind === 'ink') {
+  if (kind === 'orb' || kind === 'drain' || kind === 'water' || kind === 'ink' || kind === 'gear') {
     const t = kind === 'ink' ? 1.9 : 1.6;
     G.shots.push({ kind, x: sx, y: sy, vx: (tx - sx) / t, vy: (ty - sy) / t, g: 0, dmg: kind === 'ink' ? dmg * 0.5 : dmg }); return;
   }
@@ -3608,7 +4428,7 @@ function updateShots(dt) {
         SFX.blast(); continue;
       }
       if (a.kind === 'root') { G.shake = Math.max(G.shake, 8); burst(WALL_X, 590, 14, ['#8a5a32', '#5ac85a', '#ffffff'], 240, 500, 7, 0.5); SFX.quake(); continue; }
-      if (a.kind !== 'arrow') { burst(WALL_X, a.y, 10, a.kind === 'orb' ? ['#9a5aff', '#e0d0ff'] : a.kind === 'water' ? ['#4fb8ff', '#bfe8ff', '#ffffff'] : ['#ff7a3d', '#ffe36b', '#3a3550'], 220, 300, 7, 0.5); SFX.blast(); }
+      if (a.kind !== 'arrow') { burst(WALL_X, a.y, 10, a.kind === 'orb' ? ['#9a5aff', '#e0d0ff'] : a.kind === 'water' ? ['#4fb8ff', '#bfe8ff', '#ffffff'] : a.kind === 'gear' ? ['#c9a06a', '#ffd84d', '#ffffff'] : ['#ff7a3d', '#ffe36b', '#3a3550'], 220, 300, 7, 0.5); SFX.blast(); }
     }
   }
   G.shots = G.shots.filter(a => !a.done);
@@ -3773,6 +4593,63 @@ function updateMagic(dt) {
     }
     if (m.t <= 0) { burst(m.x, m.y - 90, 18, ['#c9a0ff', '#7af0ff', '#ffffff'], 260, 0, 6, 0.5); G.moen = null; }
   }
+  // 召喚巨妖的觸手
+  for (const k of G.tents) {
+    k.t -= dt; k.age += dt; k.swing = Math.max(0, k.swing - dt); k.atk -= dt;
+    if (k.atk <= 0 && k.t > 0.3) {
+      const hits = G.enemies.filter(e => foe(e) && Math.abs(e.x - k.x) < 110);
+      if (hits.length) {
+        k.atk = 1.3; k.swing = 0.4;
+        for (const e of hits) { damage(e, k.dmg, 'kcall'); if (!e.dead) e.wet = Math.max(e.wet, 4); }
+        burst(k.x, 520, 8, ['#ff8fd0', '#ffffff', '#4fb8ff'], 200, 300, 6, 0.4);
+        G.shake = Math.max(G.shake, 3); SFX.boom();
+      } else k.atk = 0.2;
+    }
+  }
+  G.tents = G.tents.filter(k => k.t > 0);
+  // 機械魔像：走向最前面的地面敵人，揮拳打前方一群
+  if (G.mecha) {
+    const m = G.mecha;
+    m.t -= dt; m.swing = Math.max(0, m.swing - dt * 3); m.atk -= dt;
+    let tgt = null;
+    for (const e of G.enemies) if (foe(e) && !ENEMY[e.type].air && e.x < W - 20 && (!tgt || e.x < tgt.x)) tgt = e;
+    const tx = tgt ? Math.min(Math.max(tgt.x - 90, WALL_X + 40), W - 200) : WALL_X + 80;
+    if (Math.abs(tx - m.x) > 4) { const mv = 120 * dt; m.x += Math.sign(tx - m.x) * Math.min(mv, Math.abs(tx - m.x)); m.walk += mv; }
+    if (m.atk <= 0) {
+      const inR = G.enemies.filter(e => foe(e) && !ENEMY[e.type].air && e.x >= m.x - 20 && e.x <= m.x + 150);
+      if (inR.length) {
+        m.atk = 1; m.swing = 1;
+        for (const e of inR) { damage(e, m.dmg, 'mecha'); if (!e.dead) applyStun(e, 0.5); }
+        burst(m.x + 90, 580, 8, ['#d9a066', '#ffd27a', '#ffffff'], 220, 400, 6, 0.4);
+        G.shake = Math.max(G.shake, 4); SFX.boom();
+      } else m.atk = 0.2;
+    }
+    if (m.t <= 0) { burst(m.x, 520, 22, ['#d9a066', '#ffd27a', '#ffffff'], 280, 400, 7, 0.6); SFX.crack(); G.mecha = null; }
+  }
+  // 守護天使：射出光之羽毛
+  if (G.angel) {
+    const a = G.angel;
+    a.t -= dt; a.age += dt; a.atk -= dt;
+    if (a.atk <= 0) {
+      let tgt = null;
+      for (const e of G.enemies) if (foe(e) && e.x < W - 20 && (!tgt || e.x < tgt.x)) tgt = e;
+      if (tgt) { a.atk = 0.6; G.feathers.push({ x: ANGEL.x + 20, y: ANGEL.y, id: tgt.id, dmg: a.dmg, life: 3, kind: 'angel' }); }
+      else a.atk = 0.2;
+    }
+    if (a.t <= 0) { burst(ANGEL.x, ANGEL.y, 16, ['#fff3a8', '#ffffff'], 200, 0, 6, 0.5); G.angel = null; }
+  }
+  // 流星之河
+  for (const s of G.rivers) {
+    if (s.delay > 0) { s.delay -= dt; continue; }
+    s.t += dt;
+    if (s.t < 0.45) continue;
+    s.done = true;
+    for (const e of G.enemies) if (!e.dead && !(e.charm > 0) && Math.abs(e.x - s.x) < 55 + ENEMY[e.type].r * 0.5) damage(e, s.dmg, 'river');
+    burst(s.x, 600, 10, ['#8fd8ff', '#ffffff', '#ffe46b'], 260, 300, 6, 0.5);
+    G.fx.push({ type: 'ring', x: s.x, y: 600, r: 60, life: 0.3, max: 0.3, color: '#8fd8ff' });
+    G.shake = Math.max(G.shake, 3); SFX.boom();
+  }
+  G.rivers = G.rivers.filter(s => !s.done);
   // 彗星衝擊
   for (const c of G.comets) {
     c.t += dt;
@@ -4066,6 +4943,14 @@ function drawFx() {
         ctx.restore();
         break;
       }
+      case 'bell': {
+        ctx.globalAlpha = Math.min(1, a * 2);
+        ctx.save(); ctx.translate(640, 120); ctx.rotate(Math.sin((1 - a) * 18) * 0.35 * a);
+        drawGlow(0, 40, 120, '#ffe46b', 0.7 * a);
+        drawSpellIcon('bell', 0, 50, 3.2);
+        ctx.restore();
+        break;
+      }
       case 'quake':
         ctx.globalAlpha = a; ctx.strokeStyle = OUT; ctx.lineWidth = 4; ctx.lineCap = 'round';
         for (let i = 0; i < 7; i++) {
@@ -4211,6 +5096,32 @@ function drawMagicLayer() {
     drawDarkMage(m);
     ctx.restore();
   }
+  // 召喚巨妖的觸手（從地底長出來）
+  for (const k of G.tents) {
+    const grow = Math.min(1, (k.max - k.t) / 0.35, k.t / 0.35);
+    ctx.save(); ctx.translate(k.x, 612); ctx.scale(1, grow); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    drawTentacle(k);
+    ctx.restore();
+  }
+  // 機械魔像
+  if (G.mecha) { const m = G.mecha; ctx.globalAlpha = Math.min(1, m.t / 0.4); drawMecha(m.x, 612 - Math.abs(Math.sin(m.walk * 0.05)) * 4, 0.82, m.swing, T); ctx.globalAlpha = 1; }
+  // 守護天使
+  if (G.angel) {
+    const a = G.angel;
+    ctx.globalAlpha = Math.min(1, a.t / 0.4, a.age / 0.3);
+    drawGlow(140, 470, 200, '#fff3a8', 0.18);
+    drawAngel(ANGEL.x, ANGEL.y + Math.sin(T * 2) * 8, 1.2, T);
+    ctx.globalAlpha = 1;
+  }
+  // 流星之河
+  for (const r of G.rivers) {
+    if (r.delay > 0) continue;
+    const p = Math.min(1, r.t / 0.45), x = r.x + 180 * (1 - p), y = -40 + 640 * p;
+    ctx.strokeStyle = 'rgba(143,216,255,.6)'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 70, y - 250); ctx.stroke();
+    drawGlow(x, y, 34, '#8fd8ff', 0.9);
+    drawStar(x, y, 13, '#e8f8ff', OUT, 2.5);
+  }
   // 彗星衝擊
   for (const c of G.comets) {
     const p = Math.min(1, c.t / c.dur), x = c.x + 420 * (1 - p), y = c.y - 700 * (1 - p);
@@ -4255,6 +5166,7 @@ function drawMagicLayer() {
     if (f.kind === 'moen') { drawGlow(f.x, f.y, 18, '#c9a0ff', 0.9); drawStar(f.x, f.y, 9, '#efe4ff', '#7a4fe0', 2); continue; }
     if (f.kind === 'turret') { drawGlow(f.x, f.y, 14, '#ff8fc8', 0.9); drawStar(f.x, f.y, 7, '#ffe0f2', OUT, 1.5); continue; }
     if (f.kind === 'mirror') { drawGlow(f.x, f.y, 22, '#bfe8ff', 0.9); drawStar(f.x, f.y, 10, '#ffffff', '#4fa0d0', 2); continue; }
+    if (f.kind === 'angel') { drawGlow(f.x, f.y, 20, '#fff3a8', 0.9); ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang || 0); ell(0, 0, 14, 5); fillStroke('#ffffff', 2, '#e0c060'); ctx.restore(); continue; }
     ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang || 0);
     ell(0, 0, 12, 4); fillStroke('#f2dcc0', 2);
     ctx.restore();
@@ -4289,6 +5201,13 @@ function drawMagicLayer() {
       drawGlow(a.x, a.y, 30, '#4fb8ff', 0.8);
       circ(a.x, a.y, 13); fillStroke('rgba(120,200,255,.9)', 3, '#2a78b8');
       circ(a.x - 4, a.y - 4, 4); ctx.fillStyle = '#ffffff'; ctx.fill();
+    } else if (a.kind === 'gear') {
+      drawGlow(a.x, a.y, 26, '#ffd27a', 0.7);
+      drawGear(a.x, a.y, 15, 8, '#c9a06a', T * 10);
+    } else if (a.kind === 'shell') {
+      circ(a.x, a.y, 12); fillStroke('#5a5a7a', 3);
+      circ(a.x - 3, a.y - 4, 3.5); ctx.fillStyle = '#c9c9e0'; ctx.fill();
+      if (G.fx.length < 380 && Math.random() < 0.4) G.fx.push({ type: 'p', x: a.x + 8, y: a.y - 4, vx: 0, vy: -20, g: 0, size: 6, color: 'rgba(200,190,210,.8)', life: 0.4, max: 0.4 });
     } else if (a.kind === 'ink') {
       circ(a.x, a.y, 18); fillStroke('#3a2a4a', 3, '#1a1028');
       circ(a.x + 14, a.y - 8, 7); ctx.fillStyle = '#3a2a4a'; ctx.fill(); circ(a.x - 12, a.y + 10, 6); ctx.fill();
@@ -4354,9 +5273,9 @@ function drawToast() {
 // ============================================================
 function hudLayout() {
   const slots = G.loadout.length > 0 ? slotsFor(heroLv()) : 1;
-  const ult = learned('starfall');
-  const right = 52 + (slots - 1) * 78 + (ult ? 96 : 0) + 46;
-  return { slots, ult, right };
+  const ult = learned('starfall'), ult2 = learned('miracle');
+  const right = 52 + (slots - 1) * 78 + (ult ? 96 : 0) + (ult2 ? 86 : 0) + 46;
+  return { slots, ult, ult2, right };
 }
 function inHud(x, y) {
   const { right } = hudLayout();
@@ -4394,7 +5313,9 @@ function drawHUD() {
     rrect(344, 84, 592 * br, 26, 13); ctx.fillStyle = b.mirror > 0 ? '#e0d0ff' : '#ff5a6a'; ctx.fill();
     if (b.vshield > 0) { rrect(344, 84, Math.min(592, 592 * b.vshield / 1600), 8, 4); ctx.fillStyle = '#7af0ff'; ctx.fill(); }
     const bd = ENEMY[b.type];
-    const tag = b.mirror > 0 ? '　反射中！' : b.vshield > 0 ? `　護盾 ${Math.ceil(b.vshield)}` : b.sub > 0 ? '　潛水中' : bd.regen ? (b.burnT > 0 ? '　燃燒中' : '　再生中') : '';
+    const tag = b.mirror > 0 ? '　反射中！' : b.vshield > 0 ? `　護盾 ${Math.ceil(b.vshield)}` : b.sub > 0 ? '　潛水中' : bd.regen ? (b.burnT > 0 ? '　燃燒中' : '　再生中')
+      : bd.boss === 9 ? (b.rwT < 6 && b.patrol ? `　倒轉倒數 ${Math.ceil(b.rwT)}` : '')
+      : bd.boss === 10 ? '　' + NM_PHASE[b.phase - 1] + (b.phase === 4 ? (b.burnT > 0 ? '（燃燒中）' : '（再生中）') : '') : '';
     txt(`${bd.name}　${Math.ceil(b.hp)}` + tag, 640, 98, 18, '#fff', 'center', 4);
   }
   // 持續中的增益
@@ -4404,6 +5325,12 @@ function drawHUD() {
   if (G.clone) pills.push([`影子分身 ${Math.max(0, G.clone.t).toFixed(1)}`, '#c08aff']);
   if (G.mirrorT > 0) pills.push([`鏡之結界 ${G.mirrorT.toFixed(1)}`, '#bfe8ff']);
   if (G.bless) pills.push([`樹王祝福 ${Math.max(0, G.bless.t).toFixed(1)}`, '#7be38a']);
+  if (G.tents.length) pills.push([`巨妖觸手 ${Math.max(0, G.tents[0].t).toFixed(1)}`, '#ff8fd0']);
+  if (G.mecha) pills.push([`機械魔像 ${Math.max(0, G.mecha.t).toFixed(1)}`, '#d9a066']);
+  if (G.angel) pills.push([`守護天使 ${Math.max(0, G.angel.t).toFixed(1)}`, '#fff3a8']);
+  if (G.hourglass > 0) pills.push([`時之沙漏 ${G.hourglass.toFixed(1)}`, '#ffd6a5']);
+  if (G.gearT > 0) pills.push([`時之齒輪 ${G.gearT.toFixed(1)}`, '#e0c89a']);
+  if (G.cdSlow > 0) pills.push([`冷卻變慢 ${G.cdSlow.toFixed(1)}`, '#ff8a8a']);
   pills.forEach(([s, c], i) => {
     rrect(160, 76 + i * 40, 170, 34, 17); fillStroke('rgba(58,42,74,.85)', 3, c);
     txt(s, 245, 93 + i * 40, 17, c);
@@ -4418,7 +5345,7 @@ function drawHUD() {
   buttons.push({ x: 160, y: 484, w: 80, h: 118, fn: () => { if (!G.over && !G.paused) summonMoenFoe(); } });
   buttons.push({ x: 1066, y: 18, w: 128, h: 46, fn: coinStarfall });
   // 魔法列
-  const { slots, ult, right } = hudLayout();
+  const { slots, ult, ult2, right } = hudLayout();
   rrect(12, 626, right - 12, 92, 24); ctx.fillStyle = 'rgba(58,42,74,.66)'; ctx.fill();
   rrect(24, 634, right - 36, 14, 7); ctx.fillStyle = '#2b2040'; ctx.fill();
   if (G.mpFlash > 0) { ctx.lineWidth = 3; ctx.strokeStyle = `rgba(255,90,90,${Math.min(1, G.mpFlash * 2)})`; ctx.stroke(); }
@@ -4431,6 +5358,7 @@ function drawHUD() {
     spellButton(SPELL[id], cx, cyy, R, String(i + 1));
   }
   if (ult) spellButton(SPELL.starfall, 52 + (slots - 1) * 78 + 92, 680, 34, 'Q');
+  if (ult2) spellButton(SPELL.miracle, 52 + (slots - 1) * 78 + 92 + 86, 680, 34, 'W');
   // 提示
   if (G.hintT > 0 && !G.over) {
     ctx.globalAlpha = Math.min(1, G.hintT);
@@ -4462,7 +5390,7 @@ function spellButton(s, cx, cyy, R, key) {
   const cd = s.cd ? G.cds[s.id] / s.cd : 0;
   if (cd > 0) { ctx.beginPath(); ctx.moveTo(cx, cyy); ctx.arc(cx, cyy, R - 2, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cd); ctx.closePath(); ctx.fillStyle = 'rgba(40,30,60,.55)'; ctx.fill(); }
   const cost = spellCost(s);
-  if (G.mp < cost || (ult && G.ultUsed)) { circ(cx, cyy, R - 2); ctx.fillStyle = 'rgba(60,70,120,.5)'; ctx.fill(); }
+  if (G.mp < cost || (ult && (s.id === 'miracle' ? G.ult2Used : G.ultUsed))) { circ(cx, cyy, R - 2); ctx.fillStyle = 'rgba(60,70,120,.5)'; ctx.fill(); }
   if (!ult) { rrect(cx - 15, cyy + 15, 30, 16, 8); ctx.fillStyle = G.surge > 0 ? '#2aa8d8' : s.type === 'self' ? '#9a6af0' : '#4f7cf0'; ctx.fill(); txt(String(cost), cx, cyy + 23, 12, '#fff'); }
   circ(cx - R + 5, cyy - R + 5, 10); fillStroke('#ffd84d', 2.5);
   txt(key, cx - R + 5, cyy - R + 6, 12, OUT);
@@ -4497,6 +5425,9 @@ function drawReticle() {
   else if (id === 'spore') { circ(x, y, 110); ctx.strokeStyle = 'rgba(183,122,224,.85)'; ctx.stroke(); }
   else if (id === 'charm') { circ(x, y, 150); ctx.strokeStyle = 'rgba(255,143,200,.85)'; ctx.stroke(); }
   else if (id === 'bubble') { circ(x, y, 130); ctx.strokeStyle = 'rgba(127,211,255,.9)'; ctx.stroke(); }
+  else if (id === 'prism') { const R = 52 + 4 * (r - 1); for (const off of [-95, 0, 95]) { circ(Math.max(WALL_X + 40, Math.min(W - 20, x + off)), y, R); ctx.strokeStyle = 'rgba(255,159,208,.8)'; ctx.stroke(); } }
+  else if (id === 'dream') { circ(x, y, 130); ctx.strokeStyle = 'rgba(201,184,255,.9)'; ctx.stroke(); }
+  else if (id === 'river') { const gx = Math.max(WALL_X + 40, x); rrect(gx - 290, 80, 580, 556, 20); ctx.strokeStyle = 'rgba(143,216,255,.75)'; ctx.stroke(); }
   else if (id === 'whale') { const R = 150 + 10 * (r - 1), wx = Math.max(WALL_X + 60, Math.min(x, W - 80)); rrect(wx - R, 200, R * 2, 430, 20); ctx.strokeStyle = 'rgba(98,168,255,.8)'; ctx.stroke(); }
   else {
     const t = nearestEnemy(x, y, 170);
@@ -4520,7 +5451,7 @@ function drawPause() {
 // ============================================================
 //  劇情畫面
 // ============================================================
-const PE = { age: 0, swing: 0, walk: 0, x: 0, stopX: 0, mirror: 0, id: 1, phase: 1, vshield: 0, calm: false };   // 立繪用的假敵人狀態
+const PE = { age: 0, swing: 0, walk: 0, x: 0, stopX: 0, mirror: 0, id: 1, phase: 1, vshield: 0, calm: false, rwFx: 0 };   // 立繪用的假敵人狀態
 const CAST = {
   bobby:  { name: '維維小法師', color: '#4f7cf0', x: 220,  y: 610, draw: s => drawWizard(0, 0, 2.3 * s, T, 0, '#ffd84d') },
   owl:    { name: '咕咕',     color: '#a8764a', x: 420,  y: 520, draw: s => drawOwl(0, 0, T, 0, 2.6 * s) },
@@ -4533,6 +5464,9 @@ const CAST = {
   shadow: { name: '暗影維維', color: '#3a2a6a', x: 1040, y: 610, draw: s => { ctx.scale(1.9 * s, 1.9 * s); drawShadowBobby(PE); } },
   oak:    { name: '樹王歐克', color: '#4f8a3a', x: 1040, y: 575, draw: s => { ctx.scale(1.25 * s, 1.25 * s); drawOak(PE); } },
   kraken: { name: '巨妖克拉肯', color: '#a84a90', x: 1050, y: 555, draw: s => { ctx.scale(1.2 * s, 1.2 * s); drawKraken(PE); } },
+  chrono: { name: '發條皇帝', color: '#b08a5a', x: 1050, y: 600, draw: s => { ctx.scale(1.05 * s, 1.05 * s); drawChrono(PE); } },
+  night:  { name: '奈特梅爾', color: '#3a2a6a', x: 1050, y: 530, draw: s => { ctx.scale(1.2 * s, 1.2 * s); drawNightmare(PE); } },
+  master: { name: '師父',     color: '#2f4fa8', x: 860,  y: 610, draw: s => { drawWizard(0, 0, 2.3 * s, T, 0, '#7af0ff', MASTER_PAL); drawBeard(2.3 * s); } },
 };
 function renderStory() {
   const sc = story.sc, [who, text] = sc.lines[story.i];
@@ -4540,8 +5474,9 @@ function renderStory() {
   ctx.fillStyle = 'rgba(30,20,45,.38)'; ctx.fillRect(0, 0, W, H);
   PE.age = T; PE.calm = !!sc.calm;
   for (const id of new Set(sc.lines.map(l => l[0]))) {
-    const c = CAST[id], on = id === who, cx = typeof c.x === 'function' ? c.x(sc) : c.x;
-    ctx.save(); ctx.translate(cx, c.y + (on ? Math.sin(T * 3) * 3 : 10));
+    const c = CAST[id], on = id === who, pos = sc.pos && sc.pos[id];
+    const cx = pos ? pos[0] : typeof c.x === 'function' ? c.x(sc) : c.x, cyy = pos ? pos[1] : c.y;
+    ctx.save(); ctx.translate(cx, cyy + (on ? Math.sin(T * 3) * 3 : 10));
     ctx.globalAlpha = on ? 1 : 0.45; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     c.draw(on ? 1 : 0.94);
     ctx.restore();
@@ -4590,7 +5525,7 @@ function drawResult() {
       if (R.newSlot) { txt('魔法欄位 +1！', 640, y, 21, '#c98a00'); y += 34; }
       if (R.spGain > 0) { txt(`獲得技能點 +${R.spGain}` + (G.stars === 3 ? '（含三星獎勵）' : ''), 640, y, 21, '#e8484f'); y += 34; }
     }
-    if (final) txt('第九章「發條鐘塔」即將推出，敬請期待！', 640, 548, 22, '#7a4fe0');
+    if (final) txt('維維成為真正的星帽大法師！謝謝你玩到最後！', 640, 548, 22, '#7a4fe0');
     if (G.stage < MAX_STAGE) {
       button(368, 572, 170, 60, '再玩一次', () => startLevel(G.stage), { size: 22 });
       button(555, 572, 170, 60, '選擇關卡', () => { goState('select'); }, { size: 22, color: '#a98bff' });
@@ -4652,6 +5587,7 @@ function renderPlay() {
     }
     ctx.globalAlpha = 1;
   }
+  if (G.hourglass > 0) { ctx.fillStyle = `rgba(255,200,140,${0.13 * Math.min(1, G.hourglass / 0.5)})`; ctx.fillRect(0, 0, W, H); }
   if (G.timeStop > 0) {
     ctx.fillStyle = 'rgba(120,90,200,.16)'; ctx.fillRect(0, 0, W, H);
     drawSpellIcon('timestop', 640, 210, 1.6);
@@ -4696,7 +5632,7 @@ function renderTitle() {
   drawOwl(900, 600, T, 0, 1.4);
   button(550, 340, 300, 86, '開始冒險', () => { if (isTouch) goFullscreen(); goState('select'); }, { size: 36, color: '#ff8fb8' });
   button(575, 450, 250, 60, '全螢幕', goFullscreen, { size: 24, color: '#a98bff' });
-  txt(isTouch ? '點選魔法 → 點敵人施放，按住可連發' : '滑鼠點擊施法（可按住連發）　數字鍵 1～7 切換魔法　Q 終極魔法　Esc 暫停', 640, 690, 20, '#fff', 'center', 5);
+  txt(isTouch ? '點選魔法 → 點敵人施放，按住可連發' : '滑鼠點擊施法（可按住連發）　數字鍵 1～8 切換魔法　Q／W 終極魔法　Esc 暫停', 640, 690, 20, '#fff', 'center', 5);
   musicButton(1176, 41);
   soundButton(1236, 41);
   drawToast();
@@ -4711,7 +5647,8 @@ function renderSelect() {
   rrect(366, 54, 104, 40, 20); fillStroke('#7a4fe0', 3);
   txt('Lv.' + lv, 418, 75, 24, '#fff');
   txt('出戰：', 170, 134, 20, '#7a6a8a', 'left');
-  save.loadout.forEach((id, i) => { circ(246 + i * 40, 134, 17); fillStroke('#efe4ff', 3); drawSpellIcon(id, 246 + i * 40, 134, 0.52); });
+  const gap = save.loadout.length > 7 ? 36 : 40;
+  save.loadout.forEach((id, i) => { circ(246 + i * gap, 134, 17); fillStroke('#efe4ff', 3); drawSpellIcon(id, 246 + i * gap, 134, 0.52); });
   button(530, 54, 160, 54, '魔法書', () => { goState('book'); }, { size: 24, color: '#a98bff' });
   if (sp.free > 0) { circ(684, 58, 15); fillStroke('#ff5a6a', 3); txt(String(sp.free), 684, 59, 16, '#fff'); }
   button(710, 54, 170, 54, '城堡工坊', () => { goState('shop'); }, { size: 24, color: '#ff8a3d' });
@@ -4820,7 +5757,7 @@ function renderBook() {
     if (id) { fillStroke('#efe4ff', 3); drawSpellIcon(id, x, 626, 0.8); }
     else { ctx.setLineDash([5, 5]); ctx.lineWidth = 3; ctx.strokeStyle = '#b9aec8'; ctx.stroke(); ctx.setLineDash([]); }
   }
-  txt('Lv6、14、30、61 會各增加一格', 330 + slots * 70, 626, 18, '#9a8fae', 'left');
+  txt('Lv6、14、30、61、81 各加一格', 330 + slots * 70, 626, slots >= 8 ? 16 : 18, '#9a8fae', 'left');
   drawToast();
 }
 
@@ -4936,6 +5873,7 @@ window.addEventListener('keydown', e => {
   const n = parseInt(e.key, 10);
   if (n >= 1 && n <= 8 && G.loadout[n - 1]) pressSpell(G.loadout[n - 1]);
   if (e.key === 'q' || e.key === 'Q' || e.key === ' ') { e.preventDefault(); useSpell('starfall', null, null, false); }
+  if ((e.key === 'w' || e.key === 'W') && learned('miracle')) useSpell('miracle', null, null, false);
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play' && G && !G.over) G.paused = true; });
 
@@ -4952,7 +5890,7 @@ function frame(now) {
   else if (toast) { toast.t -= dt; if (toast.t <= 0) toast = null; }
   if (state === 'story') story.shown += dt * 30;
   setMusic(state === 'story' ? story.sc.music
-    : state === 'play' ? (G.over ? null : G.boss ? 'boss' : ['grass', 'snow', 'volcano', 'sky', 'void', 'crystal', 'forest', 'ocean'][G.ch])
+    : state === 'play' ? (G.over ? null : G.boss ? 'boss' : ['grass', 'snow', 'volcano', 'sky', 'void', 'crystal', 'forest', 'ocean', 'clock', 'dream'][G.ch])
     : 'title');
   ctx.setTransform(K, 0, 0, K, 0, 0);
   if (state === 'title') renderTitle();
